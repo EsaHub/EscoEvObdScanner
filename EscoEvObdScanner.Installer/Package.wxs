@@ -1,0 +1,69 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package Name="Esco EV OBD Scanner"
+           Manufacturer="Esa Pelttari"
+           Version="$(ProductVersion)"
+           UpgradeCode="F9649680-AE1B-4148-BCA2-922D1560885F"
+           Scope="perMachine">
+
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of Esco EV OBD Scanner is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="AppIcon" SourceFile="..\EscoEvObdScanner.App\Themes\app.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/EsaHub/EscoEvObdScanner" />
+
+    <!-- the app always; the desktop shortcut can be left out on the Custom Setup page -->
+    <Feature Id="Main" Title="Esco EV OBD Scanner" Description="The app, the car files, the user guide and the Start menu shortcuts."
+             AllowAbsent="no" ConfigurableDirectory="INSTALLFOLDER" Display="expand">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentRef Id="HelpShortcuts" />
+      <Feature Id="Desktop" Title="Desktop shortcut" Description="A shortcut to the app on the desktop.">
+        <ComponentRef Id="DesktopShortcut" />
+      </Feature>
+    </Feature>
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="Esco EV OBD Scanner" />
+    </StandardDirectory>
+
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <!-- everything dotnet publish produced: the app exe, the car files and the user guide -->
+      <Files Include="$(PublishDir)**">
+        <Exclude Files="$(PublishDir)**\*.pdb" />
+      </Files>
+      <!-- the licence and the notices of what the app redistributes -->
+      <File Source="..\LICENSE" Name="LICENSE.txt" />
+      <File Source="..\THIRD-PARTY-NOTICES.md" Name="THIRD-PARTY-NOTICES.txt" />
+    </ComponentGroup>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="StartMenuShortcut" Guid="6A1C1F63-6D66-4E4B-9B0E-3E7E6C1D2A41">
+        <Shortcut Id="AppShortcut" Name="Esco EV OBD Scanner" Description="Electric car OBD diagnostics (read-only)"
+                  Target="[INSTALLFOLDER]EscoEvObdScanner.App.exe" WorkingDirectory="INSTALLFOLDER" Icon="AppIcon" />
+        <RegistryValue Root="HKLM" Key="Software\EscoEvObdScanner" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+      <!-- the user guide in both languages -->
+      <Component Id="HelpShortcuts" Guid="8D69017A-6A5D-43CF-A3CF-D75F2022679C">
+        <Shortcut Id="HelpFiShortcut" Name="Esco EV OBD Scanner – käyttöohje" Target="[INSTALLFOLDER]help\ohje.fi.html" />
+        <Shortcut Id="HelpEnShortcut" Name="Esco EV OBD Scanner – user guide" Target="[INSTALLFOLDER]help\guide.en.html" />
+        <RegistryValue Root="HKLM" Key="Software\EscoEvObdScanner" Name="HelpShortcuts" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="1F0C5B8A-2E3D-4C7A-8B9E-5D6F7A8B9C0D">
+        <Shortcut Id="AppDesktopShortcut" Name="Esco EV OBD Scanner"
+                  Target="[INSTALLFOLDER]EscoEvObdScanner.App.exe" WorkingDirectory="INSTALLFOLDER" Icon="AppIcon" />
+        <RegistryValue Root="HKLM" Key="Software\EscoEvObdScanner" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <ui:WixUI Id="WixUI_FeatureTree" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+  </Package>
+</Wix>
+
+

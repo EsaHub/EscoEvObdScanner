@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esco EV OBD Scanner – user guide</title>
+<style>
+  :root { --bg: #f6f7f9; --panel: #ffffff; --text: #1d2430; --muted: #5b6575; --line: #dde2ea; --accent: #0891b2; --good: #15803d; --watch: #b45309; --bad: #b91c1c; --code: #eef2f6; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1117; --panel: #161b22; --text: #e6edf3; --muted: #9aa5b4; --line: #2b3440; --accent: #22d3ee; --good: #4ade80; --watch: #fbbf24; --bad: #f87171; --code: #1f2630; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 20px 64px; }
+  header h1 { margin: 0; font-size: 30px; color: var(--accent); }
+  header p { margin: 6px 0 0; color: var(--muted); }
+  nav { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 20px; margin: 24px 0; }
+  nav ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+  nav a { color: var(--text); text-decoration: none; }
+  nav a:hover { color: var(--accent); }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 24px 16px; margin: 18px 0; }
+  h2 { font-size: 21px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  h3 { font-size: 17px; margin-bottom: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 15px; }
+  th, td { border: 1px solid var(--line); padding: 6px 9px; text-align: left; vertical-align: top; }
+  th { background: var(--code); }
+  code, kbd { background: var(--code); border-radius: 4px; padding: 1px 5px; font-size: 14px; }
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps li { counter-increment: step; position: relative; padding-left: 44px; margin: 12px 0; }
+  .steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--bg); font-weight: 700; text-align: center; line-height: 30px; }
+  .note { border-left: 4px solid var(--accent); background: var(--code); padding: 8px 14px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+  .warn { border-left-color: var(--watch); }
+  .good { color: var(--good); font-weight: 600; } .watch { color: var(--watch); font-weight: 600; } .bad { color: var(--bad); font-weight: 600; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: 14px; text-align: center; margin-top: 32px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Esco EV OBD Scanner</h1>
+  <p>Reads an electric car's battery and fault codes through the OBD port. The program only reads: it does not write to the car, clear fault codes or unlock anything.</p>
+</header>
+
+<nav>
+  <ol>
+    <li><a href="#need">What you need</a></li>
+    <li><a href="#start">The first time</a></li>
+    <li><a href="#tabs">The tabs</a></li>
+    <li><a href="#live">Live view and driving</a></li>
+    <li><a href="#report">Battery report</a></li>
+    <li><a href="#limits">Limits of the ratings and sources</a></li>
+    <li><a href="#faults">Fault codes</a></li>
+    <li><a href="#safety">Safety</a></li>
+    <li><a href="#trouble">Troubleshooting</a></li>
+    <li><a href="#files">Where the results are</a></li>
+    <li><a href="#about">About</a></li>
+  </ol>
+</nav>
+
+<section id="need">
+<h2>1. What you need</h2>
+<ul>
+  <li><b>A Windows computer</b> with the program installed.</li>
+  <li><b>An ELM327 or STN adapter</b> that shows up in Windows as a COM port: over USB or classic Bluetooth. Wi-Fi and Bluetooth LE adapters do not work. Windows 11 offers a Bluetooth OBD adapter for pairing only when <b>Advanced</b> is chosen in <i>Settings → Bluetooth &amp; devices → Devices → Bluetooth devices discovery</i>. Pairing creates two COM ports; use the outgoing one.</li>
+  <li><b>A supported car</b>:
+    <table>
+      <tr><th>Platform</th><th>Cars</th><th>Tested</th></tr>
+      <tr><td>Stellantis e-CMP</td><td>Opel Mokka-e, Corsa-e; Peugeot e-208, e-2008; Citroën e-C4; DS 3 E-Tense</td><td>2023 Mokka-e</td></tr>
+      <tr><td>Kia Niro EV (2022–)</td><td>Second-generation Niro EV</td><td>2024 Niro EV</td></tr>
+      <tr><td>Kia e-Niro / Hyundai Kona Electric (2018–2022)</td><td>First generation</td><td>not tested</td></tr>
+    </table>
+  </li>
+</ul>
+<p>The program also has a <b>demo car</b> that works without an adapter. Its data comes from a real car's readings, so everything can be tried at home.</p>
+<div class="note">The program was developed and tested with an <b>OBDLink EX</b> USB adapter, so that one is known to work. The identifier scans have also been run over Bluetooth with an <b>OBDLink LX</b>. Other adapters should work if they show up as a COM port, but they have not been tested.</div>
+<div class="note warn"><b>The main difference between adapters:</b> the adapter must handle long replies made of many frames and the flow control set-up commands (<code>ATFCSH</code>, <code>ATFCSD</code>, <code>ATFCSM</code>). The cell voltages come in such replies (on a Stellantis all 108 cells in one 243-byte reply). Without them the charge and voltages show, but the cell voltages do not. Test a new adapter on the <b>Battery</b> tab: if every cell shows, the adapter is fine.</div>
+</section>
+
+<section id="start">
+<h2>2. The first time</h2>
+<ol class="steps">
+  <li><b>Plug the adapter</b> into the car's OBD port (usually under the dashboard on the driver's side) and switch the car to <b>READY</b>.</li>
+  <li>On the <b>Connection</b> tab press <b>Add vehicle…</b>. Give it a name, a registration number for example, and <b>choose the right platform</b>. The wrong platform is the most common reason nothing comes from the car.</li>
+  <li>Choose the <b>Port</b> (the adapter's COM port). If it is missing, press <kbd>⟳</kbd>.</li>
+  <li>Press <b>Connect</b>. The log says "Connected", and the VIN if the car gives it.</li>
+  <li>On the <b>Dashboard</b> tab press <b>Start live view</b>. The dashboard starts to update.</li>
+  <li>Drive a round with the live view on, read the <b>Fault codes</b> (deep read) with the car standing, and finally press <b>Create report (PDF)</b> on the <b>Battery</b> tab.</li>
+</ol>
+<div class="note">Each vehicle has its own results and drive history. When you measure another car, add a vehicle for it, so the results do not mix. The program recognises the car and warns when the adapter is on another car than the vehicle chosen.</div>
+</section>
+
+<section id="tabs">
+<h2>3. The tabs</h2>
+<table>
+  <tr><th>Tab</th><th>What it holds</th></tr>
+  <tr><td>Connection</td><td>Vehicles, port, connecting and the log.</td></tr>
+  <tr><td>Dashboard</td><td>The live view starts with <i>Start live view</i>, or by itself right after connecting when <i>Start the live view automatically</i> is chosen (the laptop can stay in the car), unless none of the car file's ECUs answers.
+    <ul>
+      <li><b>Gauges:</b> power (its title gives the situation: drive power, regeneration, charging power or draw while parked), speed and motor rpm, charge and current.</li>
+      <li><b>Driving:</b> gear, drive mode, consumption, outside temperature and odometer.</li>
+      <li><b>Range:</b> an estimate at the current charge with your earlier drives' and this drive's consumption (where the car gives the battery's energy left), and the consumption of earlier drives.</li>
+      <li><b>Charging:</b> charge cable, grid voltage, time to full, the energy charged into the battery this session and the charge limit.</li>
+      <li><b>Battery:</b> voltage, energy left, battery health, average temperature, coldest and warmest reading, cell spread, lowest cell, discharge limit, insulation resistance and the 12 V battery.</li>
+      <li><b>Temperatures:</b> motor, inverter, DC-DC converter, coolant and 12 V battery.</li>
+      <li><b>Trip (this session):</b> distance, energy used and regenerated, net used, average consumption and how much charge was used. <b>Peaks (this session):</b> peak power and peak regeneration.</li>
+      <li><b>Lifetime (the car’s own counters):</b> energy taken from and put into the battery, and the average consumption. <b>Electricity (estimate):</b> the electricity from the grid and its cost at your price and charging loss, over the car’s life and per year from the day it was taken into use and the odometer reading then.</li>
+    </ul>
+    A tile or group shows only where the car file gives its value.</td></tr>
+  <tr><td>Battery</td><td>Every cell and temperature probe in colour, cell health (where the car gives it, e-CMP), cells under load and the PDF report.</td></tr>
+  <tr><td>Charts</td><td>Power, speed, current, charge, voltage, cell spread and temperatures as curves over the session; the time window can be chosen.</td></tr>
+  <tr><td>Fault codes</td><td>Fault codes per ECU, and earlier reads.</td></tr>
+  <tr><td>ECUs</td><td>The car file's ECUs and their identifiers: the known ones, all, or only the unknown. <b>Read</b> reads the values of those shown once. <b>Test the link to the selected ECUs</b> shows which of them answer. Values that seldom change (versions and configuration, for example) and identifiers whose value the ECU refused are hidden until you choose them. ECUs that have never answered this car are a group of their own at the end of the list and are not selected.</td></tr>
+  <tr><td>Discovery</td><td>A research tool for finding new ECUs and identifiers. Not needed in ordinary use. The ECU search and a scan say when the car file lists the chosen range as searched or scanned already.</td></tr>
+  <tr><td>Compare</td><td>Two snapshots side by side: what changed, during a charge for example. A snap reads the car file's identifiers except those marked as seldom changing and those whose value the ECU refused; <i>Also read rarely changing</i> and <i>Also read refused</i> add them.</td></tr>
+</table>
+<p>While the live view runs it holds the adapter. The actions of the tabs that read the car (Fault codes, ECUs, Discovery, Compare) wait, and while one of them is selected the bottom of the window shows a notice and a <b>Stop live view</b> button.</p>
+</section>
+
+<section id="live">
+<h2>4. Live view and driving</h2>
+<ul>
+  <li>The live view is recorded to a file, from which a report can be made later (<b>Report from recording…</b>).</li>
+  <li><b>Cells under load</b> needs reads under load (accelerating, at least 40 A) and at rest (standing, at most 5 A). So drive with some variety and stop now and then.</li>
+  <li>The <b>range estimate</b> comes from the battery's remaining energy and the consumption: at the drive history's consumption (this drive included) once there are at least 30 km of drives, and at this drive's consumption after 5 km of driving. The program does not read the range estimate on the car's own dashboard.</li>
+</ul>
+</section>
+
+<section id="report">
+<h2>5. Battery report</h2>
+<p>The report is made on the <b>Battery</b> tab. In <b>Text for the report</b> you can write whose car it is, for example, or the VIN if the car does not give it (on the tested e-CMP car the VIN cannot be read through the OBD port).</p>
+<h3>What the report holds</h3>
+<ul>
+  <li><b>VIN</b>: compare it with the lower corner of the windscreen and the registration document. This ties the report to the car measured.</li>
+  <li><b>Summary</b>: ratings <span class="good">Good</span>, <span class="watch">Attention</span> and <span class="bad">Check</span>.</li>
+  <li><b>Battery values, the drive, cells under load, cells and probes, fault codes</b>, and the car's lifetime counters where the car gives them (Kia Niro EV: energy into and out of the battery, and charging; Stellantis: energy into and out of the battery, starts and time above 55 °C). Stellantis gives the energy into the battery only once the car has driven or charged since it woke; until then the row is left out.</li>
+  <li><b>Battery and battery management</b> (Stellantis): the battery management's date of manufacture, the age worked out from it, the wear rate ((100 % − SOH) per year and per 10,000 km; assumes the new battery was at 100 % and is as old as its battery management) and the software and hardware versions. They are read at the connection and kept with the vehicle, so a report made from a recording has them too, with the date they were read.</li>
+  <li><b>12 V battery</b>: the voltage and whether it is a rest voltage (the car standing, pack current at most 5 A, below 13 V) or the DC/DC is charging the battery (13 V or more). The rest voltage references (full about 12.65 V, half about 12.24 V; Battery University BU-903 [6]) are indicative only: a reliable reading needs hours of rest.</li>
+  <li>The <b>Source</b> column tells for each figure whether it is given by the <i>car</i> as it is or <i>calculated</i> by the program from the car's values.</li>
+  <li><b>How the figures are calculated</b>: the formula of every calculated figure.</li>
+  <li><b>Limits of the ratings</b>: every rating's limits and their basis (see the next section).</li>
+</ul>
+<div class="note warn">The report is not a manufacturer's or workshop's battery test nor a guarantee of the battery's condition. A PDF can be edited: when a car is sold, the most reliable result is a measurement the buyer is present at.</div>
+</section>
+
+<section id="limits">
+<h2>6. Limits of the ratings and sources</h2>
+<table>
+  <tr><th>Rating</th><th class="good">Good</th><th class="watch">Attention</th><th class="bad">Check</th><th>Basis</th></tr>
+  <tr><td>Battery health (SOH)</td><td>90 % or more</td><td>80–90 %</td><td>below 80 %</td><td>The program's own limits. For comparison, battery warranties: Kia 70 % (7 years / 150,000 km) [1], Stellantis about 70 % (8 years / 160,000 km) [2].</td></tr>
+  <tr><td>Cell voltage spread (at rest)</td><td>below 30 mV</td><td>30–80 mV</td><td>80 mV or more</td><td>A healthy pack's cells are within 10–20 mV, and 50–100 mV is a red flag depending on the manufacturer [3].</td></tr>
+  <tr><td>Cells under load</td><td>below 5 mV / 100 A</td><td>5–15</td><td>15 or more</td><td>The program's own limits; there is no published source. The principle: a cell's internal resistance grows as it ages and shows as a sag under load. The limits rise with the measuring accuracy (the Kia gives cell voltages in 20 mV steps). When the coldest probe is below 10 °C under load, the rating is at most Attention: in the cold the cells’ resistance rises, most in the coldest parts of the pack.</td></tr>
+  <tr><td>Temperature spread in the pack</td><td>below 5 °C</td><td>5–10 °C</td><td>10 °C or more</td><td>Battery thermal management aims at a spread below 5 °C between cells [4]. 10 °C is the program's own limit.</td></tr>
+  <tr><td>Insulation</td><td>500 kΩ or more</td><td>legal limit – 500 kΩ</td><td>below the legal limit</td><td>UNECE R100: at least 500 Ω/V of the battery voltage (200 kΩ for a 400 V battery) [5]. 500 kΩ is the program's own limit; for a battery over 1000 V, Good starts at the legal limit.</td></tr>
+  <tr><td>Battery fault codes</td><td>no faults</td><td>past, not now</td><td>active</td><td>An active fault is on now, a past one has been, not now.</td></tr>
+</table>
+<p>Sources:</p>
+<ol>
+  <li><a href="https://www.kia.com/sk/predajca/aspekta/o-nas/zazitok-kia/zodpovednost/electrification/">Kia: battery warranty</a></li>
+  <li><a href="https://www.carwow.es/blog/mantenimiento-peugeot-e-208">Carwow: Peugeot e-208 battery warranty</a></li>
+  <li><a href="https://www.midtronics.com/blog/early-signs-of-cell-imbalance-in-high-voltage-ev-batteries/">Midtronics: Early Signs of Cell Imbalance in High Voltage EV Batteries (2025)</a></li>
+  <li><a href="https://www.scitepress.org/Papers/2022/110307/110307.pdf">Battery Thermal Management Systems for EVs and Its Applications (SciTePress 2022)</a></li>
+  <li><a href="https://www.lexaris.de/library/tableofcontents/2059009">UNECE Regulation No 100, paragraph 5.1.3</a></li>
+  <li><a href="https://batteryuniversity.com/article/bu-903-how-to-measure-state-of-charge">Battery University: BU-903 How to Measure State-of-charge</a> (the 12 V battery's rest voltage)</li>
+</ol>
+</section>
+
+<section id="faults">
+<h2>7. Fault codes</h2>
+<ul>
+  <li><b>Read fault codes</b> reads the codes of the known ECUs. ECUs that have never answered this car are skipped unless <b>Also ask ECUs that have not answered</b> is chosen. <b>Deep read</b> also reads each fault's freeze frame and counters. On e-CMP cars the <b>Occurred</b> column also shows when, and at what odometer reading, the fault occurred.</li>
+  <li><b>active</b> = the fault is on now, <b>past, not now</b> = the fault was seen before but is not on now.</li>
+  <li><b>Failure type (SAE J2012-DA)</b> shows the code's last byte (e.g. U1208-<b>29</b>) by its name in the standard, for example 13 = Circuit Open, 29 = Signal Invalid. Values the maker defines have no name.</li>
+  <li><b>Status bits (ISO 14229-1)</b> shows the bits of the status byte the car reports by their names in the standard, and <b>Meaning</b> the same bits in plain words, for example testFailed = failing now, confirmedDTC = confirmed fault, warningIndicatorRequested = asks for the warning light.</li>
+  <li>The program never clears fault codes.</li>
+  <li>Read fault codes with the car standing in READY. The live view holds the adapter, so stop it first.</li>
+</ul>
+</section>
+
+<section id="safety">
+<h2>8. Safety</h2>
+<ul>
+  <li>The program sends read requests only. Commands that write, clear or unlock do not exist in it.</li>
+  <li>A long session keeps the car awake and drains the 12 V battery. Keep the car in READY or on charge, and unplug the adapter when you finish.</li>
+  <li>Some e-208 and Corsa-e owners report that an OBD adapter in use while driving upset the infotainment or the displays. If the car's screens behave oddly during the live view, stop it and unplug the adapter.</li>
+  <li>Do not use the program while driving yourself. Let a passenger handle the computer, or do things at stops.</li>
+</ul>
+</section>
+
+<section id="trouble">
+<h2>9. Troubleshooting</h2>
+<table>
+  <tr><th>Symptom</th><th>Cause and fix</th></tr>
+  <tr><td>No values come, and the ECUs "did not answer" (NO DATA in the adapter traffic)</td><td>The wrong platform. Disconnect, remove the vehicle and add it again with the right platform.</td></tr>
+  <tr><td>Connect fails, the adapter does not answer</td><td>The wrong port or speed. Try 38400. Some adapters fall asleep while the car rests: unplug and plug in the adapter.</td></tr>
+  <tr><td>The port is busy</td><td>Another program uses the adapter. Close it.</td></tr>
+  <tr><td>Warning: the adapter is on another car than the vehicle chosen</td><td>Choose the right vehicle or add a new one. If it surely is the same car (a replaced battery ECU, for example), answer <b>Yes</b>.</td></tr>
+  <tr><td>The report says "VIN: not given by the car"</td><td>The car does not give its VIN through the OBD port (so on the tested e-CMP car). Write the VIN in <b>Text for the report</b>.</td></tr>
+  <tr><td>The cells do not show, other values do</td><td>The adapter does not handle long replies or the flow control commands (typical of cheap clones). Try another adapter.</td></tr>
+  <tr><td>The report's Cells under load says "The cells are not ranked"</td><td>Too few reads under load or at rest. Drive longer, accelerate now and then and stop now and then.</td></tr>
+</table>
+</section>
+
+<section id="files">
+<h2>10. Where the results are</h2>
+<p>Results go to <code>Documents\EscoEvObdScanner\&lt;vehicle&gt;</code>: reports, live recordings, fault code reads, snapshots and logs. <b>Open folder</b> on the <b>Connection</b> tab opens <code>Documents\EscoEvObdScanner</code>, where each vehicle has a folder of its own.</p>
+<p>The files can hold ECU serial numbers and the car's VIN. Think about whom you share them with.</p>
+</section>
+
+<section id="about">
+<h2>11. About</h2>
+<ul>
+  <li>The program is free and open source: <a href="https://github.com/EsaHub/EscoEvObdScanner">github.com/EsaHub/EscoEvObdScanner</a>.</li>
+  <li>Licence: the code MIT, the car files CC BY 4.0 (free to use with credit to the source). The name "Esco EV OBD Scanner" and the logo are not part of the licence.</li>
+  <li>The program reads what the car reports and cannot guarantee it is correct. Calculations and estimates are indicative. The program is provided as is, without warranty.</li>
+  <li>Technical background, findings about the cars and sources: <a href="https://github.com/EsaHub/EscoEvObdScanner#readme">the README on GitHub</a>.</li>
+  <li>Findings and fixes are welcome through GitHub.</li>
+</ul>
+</section>
+
+<footer>Esco EV OBD Scanner – user guide</footer>
+</main>
+</body>
+</html>

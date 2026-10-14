@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="EscoEvObdScanner.Core/EscoEvObdScanner.Core.csproj" />
+  <Project Path="EscoEvObdScanner/EscoEvObdScanner.csproj" />
+  <Project Path="EscoEvObdScanner.AppLogic/EscoEvObdScanner.AppLogic.csproj" />
+  <Project Path="EscoEvObdScanner.App/EscoEvObdScanner.App.csproj" />
+  <Project Path="EscoEvObdScanner.Tests/EscoEvObdScanner.Tests.csproj" />
+</Solution>

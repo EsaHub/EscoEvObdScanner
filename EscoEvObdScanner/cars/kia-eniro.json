@@ -1,0 +1,511 @@
+{
+  "schema": 2,
+  "version": 1,
+  "license": "CC-BY-4.0",
+  "attribution": "Esco EV OBD Scanner car files by Esa Pelttari, CC BY 4.0, https://github.com/EsaHub/EscoEvObdScanner",
+  "platform": {
+    "name": "Kia e-Niro / Hyundai Kona Electric (2018–2022)",
+    "cars": "Kia e-Niro 2018-2022 (64 kWh: 98 cells), Hyundai Kona Electric 2018-2022; the 39 kWh packs may have fewer cells: empty slots at the end are left out, so the battery view shows the cells the pack has, as long as the replies keep the same layout. Speed from the ABS is for the e-Niro. Not tested with this program.",
+    "elm_protocol": "6",
+    "probe_from": "0x700",
+    "main_range": [
+      "0x770",
+      "0x7E7"
+    ],
+    "identifying": [],
+    "gauges": {
+      "power_kw": [
+        -80,
+        160
+      ],
+      "current_a": [
+        -250,
+        450
+      ],
+      "speed_kmh": [
+        0,
+        170
+      ]
+    },
+    "warranty": {
+      "fi": "Kia: 70 % (7 v tai 150 000 km). Lähde: Kian takuuehdot.",
+      "en": "Kia: 70 % (7 years or 150,000 km). Source: Kia's warranty terms."
+    }
+  },
+  "live": {
+    "soc": {
+      "ecu": "bms",
+      "did": "0x0105",
+      "poll": "fast",
+      "expression": "B35/2",
+      "min": 0,
+      "max": 100
+    },
+    "voltage": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "fast",
+      "expression": "[B16:B17]/10",
+      "min": 100,
+      "max": 500
+    },
+    "current": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "fast",
+      "expression": "S[B14:B15]/10",
+      "min": -500,
+      "max": 500
+    },
+    "motor_rpm": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "fast",
+      "expression": "S[B57:B58]",
+      "min": -20000,
+      "max": 20000
+    },
+    "speed": {
+      "ecu": "abs",
+      "did": "0xC101",
+      "poll": "fast",
+      "expression": "B10",
+      "min": 0,
+      "max": 250
+    },
+    "soh": {
+      "ecu": "bms",
+      "did": "0x0105",
+      "poll": "slow",
+      "expression": "[B29:B30]/10",
+      "min": 50,
+      "max": 110
+    },
+    "temp_max": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "SB18",
+      "min": -40,
+      "max": 90
+    },
+    "temp_min": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "SB19",
+      "min": -40,
+      "max": 90
+    },
+    "cell_max": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "B27/50",
+      "min": 2,
+      "max": 4.5
+    },
+    "cell_min": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "B29/50",
+      "min": 2,
+      "max": 4.5
+    },
+    "lowest_cell": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "B30",
+      "min": 1,
+      "max": 98
+    },
+    "aux_voltage": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "B33/10",
+      "min": 5,
+      "max": 17
+    },
+    "gear": {
+      "ecu": "abs",
+      "did": "0xC101",
+      "poll": "slow",
+      "expression": "B12",
+      "map": {
+        "1": "P/N",
+        "2": "R",
+        "4": "D"
+      },
+      "min": 0,
+      "max": 15
+    },
+    "odometer": {
+      "ecu": "cluster",
+      "did": "0xB002",
+      "poll": "slow",
+      "expression": "[B10:B12]",
+      "min": 1,
+      "max": 2000000
+    },
+    "ambient": {
+      "ecu": "aircon",
+      "did": "0x0100",
+      "poll": "slow",
+      "expression": "B10/2-40",
+      "min": -50,
+      "max": 70
+    },
+    "cells": {
+      "ecu": "bms",
+      "parts": [
+        {
+          "did": "0x0102",
+          "skip": 4,
+          "count": 32
+        },
+        {
+          "did": "0x0103",
+          "skip": 4,
+          "count": 32
+        },
+        {
+          "did": "0x0104",
+          "skip": 4,
+          "count": 32
+        },
+        {
+          "did": "0x0105",
+          "skip": 34,
+          "count": 2
+        }
+      ],
+      "poll": "cells",
+      "bytes": 1,
+      "scale": 0.02,
+      "columns": 14,
+      "min": 2,
+      "max": 4.5
+    },
+    "probes": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "cells",
+      "bytes": 1,
+      "signed": true,
+      "skip": 16,
+      "count": 4,
+      "columns": 4,
+      "min": -40,
+      "max": 90
+    }
+  },
+  "ecus": [
+    {
+      "id": "bms",
+      "name": {
+        "fi": "Akunhallinta (BMS)",
+        "en": "Battery management (BMS)"
+      },
+      "request": "0x7E4",
+      "response": "0x7EC",
+      "notes": "Most battery values come packed in 0x0101 and 0x0105.",
+      "dids": [
+        {
+          "did": "0x0101",
+          "name": {
+            "fi": "Akun pääarvot (monta arvoa)",
+            "en": "Battery main values (several values)"
+          },
+          "unit": "V",
+          "expression": "[B16:B17]/10",
+          "confidence": "reported",
+          "source": [
+            "evdash",
+            "jejusoul"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Holds: available charge power [B9:B10]/100 kW, discharge power [B11:B12]/100 kW, current S[B14:B15]/10 A (positive = discharge), voltage [B16:B17]/10 V, max/min pack temperature SB18/SB19 °C, module temperatures SB20..SB23 °C, inlet temperature SB26 °C, highest cell B27/50 V (number B28), lowest cell B29/50 V (number B30), fan B31, 12 V B33/10 V, motor rpm S[B57:B58]. evDash also reads cumulative charged and discharged energy [B42:B45]/10 and [B46:B49]/10 kWh and operating time [B50:B53] s, but in its sample replies the energy (543 / 498 kWh) does not fit its sample odometer (13 067 km), so their meaning is open. The max/min pack temperatures SB18/SB19 are not from evDash (it takes them from the module temperatures SB20..SB23) but from JejuSoul's Kona/Niro list (Battery Max/Min Temperature, Signed(O)/Signed(P)), so they are less certain than the module temperatures. Shown here: voltage."
+        },
+        {
+          "did": "0x0102",
+          "name": {
+            "fi": "Kennojännitteet 1-32",
+            "en": "Cell voltages 1-32"
+          },
+          "unit": "V",
+          "expression": "B8/50",
+          "confidence": "reported",
+          "source": [
+            "evdash"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Cells 1-32, one byte each from B8, /50 V; B7 reads FF. Shown here: cell 1."
+        },
+        {
+          "did": "0x0103",
+          "name": {
+            "fi": "Kennojännitteet 33-64",
+            "en": "Cell voltages 33-64"
+          },
+          "unit": "V",
+          "expression": "B8/50",
+          "confidence": "reported",
+          "source": [
+            "evdash"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Cells 33-64 from B8, /50 V. Shown here: cell 33."
+        },
+        {
+          "did": "0x0104",
+          "name": {
+            "fi": "Kennojännitteet 65-96",
+            "en": "Cell voltages 65-96"
+          },
+          "unit": "V",
+          "expression": "B8/50",
+          "confidence": "reported",
+          "source": [
+            "evdash"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Cells 65-96 from B8, /50 V. Shown here: cell 65."
+        },
+        {
+          "did": "0x0105",
+          "name": {
+            "fi": "Akun lisäarvot (monta arvoa)",
+            "en": "More battery values (several values)"
+          },
+          "unit": "%",
+          "expression": "B35/2",
+          "confidence": "reported",
+          "source": [
+            "evdash",
+            "jejusoul",
+            "obdb"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Holds: SOH [B29:B30]/10 %, displayed SOC B35/2 %, heater temperature SB27 °C, cells 97-98 at B38 and B39 (/50 V), charging byte B25 (bit 6 AC, bit 5 DC; charging when one is set and the low nibble is 5-9). Shown here: SOC. No per-cell health: B31 is the most deteriorated cell number, [B32:B33]/10 the least cell deterioration % and B34 its cell number (JejuSoul OBD-PIDs-for-HKMC-EVs, OBDb). The OBDb captures of 2019-2022 cars do not agree with that meaning: the cell numbers change between readings or read 0, and the least deterioration reads 100 % on the 2019 car and 0 to 11.9 % on the 2020-2022 cars, also at SOH 100 %."
+        },
+        {
+          "did": "0x0106",
+          "name": {
+            "fi": "Akun jäähdytys",
+            "en": "Battery cooling"
+          },
+          "unit": "°C",
+          "expression": "SB8",
+          "confidence": "reported",
+          "source": [
+            "evdash"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Cooling water temperature SB8 °C; battery management mode in the low nibble of B18."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "abs",
+      "name": {
+        "fi": "ABS / ESP",
+        "en": "ABS / ESP"
+      },
+      "request": "0x7D1",
+      "response": "0x7D9",
+      "notes": "Answers with the car off too (evDash).",
+      "dids": [
+        {
+          "did": "0xC101",
+          "name": {
+            "fi": "Nopeus ja vaihde",
+            "en": "Speed and gear"
+          },
+          "unit": "km/h",
+          "expression": "B10",
+          "confidence": "reported",
+          "source": [
+            "evdash"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Speed B10 km/h (e-Niro; the Kona reads speed from the VMCU instead), selector B12: 1 P or N, 2 R, 4 D. Shown here: speed."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "cluster",
+      "name": {
+        "fi": "Mittaristo",
+        "en": "Instrument cluster"
+      },
+      "request": "0x7C6",
+      "response": "0x7CE",
+      "dids": [
+        {
+          "did": "0xB002",
+          "name": {
+            "fi": "Mittarilukema",
+            "en": "Odometer"
+          },
+          "unit": "km",
+          "expression": "[B10:B12]",
+          "confidence": "reported",
+          "source": [
+            "evdash"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "aircon",
+      "name": {
+        "fi": "Ilmastointi",
+        "en": "Climate control"
+      },
+      "request": "0x7B3",
+      "response": "0x7BB",
+      "dids": [
+        {
+          "did": "0x0100",
+          "name": {
+            "fi": "Ilmastointi (monta arvoa)",
+            "en": "Climate control (several values)"
+          },
+          "unit": "°C",
+          "expression": "B10/2-40",
+          "confidence": "reported",
+          "source": [
+            "evdash"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Indoor B9/2-40 °C, outdoor B10/2-40 °C, evaporator B11/2-40 °C. Shown here: outdoor."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "tpms",
+      "name": {
+        "fi": "Rengaspaineet (TPMS)",
+        "en": "Tyre pressure (TPMS)"
+      },
+      "request": "0x7A0",
+      "response": "0x7A8",
+      "dids": [
+        {
+          "did": "0xC00B",
+          "name": {
+            "fi": "Rengaspaineet",
+            "en": "Tyre pressures"
+          },
+          "unit": "bar",
+          "expression": "B8/72.519",
+          "confidence": "reported",
+          "source": [
+            "evdash"
+          ],
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Pressure / temperature pairs: front left B8 / B9, front right B12 / B13, rear right B16 / B17, rear left B20 / B21; pressure /72.519 bar, temperature -50 °C. Shown here: front left pressure."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "igpm",
+      "name": {
+        "fi": "Korin ohjain (IGPM)",
+        "en": "Body controller (IGPM)"
+      },
+      "request": "0x770",
+      "response": "0x778",
+      "notes": "Doors, lights and ignition bits (evDash: 22BC03, 22BC06).",
+      "dids": [],
+      "discovered": []
+    }
+  ],
+  "confidence_levels": {
+    "confirmed": "Checked against the dashboard or another known value on a real car: the car this file was tested on, or recordings of real cars published by others",
+    "reported": "Name or formula from one source (a publication or a single own observation), not checked against a known value",
+    "unverified": "Identifier responds; the formula is an educated guess",
+    "unknown": "Identifier responds; the meaning of the bytes is not worked out"
+  },
+  "blocks": [
+    {
+      "id": "known",
+      "name": {
+        "fi": "Tunnetut - ei skannausta",
+        "en": "Known - no scan"
+      },
+      "order": 0,
+      "runtime": "seconds",
+      "why": "Read the catalogued identifiers first. Plausible SOC, voltage and odometer prove the chain works."
+    },
+    {
+      "id": "01xx",
+      "name": {
+        "fi": "BMS 0100-01FF",
+        "en": "BMS 0100-01FF"
+      },
+      "range": [
+        "0x0100",
+        "0x01FF"
+      ],
+      "count": 256,
+      "order": 1,
+      "ecus": [
+        "bms"
+      ],
+      "runtime": "under a minute",
+      "why": "Where this platform keeps its battery data."
+    },
+    {
+      "id": "f1xx",
+      "name": {
+        "fi": "ISO-tunnistelohko",
+        "en": "ISO identification block"
+      },
+      "range": [
+        "0xF100",
+        "0xF1FF"
+      ],
+      "count": 256,
+      "order": 2,
+      "ecus": [
+        "bms"
+      ],
+      "runtime": "under a minute",
+      "why": "ISO 14229 identification: part numbers, software versions."
+    }
+  ],
+  "cautions": [
+    "Read-only. This program sends only services 0x22, 0x24, 0x19 and 0x3E. Some identifiers on these cars use service 0x21 (VMCU 2101/2102, MCU 2102), which this program does not send.",
+    "Untested with this program: positions come from evDash. Compare SOC and odometer with the dashboard before trusting other values."
+  ],
+  "sources": [
+    {
+      "id": "evdash",
+      "url": "https://github.com/nickn17/evDash/blob/master/src/CarKiaEniro.cpp",
+      "notes": "Open-source EV dashboard (MIT). Its Kia e-Niro decoder gives the ECU addresses, identifiers and byte positions in this file; facts only, no code copied."
+    },
+    {
+      "id": "jejusoul",
+      "url": "https://github.com/JejuSoul/OBD-PIDs-for-HKMC-EVs",
+      "notes": "Torque PID lists for Hyundai and Kia EVs, including the Kona EV and Niro EV (2018-2022). Facts only, nothing copied."
+    },
+    {
+      "id": "obdb",
+      "url": "https://github.com/OBDb/Kia-Niro-EV",
+      "notes": "OBDb signal definitions (CC BY-SA 4.0) and captured replies from US 2019-2022 Niro EVs, used to check the 0x0105 meanings. Facts only, no definitions copied."
+    },
+    {
+      "id": "own-scan",
+      "notes": "A scan of an identifier range by this program on a car; the notes give the dates."
+    },
+    {
+      "id": "own-snaps",
+      "notes": "Snapshots (every identifier read once) by this program on a car; the notes give the dates."
+    },
+    {
+      "id": "own-watch",
+      "notes": "Watching identifiers over time with this program on a car; the notes give the dates."
+    }
+  ]
+}

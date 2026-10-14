@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 256" width="760" height="256">
+  <title>Esco EV OBD Scanner</title>
+  <rect width="256" height="256" rx="56" fill="#0b1220"/>
+  <rect x="58" y="58" width="34" height="22" rx="5" fill="#e2e8f0"/><rect x="164" y="58" width="34" height="22" rx="5" fill="#e2e8f0"/><rect x="28" y="78" width="200" height="128" rx="16" fill="#0f172a" stroke="#e2e8f0" stroke-width="10"/><rect x="64" y="95" width="22" height="7" rx="2" fill="#94a3b8"/><rect x="170" y="95" width="22" height="7" rx="2" fill="#94a3b8"/><rect x="177.5" y="87.5" width="7" height="22" rx="2" fill="#94a3b8"/><rect x="40" y="122" width="20" height="70" rx="4" fill="#22d3ee"/><rect x="68" y="122" width="20" height="70" rx="4" fill="#22d3ee"/><rect x="96" y="122" width="20" height="70" rx="4" fill="#22d3ee"/><rect x="124" y="136" width="20" height="56" rx="4" fill="#f59e0b"/><rect x="152" y="122" width="20" height="70" rx="4" fill="#22d3ee"/><rect x="180" y="122" width="20" height="70" rx="4" fill="#22d3ee"/>
+  <text x="296" y="150" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="112" font-weight="700" fill="#0f172a">Esco <tspan fill="#0891b2">EV</tspan></text>
+  <text x="300" y="206" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="34" font-weight="600" letter-spacing="9" fill="#64748b">OBD SCANNER</text>
+</svg>

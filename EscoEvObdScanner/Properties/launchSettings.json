@@ -1,0 +1,49 @@
+{
+  "profiles": {
+    "0 known demo (no adapter)": {
+      "commandName": "Project",
+      "commandLineArgs": "demo known --car stellantis-ecmp",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "1 blocks (no adapter)": {
+      "commandName": "Project",
+      "commandLineArgs": "- blocks --car stellantis-ecmp",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "2 known COM4": {
+      "commandName": "Project",
+      "commandLineArgs": "COM4 known --trace --car stellantis-ecmp",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "3 ecus COM4 (6A0-6BF)": {
+      "commandName": "Project",
+      "commandLineArgs": "COM4 ecus 6A0 6BF --car stellantis-ecmp",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "4 dtc COM4": {
+      "commandName": "Project",
+      "commandLineArgs": "COM4 dtc --car stellantis-ecmp",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "5 scan d8xx bms COM4": {
+      "commandName": "Project",
+      "commandLineArgs": "COM4 scan d8xx bms --car stellantis-ecmp",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "6 watch bms COM4": {
+      "commandName": "Project",
+      "commandLineArgs": "COM4 watch bms D410,D815,D816 1000 --car stellantis-ecmp",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "9 known COM4 (Kia e-Niro)": {
+      "commandName": "Project",
+      "commandLineArgs": "COM4 known --trace --car kia-eniro",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "10 known COM4 (Kia Niro EV 2022)": {
+      "commandName": "Project",
+      "commandLineArgs": "COM4 known --trace --car kia-niro-ev-2022",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}

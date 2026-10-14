@@ -1,0 +1,128 @@
+<UserControl x:Class="EscoEvObdScanner.App.Views.BatteryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="clr-namespace:EscoEvObdScanner.App.Infrastructure"
+             xmlns:c="clr-namespace:EscoEvObdScanner.App.Controls">
+    <DockPanel Margin="4">
+        <!-- the report controls follow the live ones and move to a second row in a narrow window -->
+        <WrapPanel DockPanel.Dock="Top" Margin="6,4,6,8">
+            <Button Content="{i:T LiveStart}" Command="{Binding Start}" Style="{StaticResource AccentButton}" Margin="0,0,8,0" />
+            <Button Content="{i:T LiveStop}" Command="{Binding Stop}" />
+            <ToggleButton Content="{i:T CellHealth}" IsChecked="{Binding ShowCellHealth}" Padding="14,6" Margin="8,0,0,0"
+                          Visibility="{Binding HasCellHealth, Converter={StaticResource BoolToVisibility}}" />
+            <ToggleButton Content="{i:T CellsUnderLoad}" IsChecked="{Binding ShowCellLoad}" Padding="14,6" Margin="8,0,0,0"
+                          ToolTip="{i:T CellsUnderLoadHint}" />
+            <TextBlock Text="{i:T BatteryWaiting}" Style="{StaticResource Hint}" VerticalAlignment="Center" Margin="12,0,0,0"
+                       TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{i:T BatteryWaiting}"
+                       Visibility="{Binding WaitingForCells, Converter={StaticResource BoolToVisibility}}" />
+            <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
+                <TextBlock Text="{i:T ReportNoteLabel}" Style="{StaticResource Hint}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <Grid Width="280" Margin="0,0,8,0">
+                    <TextBox x:Name="NoteBox" Text="{Binding ReportNote, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"
+                             ToolTip="{i:T ReportNoteHint}" />
+                    <!-- an example of what to write, until something is written -->
+                    <TextBlock Text="{i:T ReportNotePlaceholder}" IsHitTestVisible="False" Margin="8,0" VerticalAlignment="Center"
+                               Foreground="{StaticResource MutedBrush}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=NoteBox}" Value="">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <Button Content="{i:T ReportCreate}" Command="{Binding CreateReport}" ToolTip="{i:T ReportHint}" />
+                <Button Content="{i:T ReportFromRecording}" Command="{Binding ReportFromRecording}" ToolTip="{i:T ReportFromRecordingHint}" />
+            </StackPanel>
+        </WrapPanel>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="220" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="300" />
+            </Grid.ColumnDefinitions>
+
+            <!-- the pack: cells in rows, as wide as the car file says -->
+            <Border Style="{StaticResource Panel}">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
+                                    Visibility="{Binding ShowCellLoad, Converter={StaticResource BoolToVisibility}}">
+                            <Button Content="{i:T CellLoadBackToLive}" Command="{Binding BackToLive}" Margin="0,0,8,0"
+                                    Visibility="{Binding HasShownRecording, Converter={StaticResource BoolToVisibility}}" />
+                            <Button Content="{i:T CellLoadOpenRecording}" Command="{Binding OpenRecording}" ToolTip="{i:T CellLoadOpenRecordingHint}" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding CellTitle}" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                    </DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="{Binding CellLoadStatus}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,6"
+                               Visibility="{Binding ShowCellLoad, Converter={StaticResource BoolToVisibility}}" />
+                    <TextBlock DockPanel.Dock="Bottom" Text="{Binding CellLegend}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,6,0,0" />
+                    <c:CellMap Values="{Binding CellValues}" Columns="{Binding CellColumns}" Format="{Binding CellFormat}" Unit="{Binding CellUnit}"
+                               MinimumSpan="{Binding CellMinimumSpan}" ItemLabel="{i:T Cell}" Palette="LowIsBad"
+                               WarnAt="{Binding CellWarnAt}" BadAt="{Binding CellBadAt}" />
+                </DockPanel>
+            </Border>
+
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <c:Tile Title="{i:T Min}" Unit="{Binding CellUnit}">
+                    <c:Tile.Value>
+                        <MultiBinding Converter="{x:Static c:CellStatConverter.Instance}">
+                            <Binding Path="CellMin" />
+                            <Binding Path="CellFormat" />
+                            <Binding Path="CellMinNo" />
+                        </MultiBinding>
+                    </c:Tile.Value>
+                </c:Tile>
+                <c:Tile Title="{i:T Max}" Unit="{Binding CellUnit}">
+                    <c:Tile.Value>
+                        <MultiBinding Converter="{x:Static c:CellStatConverter.Instance}">
+                            <Binding Path="CellMax" />
+                            <Binding Path="CellFormat" />
+                            <Binding Path="CellMaxNo" />
+                        </MultiBinding>
+                    </c:Tile.Value>
+                </c:Tile>
+                <c:Tile Title="{i:T Avg}" Unit="{Binding CellUnit}">
+                    <c:Tile.Value>
+                        <MultiBinding Converter="{x:Static c:CellStatConverter.Instance}">
+                            <Binding Path="CellAvg" />
+                            <Binding Path="CellFormat" />
+                        </MultiBinding>
+                    </c:Tile.Value>
+                </c:Tile>
+                <c:Tile Title="{i:T Spread}" Unit="{Binding CellSpreadUnit}" Value="{Binding CellSpreadShown, StringFormat={}{0:F1}, TargetNullValue=—}" />
+                <c:Tile Title="{i:T Current}" Unit="A" Value="{Binding Now.Current, StringFormat={}{0:F1}, TargetNullValue=—}" />
+                <TextBlock Text="{i:T CurrentNote}" Style="{StaticResource Hint}" Margin="10,0,10,6" />
+            </StackPanel>
+            </ScrollViewer>
+
+            <!-- temperature probes -->
+            <Border Grid.Row="2" Style="{StaticResource Panel}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="{i:T ModuleTemps}" Style="{StaticResource Caption}" />
+                    <TextBlock DockPanel.Dock="Bottom" Text="{i:T LegendTemps}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,6,0,0" />
+                    <c:CellMap Values="{Binding Now.ModuleTemps}" Columns="{Binding ProbeColumns}" Format="F0" Unit="°C" MinimumSpan="4"
+                               ItemLabel="{i:T Probe}" Palette="Heat" />
+                </DockPanel>
+            </Border>
+
+            <ScrollViewer Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <c:Tile Title="{i:T Min}" Unit="°C" Value="{Binding ProbeMin, StringFormat={}{0:F0}, TargetNullValue=—}" />
+                <c:Tile Title="{i:T Max}" Unit="°C" Value="{Binding ProbeMax, StringFormat={}{0:F0}, TargetNullValue=—}" />
+                <c:Tile Title="{i:T Avg}" Unit="°C" Value="{Binding ProbeAvg, StringFormat={}{0:F1}, TargetNullValue=—}" />
+            </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </DockPanel>
+</UserControl>

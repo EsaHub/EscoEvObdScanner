@@ -1,0 +1,9 @@
+<Project>
+  <!-- Shared by every project: one place for the version and the author. -->
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Authors>Esa Pelttari</Authors>
+    <Copyright>Copyright (c) 2026 Esa Pelttari</Copyright>
+    <RepositoryUrl>https://github.com/EsaHub/EscoEvObdScanner</RepositoryUrl>
+  </PropertyGroup>
+</Project>

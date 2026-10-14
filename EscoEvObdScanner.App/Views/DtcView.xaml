@@ -1,0 +1,80 @@
+<UserControl x:Class="EscoEvObdScanner.App.Views.DtcView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="clr-namespace:EscoEvObdScanner.App.Infrastructure">
+    <DockPanel Margin="4">
+        <Border DockPanel.Dock="Top" Style="{StaticResource Panel}">
+            <StackPanel>
+                <WrapPanel>
+                    <Button Content="{i:T ReadDtc}" Command="{Binding Read}" Style="{StaticResource AccentButton}" Margin="0,0,8,0" />
+                    <Button Content="{i:T Stop}" Command="{Binding Stop}" Margin="0,0,16,0" />
+                    <CheckBox Content="{i:T Deep}" IsChecked="{Binding Deep}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                    <CheckBox Content="{i:T ShowNotRun}" IsChecked="{Binding ShowNotRun}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                    <CheckBox Content="{i:T DtcAllEcus}" IsChecked="{Binding AllEcus}" VerticalAlignment="Center" Margin="0,0,24,0" />
+                    <TextBlock Text="{i:T DtcEarlier}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}" DisplayMemberPath="Text" MinWidth="230" Margin="0,0,8,0" />
+                    <Button Content="{i:T DtcShow}" Command="{Binding ShowFile}" />
+                </WrapPanel>
+                <TextBlock Text="{Binding Summary}" Margin="0,10,0,4" FontWeight="SemiBold" />
+                <!-- the help, one labelled line per subject -->
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{i:T DtcHelpStatus}" Style="{StaticResource HelpHead}" />
+                    <TextBlock Grid.Column="1" Text="{i:T DtcLegend}" Style="{StaticResource HelpText}" />
+                    <TextBlock Grid.Row="1" Text="{i:T Deep}" Style="{StaticResource HelpHead}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{i:T DeepHint}" Style="{StaticResource HelpText}" />
+                    <TextBlock Grid.Row="2" Text="{i:T DtcHelpNotRun}" Style="{StaticResource HelpHead}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{i:T NotRunHint}" Style="{StaticResource HelpText}" />
+                    <TextBlock Grid.Row="3" Text="{i:T DtcHelpEarlier}" Style="{StaticResource HelpHead}" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{i:T DtcEarlierHint}" Style="{StaticResource HelpText}" />
+                    <TextBlock Grid.Row="4" Text="{i:T DtcHelpEcus}" Style="{StaticResource HelpHead}" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{i:T DtcAllEcusHint}" Style="{StaticResource HelpText}" />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource Panel}" Padding="0">
+            <DataGrid ItemsSource="{Binding RowsView}" IsSynchronizedWithCurrentItem="False">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Severity}" Value="ACTIVE">
+                                <Setter Property="Foreground" Value="{StaticResource BadBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Severity}" Value="stored">
+                                <Setter Property="Foreground" Value="{StaticResource WarnBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Severity}" Value="no fault">
+                                <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{i:T Ecu}" Binding="{Binding Ecu}" Width="220" />
+                    <DataGridTextColumn Header="{i:T Code}" Binding="{Binding Code}" Width="100" FontWeight="SemiBold" />
+                    <DataGridTextColumn Header="{i:T DtcFailureType}" Binding="{Binding FailureTypeShown}" Width="200" />
+                    <DataGridTextColumn Header="{i:T Severity}" Binding="{Binding SeverityShown}" Width="130" />
+                    <DataGridTextColumn Header="{i:T Status}" Binding="{Binding Status}" Width="80" />
+                    <DataGridTextColumn Header="{i:T DtcBits}" Binding="{Binding StatusTextShown}" Width="*" MinWidth="160" />
+                    <DataGridTextColumn Header="{i:T DtcBitsMeaning}" Binding="{Binding StatusMeaningShown}" Width="*" MinWidth="160" />
+                    <DataGridTextColumn Header="{i:T DtcOccurred}" Binding="{Binding Occurred}" Width="170" />
+                    <DataGridTextColumn Header="{i:T Snapshot}" Binding="{Binding Snapshot}" Width="260" />
+                    <DataGridTextColumn Header="{i:T Extended}" Binding="{Binding Extended}" Width="160" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </DockPanel>
+</UserControl>

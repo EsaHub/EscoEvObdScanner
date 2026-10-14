@@ -1,0 +1,161 @@
+<UserControl x:Class="EscoEvObdScanner.App.Views.BrowseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="clr-namespace:EscoEvObdScanner.App.Infrastructure">
+    <Grid Margin="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ECUs: the checked ones are listed and read -->
+        <Border Style="{StaticResource Panel}" Padding="0">
+            <DockPanel>
+                <Button DockPanel.Dock="Top" Content="{i:T BrowseCheck}" Command="{Binding Check}" Margin="8,8,8,4"
+                        HorizontalAlignment="Left" ToolTip="{i:T BrowseCheckHint}" />
+                <CheckBox DockPanel.Dock="Top" Content="{i:T BrowseAllEcus}" IsChecked="{Binding AllChecked}" IsEnabled="{Binding IsIdle}"
+                          FontWeight="SemiBold" Margin="8,8,8,4" />
+                <ItemsControl ItemsSource="{Binding Ecus}" IsEnabled="{Binding IsIdle}">
+                    <ItemsControl.Template>
+                        <ControlTemplate>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </ControlTemplate>
+                    </ItemsControl.Template>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                            <!-- above the first ECU that has not answered: the heading of their group -->
+                            <StackPanel Visibility="{Binding FirstNeverAnswered, Converter={StaticResource BoolToVisibility}}" Margin="8,12,8,2">
+                                <TextBlock Text="{i:T BrowseNeverAnsweredHead}" FontWeight="SemiBold" />
+                                <TextBlock Text="{i:T BrowseNeverAnsweredHint}" Style="{StaticResource Hint}" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <CheckBox IsChecked="{Binding IsChecked}" Margin="8,4" VerticalContentAlignment="Top">
+                                <StackPanel>
+                                    <DockPanel>
+                                        <!-- the last check: green answered, red did not -->
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Mark}" FontWeight="Bold" Margin="0,0,6,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="{StaticResource BadBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Answered}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource GoodBrush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                    </DockPanel>
+                                    <TextBlock Text="{Binding Counts}" Style="{StaticResource Hint}" />
+                                </StackPanel>
+                            </CheckBox>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </DockPanel>
+        </Border>
+
+        <DockPanel Grid.Column="1">
+            <!-- toolbar -->
+            <StackPanel DockPanel.Dock="Top" Margin="6,4,6,8">
+                <WrapPanel>
+                    <Button Content="{i:T BrowseRead}" Command="{Binding Read}" Style="{StaticResource AccentButton}" Margin="0,0,8,0" />
+                    <Button Content="{i:T Stop}" Command="{Binding Stop}" Margin="0,0,20,0" />
+                    <RadioButton Content="{i:T FilterKnown}" IsChecked="{Binding ShowKnown}" GroupName="BrowseShow"
+                                 VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <RadioButton Content="{i:T FilterAll}" IsChecked="{Binding ShowAll}" GroupName="BrowseShow"
+                                 VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <RadioButton Content="{i:T FilterUnknown}" IsChecked="{Binding ShowUnknown}" GroupName="BrowseShow"
+                                 VerticalAlignment="Center" Margin="0,0,20,0" />
+                    <TextBlock Text="{i:T BrowseSearchLabel}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" Width="200" VerticalAlignment="Center"
+                             ToolTip="{i:T BrowseSearch}" Margin="0,0,20,0" />
+                    <CheckBox Content="{i:T ShowRare}" IsChecked="{Binding ShowRare}" ToolTip="{i:T RareHint}"
+                              VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <CheckBox Content="{i:T ShowRefused}" IsChecked="{Binding ShowRefused}" ToolTip="{i:T RefusedHint}"
+                              VerticalAlignment="Center" />
+                </WrapPanel>
+                <!-- the help: what the rows are, and the confidence levels, as two short lists side by side -->
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" MaxWidth="560" />
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="*" MaxWidth="560" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                    <TextBlock Text="{i:T BrowseHelpRowsHead}" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,4" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{i:T FilterKnown}" Style="{StaticResource HelpHead}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{i:T BrowseHelpKnown}" Style="{StaticResource HelpText}" />
+                        <TextBlock Grid.Row="1" Text="{i:T FilterUnknown}" Style="{StaticResource HelpHead}" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{i:T BrowseHelpUnknown}" Style="{StaticResource HelpText}" />
+                        <TextBlock Grid.Row="2" Text="{i:T BrowseHelpFile}" Style="{StaticResource HelpHead}" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Source}" Style="{StaticResource HelpText}" />
+                    </Grid>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                    <TextBlock Text="{i:T BrowseHelpConfidenceHead}" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,4" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{i:T StatusConfirmed}" Style="{StaticResource HelpHead}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{i:T ConfidenceConfirmed}" Style="{StaticResource HelpText}" />
+                        <TextBlock Grid.Row="1" Text="{i:T StatusReported}" Style="{StaticResource HelpHead}" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{i:T ConfidenceReported}" Style="{StaticResource HelpText}" />
+                        <TextBlock Grid.Row="2" Text="{i:T StatusCandidate}" Style="{StaticResource HelpHead}" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{i:T ConfidenceCandidate}" Style="{StaticResource HelpText}" />
+                        <TextBlock Grid.Row="3" Text="{i:T StatusUnknown}" Style="{StaticResource HelpHead}" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{i:T ConfidenceUnknown}" Style="{StaticResource HelpText}" />
+                    </Grid>
+                    </StackPanel>
+                </Grid>
+                <TextBlock Text="{Binding Hint}" Style="{StaticResource Hint}" Margin="0,4,0,0" />
+                <TextBlock Text="{Binding Status}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,2,0,0" />
+            </StackPanel>
+
+            <!-- details of the selected identifier -->
+            <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Height="150">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBlock Text="{Binding SelectedRow.Details}" Style="{StaticResource Mono}" TextWrapping="Wrap" />
+                </ScrollViewer>
+            </Border>
+
+            <Border Style="{StaticResource Panel}" Padding="0">
+                <DataGrid ItemsSource="{Binding RowsView}" IsSynchronizedWithCurrentItem="False" SelectedItem="{Binding SelectedRow}" SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{i:T Ecu}" Binding="{Binding EcuName}" Width="150" />
+                        <DataGridTextColumn Header="DID" Binding="{Binding Did}" Width="70" />
+                        <DataGridTextColumn Header="{i:T Name}" Binding="{Binding Label}" Width="*" MinWidth="220" />
+                        <DataGridTextColumn Header="{i:T Value}" Binding="{Binding Value}" Width="130" FontWeight="SemiBold" />
+                        <DataGridTextColumn Header="{i:T Unit}" Binding="{Binding Unit}" Width="60" />
+                        <DataGridTextColumn Header="{i:T Raw}" Binding="{Binding Raw}" Width="130" />
+                        <DataGridTextColumn Header="{i:T Readable}" Binding="{Binding Readable}" Width="190" />
+                        <DataGridTextColumn Header="{i:T Confidence}" Binding="{Binding Status}" Width="100" />
+                        <DataGridTextColumn Header="{i:T Source}" Binding="{Binding Source}" Width="140" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </DockPanel>
+    </Grid>
+</UserControl>

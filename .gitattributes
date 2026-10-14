@@ -1,0 +1,9 @@
+# Text files are stored with LF line endings and checked out as each machine wants,
+# so a change of line endings never shows up as a change of every line.
+* text=auto
+
+# Binary files are never converted.
+*.png binary
+*.ico binary
+*.msi binary
+*.pdf binary

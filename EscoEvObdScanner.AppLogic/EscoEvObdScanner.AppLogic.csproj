@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- What the app does apart from drawing it: view models, services, report, UI texts.
+       No Windows UI types; the platform plugs in through Infrastructure/AppHost.cs. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>EscoEvObdScanner.AppLogic</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PDFsharp-MigraDoc" Version="6.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- hooks for the self-test, which runs in the app -->
+    <InternalsVisibleTo Include="EscoEvObdScanner.App" />
+    <!-- and for the tests -->
+    <InternalsVisibleTo Include="EscoEvObdScanner.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EscoEvObdScanner.Core\EscoEvObdScanner.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- UI texts, one file per language; read by Infrastructure/Loc.cs -->
+    <EmbeddedResource Include="Localization\*.json" LogicalName="Localization.%(Filename).json" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+<Window x:Class="EscoEvObdScanner.App.Views.AddVehicleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="clr-namespace:EscoEvObdScanner.App.Infrastructure"
+        Title="{i:T VehicleAddTitle}" Width="520" SizeToContent="Height" ResizeMode="NoResize"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <StackPanel Margin="16">
+        <TextBlock Text="{i:T VehicleAddHint}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,12" />
+        <TextBlock Text="{i:T VehicleName}" Margin="0,0,0,4" />
+        <TextBox x:Name="NameBox" Margin="0,0,0,12" />
+        <TextBlock Text="{i:T VehicleCarFile}" Margin="0,0,0,4" />
+        <ComboBox x:Name="CarBox" DisplayMemberPath="Title" Margin="0,0,0,4" />
+        <TextBlock Text="{Binding SelectedItem.Cars, ElementName=CarBox}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,12" />
+        <TextBlock x:Name="ProblemText" Foreground="{StaticResource BadBrush}" TextWrapping="Wrap" Margin="0,0,0,8" Visibility="Collapsed" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{i:T VehicleAdd}" IsDefault="True" Click="OnAdd" Style="{StaticResource AccentButton}" Margin="0,0,8,0" />
+            <Button Content="{i:T RecordingPickCancel}" IsCancel="True" />
+        </StackPanel>
+    </StackPanel>
+</Window>

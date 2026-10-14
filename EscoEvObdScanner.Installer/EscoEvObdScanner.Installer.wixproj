@@ -1,0 +1,28 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.2">
+
+  <!--
+    Builds EscoEvObdScanner.msi from the published app. Run build-installer.ps1
+    in the repository root: it publishes the app and then builds this project.
+  -->
+  <PropertyGroup>
+    <OutputName>EscoEvObdScanner</OutputName>
+    <PublishDir Condition="'$(PublishDir)' == ''">$(MSBuildThisFileDirectory)..\publish\app\</PublishDir>
+    <!-- with a trailing backslash, whether or not the caller gave one (a global property cannot be reassigned) -->
+    <AppDir>$([MSBuild]::EnsureTrailingSlash('$(PublishDir)'))</AppDir>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">$(Version)</ProductVersion>
+    <DefineConstants>PublishDir=$(AppDir);ProductVersion=$(ProductVersion)</DefineConstants>
+    <!-- the app is a self-contained win-x64 build: a 64-bit package installs it under Program Files -->
+    <InstallerPlatform>x64</InstallerPlatform>
+    <!-- ICE61 flags AllowSameVersionUpgrades, which lets a rebuilt package of the same version replace the installed one.
+         ICE38, ICE43, ICE57: they take the shortcut folders for per-user ones and want the key path under HKCU.
+         This package is per-machine: the shortcuts go to the all-users folders and their key paths are under HKLM,
+         so removing the app as any administrator removes them all, with nothing left in another user's registry. -->
+    <SuppressIces>ICE38;ICE43;ICE57;ICE61</SuppressIces>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>
+

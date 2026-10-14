@@ -1,0 +1,63 @@
+<UserControl x:Class="EscoEvObdScanner.App.Views.CompareView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="clr-namespace:EscoEvObdScanner.App.Infrastructure">
+    <DockPanel Margin="4">
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock Text="{i:T TakeSnap}" Style="{StaticResource Caption}" />
+                    <TextBlock Text="{i:T Note}" Margin="0,0,0,4" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="{i:T Stop}" Command="{Binding Stop}" Margin="8,0,0,0" />
+                        <Button DockPanel.Dock="Right" Content="{i:T TakeSnap}" Command="{Binding TakeSnap}"
+                                Style="{StaticResource AccentButton}" Margin="8,0,0,0" />
+                        <TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" ToolTip="{i:T NoteHint}" />
+                    </DockPanel>
+                    <WrapPanel Margin="0,8,0,0">
+                        <CheckBox Content="{i:T ReadRare}" IsChecked="{Binding ReadRare}" ToolTip="{i:T RareHint}" Margin="0,0,16,0" />
+                        <CheckBox Content="{i:T ReadRefused}" IsChecked="{Binding ReadRefused}" ToolTip="{i:T RefusedHint}" />
+                    </WrapPanel>
+                    <ProgressBar Value="{Binding Progress, Mode=OneWay}" Height="6" Margin="0,12,0,0" />
+                    <TextBlock Text="{Binding SnapInfo}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,10,0,0" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock Text="{i:T Compare}" Style="{StaticResource Caption}" />
+                    <TextBlock Text="{i:T SnapA}" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding Files}" SelectedItem="{Binding A}" Margin="0,0,0,8" />
+                    <TextBlock Text="{i:T SnapB}" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding Files}" SelectedItem="{Binding B}" Margin="0,0,0,10" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="{i:T Compare}" Command="{Binding Compare}" Style="{StaticResource AccentButton}" Margin="0,0,8,0" />
+                        <Button Content="⟳" ToolTip="{i:T Refresh}" Command="{Binding RefreshFiles}" />
+                        <Button Content="{i:T OpenFolder}" Command="{Binding OpenFolder}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Status}" Style="{StaticResource Mono}" Margin="10,2,10,4" />
+
+        <Border Style="{StaticResource Panel}" Padding="0">
+            <DataGrid ItemsSource="{Binding Rows}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{i:T Ecu}" Binding="{Binding Ecu}" Width="80" />
+                    <DataGridTextColumn Header="DID" Binding="{Binding Did}" Width="80" />
+                    <DataGridTextColumn Header="{i:T Name}" Binding="{Binding Name}" Width="200" />
+                    <DataGridTextColumn Header="{i:T Change}" Binding="{Binding Change}" Width="*" />
+                    <DataGridTextColumn Header="{i:T Delta}" Binding="{Binding Delta}" Width="100" FontWeight="SemiBold" />
+                    <DataGridTextColumn Header="A" Binding="{Binding ValueA}" Width="90" />
+                    <DataGridTextColumn Header="B" Binding="{Binding ValueB}" Width="90" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </DockPanel>
+</UserControl>

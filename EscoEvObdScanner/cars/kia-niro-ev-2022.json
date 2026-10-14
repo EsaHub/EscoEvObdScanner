@@ -1,0 +1,766 @@
+{
+  "schema": 2,
+  "version": 1,
+  "license": "CC-BY-4.0",
+  "attribution": "Esco EV OBD Scanner car files by Esa Pelttari, CC BY 4.0, https://github.com/EsaHub/EscoEvObdScanner",
+  "platform": {
+    "name": "Kia Niro EV (2022–)",
+    "cars": "Kia Niro EV, second generation (SG2), 2022 on, 64.8 kWh: 96 cells, 16 temperature probes. Positions from OBDb captures of US 2023/2024/2026 cars and the E-GMP (Ioniq 5 / EV6) decoders the layout matches. Tested with this program on a 2024 EU Niro EV; not for the 2018-2022 e-Niro.",
+    "elm_protocol": "6",
+    "probe_from": "0x700",
+    "main_range": [
+      "0x740",
+      "0x7E7"
+    ],
+    "identifying": [],
+    "gauges": {
+      "power_kw": [
+        -100,
+        180
+      ],
+      "current_a": [
+        -300,
+        500
+      ],
+      "speed_kmh": [
+        0,
+        170
+      ]
+    },
+    "warranty": {
+      "fi": "Kia: 70 % (7 v tai 150 000 km). Lähde: Kian takuuehdot.",
+      "en": "Kia: 70 % (7 years or 150,000 km). Source: Kia's warranty terms."
+    }
+  },
+  "live": {
+    "soc": {
+      "ecu": "bms",
+      "did": "0x0105",
+      "poll": "fast",
+      "expression": "B35/2",
+      "min": 0,
+      "max": 100
+    },
+    "soc_raw": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "fast",
+      "expression": "B8/2",
+      "min": 0,
+      "max": 100
+    },
+    "voltage": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "fast",
+      "expression": "[B16:B17]/10",
+      "min": 100,
+      "max": 500
+    },
+    "current": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "fast",
+      "expression": "S[B14:B15]/10",
+      "min": -500,
+      "max": 500
+    },
+    "motor_rpm": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "fast",
+      "expression": "S[B57:B58]",
+      "min": -20000,
+      "max": 20000
+    },
+    "speed": {
+      "ecu": "aircon",
+      "did": "0x0100",
+      "poll": "fast",
+      "expression": "B33",
+      "min": 0,
+      "max": 250
+    },
+    "soh": {
+      "ecu": "bms",
+      "did": "0x0105",
+      "poll": "slow",
+      "expression": "[B29:B30]/10",
+      "min": 50,
+      "max": 110
+    },
+    "max_charge_power": {
+      "ecu": "bms",
+      "did": "0x0105",
+      "poll": "slow",
+      "expression": "[B20:B21]/100",
+      "min": 0,
+      "max": 400
+    },
+    "max_discharge_power": {
+      "ecu": "bms",
+      "did": "0x0105",
+      "poll": "slow",
+      "expression": "[B22:B23]/100",
+      "min": 0,
+      "max": 400
+    },
+    "temp_max": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "SB18",
+      "min": -40,
+      "max": 90
+    },
+    "temp_min": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "SB19",
+      "min": -40,
+      "max": 90
+    },
+    "cell_max": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "B27/50",
+      "min": 2,
+      "max": 4.5
+    },
+    "cell_min": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "B29/50",
+      "min": 2,
+      "max": 4.5
+    },
+    "lowest_cell": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "B30",
+      "min": 1,
+      "max": 96
+    },
+    "aux_voltage": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "B33/10",
+      "min": 5,
+      "max": 17
+    },
+    "isolation_pos": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "slow",
+      "expression": "[B61:B62]",
+      "min": 0,
+      "max": 2999
+    },
+    "gear": {
+      "ecu": "vcu",
+      "did": "0xE004",
+      "poll": "slow",
+      "expression": "B18",
+      "map": {
+        "0": "P",
+        "5": "D",
+        "6": "N",
+        "7": "R"
+      },
+      "min": 0,
+      "max": 255
+    },
+    "odometer": {
+      "ecu": "cluster",
+      "did": "0xB002",
+      "poll": "slow",
+      "expression": "[B10:B12]",
+      "min": 1,
+      "max": 2000000
+    },
+    "ambient": {
+      "ecu": "aircon",
+      "did": "0x0100",
+      "poll": "slow",
+      "expression": "B10/2-40",
+      "min": -50,
+      "max": 70
+    },
+    "cells": {
+      "ecu": "bms",
+      "parts": [
+        {
+          "did": "0x0102",
+          "skip": 4,
+          "count": 32
+        },
+        {
+          "did": "0x0103",
+          "skip": 4,
+          "count": 32
+        },
+        {
+          "did": "0x0104",
+          "skip": 4,
+          "count": 32
+        }
+      ],
+      "poll": "cells",
+      "bytes": 1,
+      "scale": 0.02,
+      "columns": 12,
+      "min": 2,
+      "max": 4.5
+    },
+    "probes": {
+      "ecu": "bms",
+      "parts": [
+        {
+          "did": "0x0101",
+          "skip": 16,
+          "count": 5
+        },
+        {
+          "did": "0x0105",
+          "skip": 9,
+          "count": 7
+        },
+        {
+          "did": "0x0105",
+          "skip": 39,
+          "count": 4
+        }
+      ],
+      "poll": "cells",
+      "bytes": 1,
+      "signed": true,
+      "columns": 16,
+      "min": -40,
+      "max": 90
+    },
+    "lifetime_charged_kwh": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "rare",
+      "expression": "[B42:B45]/10",
+      "min": 0,
+      "max": 10000000
+    },
+    "lifetime_discharged_kwh": {
+      "ecu": "bms",
+      "did": "0x0101",
+      "poll": "rare",
+      "expression": "[B46:B49]/10",
+      "min": 0,
+      "max": 10000000
+    },
+    "ac_charges": {
+      "ecu": "bms",
+      "did": "0x0111",
+      "poll": "rare",
+      "expression": "[B8:B11]",
+      "min": 0,
+      "max": 10000000
+    },
+    "dc_charges": {
+      "ecu": "bms",
+      "did": "0x0111",
+      "poll": "rare",
+      "expression": "[B12:B15]",
+      "min": 0,
+      "max": 10000000
+    },
+    "ac_charged_kwh": {
+      "ecu": "bms",
+      "did": "0x0111",
+      "poll": "rare",
+      "expression": "[B16:B19]",
+      "min": 0,
+      "max": 10000000
+    },
+    "dc_charged_kwh": {
+      "ecu": "bms",
+      "did": "0x0111",
+      "poll": "rare",
+      "expression": "[B20:B23]",
+      "min": 0,
+      "max": 10000000
+    }
+  },
+  "ecus": [
+    {
+      "id": "bms",
+      "name": {
+        "fi": "Akunhallinta (BMS)",
+        "en": "Battery management (BMS)"
+      },
+      "request": "0x7E4",
+      "response": "0x7EC",
+      "notes": "Pads frames with 0xAA. Also answers the standard OBD-II mode 01 PIDs 015B and 019A. Service 0x21 groups (2101-2105) are not supported.",
+      "dids": [
+        {
+          "did": "0x0101",
+          "name": {
+            "fi": "Akun pääarvot (monta arvoa)",
+            "en": "Battery main values (several values)"
+          },
+          "unit": "V",
+          "expression": "[B16:B17]/10",
+          "confidence": "confirmed",
+          "source": [
+            "obdb",
+            "own-snaps",
+            "own-watch"
+          ],
+          "notes": "62 bytes. Positions checked against OBDb captures of US 2023/2024/2026 cars (sample: SOC 22.5 %, 15.8 A, 342.6 V, cells 3.56 V, 34 370 km). Holds: BMS SOC B8/2 %, current S[B14:B15]/10 A (positive = discharge), voltage [B16:B17]/10 V, max/min pack temperature SB18/SB19 °C, module temperatures SB20..SB24 °C (five here), highest cell B27/50 V (number B28), lowest cell B29/50 V (number B30), 12 V B33/10 V, cumulative charged [B34:B37]/10 Ah and discharged [B38:B41]/10 Ah, cumulative charged energy [B42:B45]/10 kWh and discharged [B46:B49]/10 kWh, operating time [B50:B53] s, inverter capacitor voltage [B55:B56] V, motor rpm S[B57:B58], insulation resistance [B61:B62] kOhm (3000 with the HV system off, in every OBDb capture at 0 A, so the dashboard does not show 3000; 2782 in Ready on a 2024 EU car, 2026-10-04). B9..B12 are zero except in a few captures that look plugged in (0x10B0 then 0x0156 or 0x01A4); OVMS Ioniq 5 reads B9:B10 as available power and B11:B12 as charge current request /10 A (34.2 / 42.0 A there), evDash E-GMP as available charge/discharge power /100 kW: meaning open; B13 is always 0 (gen-1 keeps status bits there); B26 is not the pack inlet temperature (45-83 °C in the samples). Shown here: voltage. On a 2024 EU car (about 65 000 km): 381 V and 3.96 V cells at 75 % SOC, 25 A at 62 km/h and 5 425 rpm, 12 V 13.7 V, all as the car showed; cumulative about 13 700 kWh charged and 13 100 kWh discharged."
+        },
+        {
+          "did": "0x0102",
+          "name": {
+            "fi": "Kennojännitteet 1-32",
+            "en": "Cell voltages 1-32"
+          },
+          "unit": "V",
+          "expression": "B8/50",
+          "confidence": "confirmed",
+          "source": [
+            "obdb"
+          ],
+          "notes": "B4..B7 a cell-present mask (FF FF FF FF), then 32 cells in B8..B39, 0.02 V steps. The expression shows the first cell."
+        },
+        {
+          "did": "0x0103",
+          "name": {
+            "fi": "Kennojännitteet 33-64",
+            "en": "Cell voltages 33-64"
+          },
+          "unit": "V",
+          "expression": "B8/50",
+          "confidence": "confirmed",
+          "source": [
+            "obdb"
+          ],
+          "notes": "As 0x0102, cells 33-64."
+        },
+        {
+          "did": "0x0104",
+          "name": {
+            "fi": "Kennojännitteet 65-96",
+            "en": "Cell voltages 65-96"
+          },
+          "unit": "V",
+          "expression": "B8/50",
+          "confidence": "confirmed",
+          "source": [
+            "obdb"
+          ],
+          "notes": "As 0x0102, cells 65-96. The pack has 96 cells: no cell number above 96 in the captures, and pack voltage is 96 x the cell voltage. 0x010A..0x010C answer with no cells (E-GMP packs use them)."
+        },
+        {
+          "did": "0x0105",
+          "name": {
+            "fi": "Akun lisäarvot (monta arvoa)",
+            "en": "More battery values (several values)"
+          },
+          "unit": "%",
+          "expression": "[B29:B30]/10",
+          "confidence": "reported",
+          "source": [
+            "wican",
+            "evdash",
+            "obdb",
+            "ovms-ioniq5",
+            "own-snaps",
+            "own-watch"
+          ],
+          "notes": "46 bytes. Module temperatures SB13..SB19 °C (probes 6-12) and SB43..SB46 °C (probes 13-16) per the WiCAN Ioniq 5/6 profile and evDash E-GMP. Maximum charge/regeneration power [B20:B21]/100 kW, maximum discharge power [B22:B23]/100 kW and remaining energy [B32:B33]*2 Wh per the WiCAN Ioniq 5/6 profile only (evDash E-GMP takes the power limits from 0x0101 B9:B12; OVMS does not read them); the Niro captures fit the power limits (charge limit 38.5 kW at 100 %, discharge limit 182 kW at low SOC). OBDb and OVMS read [B32:B33] as minimum deterioration /10 %, which gives 535-2923 % on these cars, so the energy meaning is the likelier one. From OBDb: cell voltage deviation B24/50 V, SOH [B29:B30]/10 % (100.0 in every OBDb sample, so the scale is untested on a worn pack), display SOC B35/2 %. Shown here: SOH. No per-cell health: B31 is the most deteriorated cell number per OBDb (27 to 46 in the 2023-2026 captures, all at SOH 100 %; 96 on a 2024 EU car at SOH 99.8 %); its meaning is unconfirmed. The energy reading fits the captures with a display SOC: 58.5 kWh at 100 %, 52.8 at 87 %, 46.7 at 81 %. On a 2024 EU car at SOH 99.8 %: about 41.6 kWh at 75 % and 36.2 kWh at 66 % display SOC, about 55 kWh at 100 % against 64.8 kWh nominal, so what the remaining energy value measures (usable energy above a reserve, or another quantity) is open; it is not used for the dashboard or the range."
+        },
+        {
+          "did": "0x0111",
+          "name": {
+            "fi": "Latauskerrat ja -energia",
+            "en": "Charge counts and energy"
+          },
+          "expression": "[B8:B11]",
+          "confidence": "reported",
+          "source": [
+            "obdb",
+            "own-snaps"
+          ],
+          "notes": "AC charge count [B8:B11], DC charge count [B12:B15], AC charged energy [B16:B19] kWh, DC charged energy [B20:B23] kWh (sample 346 / 6 / 5680 / 71, equal to the VCMS counters in that capture). Shown here: AC charge count. A 2024 EU car at about 65 000 km: 604 AC and 28 DC charges, 12 179 kWh AC and 504 kWh DC; its VCMS counters (0xE003) read 610 AC and 31 DC at the same time, so the counts are not confirmed."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "vcu",
+      "name": {
+        "fi": "Ajoneuvon pääohjain (VCU)",
+        "en": "Vehicle control unit (VCU)"
+      },
+      "request": "0x7E2",
+      "response": "0x7EA",
+      "notes": "Answers 0xE004/0xE005; the gen-1 groups 2101/2102 are not supported.",
+      "dids": [
+        {
+          "did": "0xE004",
+          "name": {
+            "fi": "Ajoneuvon pääohjaimen tila (monta arvoa)",
+            "en": "Vehicle control unit state (several values)"
+          },
+          "expression": "B18",
+          "confidence": "confirmed",
+          "source": [
+            "ovms-ioniq5",
+            "obdb",
+            "own-snaps",
+            "own-watch"
+          ],
+          "notes": "Selector B18: 0 P, 5 D, 6 N, 7 R in the low four bits on E-GMP cars (OVMS Ioniq 5). The OBDb SG2 captures, all parked, read 0; a 2024 EU car read 5 while driving forward and 7 while reversing (3-4 km/h, negative motor rpm); 6 (N) has not been seen. The gear map uses the whole byte, so a value with the high bits set shows as a number. 12 V B16..B17 little-endian (B16 low byte) x 0.0004883 V (14.65 V in the OBDb sample, 14.0 V on a 2024 EU car). Vehicle speed B14..B15 signed, little-endian (B14 low byte) /64 km/h per OBDb, an alternative to the air-con unit's B33, which is the one shown (12.8 km/h here against 14 km/h from B33 on a 2024 EU car). Shown here: selector."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "mcu",
+      "name": {
+        "fi": "Sähkömoottorin ohjain (MCU)",
+        "en": "Electric motor controller (MCU)"
+      },
+      "request": "0x7E3",
+      "response": "0x7EB",
+      "notes": "Answers 0xE001/0xE009. The decodes published for 0xE001 give implausible values in the OBDb captures (1945 Nm, 232 °C), so none are used.",
+      "dids": [],
+      "discovered": []
+    },
+    {
+      "id": "obc",
+      "name": {
+        "fi": "Laturi ja DC/DC (OBC/LDC)",
+        "en": "Charger and DC/DC (OBC/LDC)"
+      },
+      "request": "0x7E5",
+      "response": "0x7ED",
+      "notes": "Also holds the 12 V battery sensor.",
+      "dids": [
+        {
+          "did": "0xE011",
+          "name": {
+            "fi": "12 V:n akku",
+            "en": "12 V battery"
+          },
+          "unit": "V",
+          "expression": "[B25:B26]/1000+6",
+          "confidence": "reported",
+          "source": [
+            "obdb",
+            "own-snaps"
+          ],
+          "notes": "12 V battery SOC B24 %, voltage [B25:B26]/1000+6 V, current [B22:B23]/100-327 A, temperature [B27:B28]/2-40 °C; LDC input voltage [B18:B19]/10 V (sample 87 %, 14.711 V, 22.5 °C, 403.7 V). Shown here: voltage. A 2024 EU car with an OBDLink EX (USB) adapter: the 41-byte reply came with frames missing in both tries (the longer BMS replies came whole apart from one cut 0x0101 reply); the frames that arrived give 92 %, 13.97 V and an LDC input of 380.4 V."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "vcms",
+      "name": {
+        "fi": "Latauksen ohjain (VCMS)",
+        "en": "Charging controller (VCMS)"
+      },
+      "request": "0x744",
+      "response": "0x74C",
+      "notes": "Charging control. Answers 0xE001..0xE004.",
+      "dids": [
+        {
+          "did": "0xE003",
+          "name": {
+            "fi": "Lataustiedot (monta arvoa)",
+            "en": "Charging data (several values)"
+          },
+          "unit": "%",
+          "expression": "B19/2",
+          "confidence": "reported",
+          "source": [
+            "obdb",
+            "own-snaps"
+          ],
+          "notes": "Control pilot voltage B10/10 V, CP duty [B11:B12]/10 %, HV voltage [B17:B18]/10 V, SOC B19/2 %, EV max voltage [B24:B25]/10 V, max current [B26:B27]/10 A, AC/DC charge counts [B34:B35]/[B36:B37], AC/DC charge hours [B38:B39]/[B40:B41]. None of the OBDb captures is known to be taken while charging, and the readings of a 2024 EU car were not; on that car SOC 72 % and HV 381.5 V matched the BMS. The charging values themselves have not been checked, so the entry stays reported. Shown here: SOC."
+        },
+        {
+          "did": "0xE004",
+          "name": {
+            "fi": "Latausliitin",
+            "en": "Charge port"
+          },
+          "unit": "°C",
+          "expression": "B14-50",
+          "confidence": "reported",
+          "source": [
+            "obdb"
+          ],
+          "notes": "Main relay B8 bit 2, charge socket connected B8 bit 1; DC inlet temperatures B12-50 and B13-50 °C, AC inlet temperature B14-50 °C (24 °C in the sample). Shown here: AC inlet temperature."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "igpm",
+      "name": {
+        "fi": "Korin ohjain (IGPM)",
+        "en": "Body controller (IGPM)"
+      },
+      "request": "0x770",
+      "response": "0x778",
+      "notes": "Answers 0xBC03..0xBC09.",
+      "dids": [],
+      "discovered": []
+    },
+    {
+      "id": "tpms",
+      "name": {
+        "fi": "Rengaspaineet (BCM/TPMS)",
+        "en": "Tyre pressure (BCM/TPMS)"
+      },
+      "request": "0x7A0",
+      "response": "0x7A8",
+      "dids": [
+        {
+          "did": "0xC00B",
+          "name": {
+            "fi": "Rengaspaineet",
+            "en": "Tyre pressures"
+          },
+          "unit": "psi",
+          "expression": "B8/5",
+          "confidence": "reported",
+          "source": [
+            "ovms-ioniq5",
+            "own-snaps"
+          ],
+          "notes": "Five bytes per wheel (E-GMP layout, not the gen-1 four): front left pressure B8/5 psi and temperature B9-50 °C, front right B13/B14, rear left B18/B19, rear right B23/B24 (sample 34.8 psi / 6 °C; 32.8-37 psi and 19-23 °C on a 2024 EU car). Shown here: front left pressure."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "aircon",
+      "name": {
+        "fi": "Ilmastointi",
+        "en": "Climate control"
+      },
+      "request": "0x7B3",
+      "response": "0x7BB",
+      "dids": [
+        {
+          "did": "0x0100",
+          "name": {
+            "fi": "Ilmastointi (monta arvoa)",
+            "en": "Climate control (several values)"
+          },
+          "unit": "°C",
+          "expression": "B10/2-40",
+          "confidence": "confirmed",
+          "source": [
+            "obdb",
+            "own-watch"
+          ],
+          "notes": "Ambient temperature B10/2-40 °C, cabin temperature B9/2-40 °C (21.5 / 24.5 °C in the sample), vehicle speed B33 km/h (E-GMP position; on a 2024 EU car it matched the drive: 62 km/h with 5 425 rpm). Shown here: ambient."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "cluster",
+      "name": {
+        "fi": "Mittaristo",
+        "en": "Instrument cluster"
+      },
+      "request": "0x7C6",
+      "response": "0x7CE",
+      "dids": [
+        {
+          "did": "0xB002",
+          "name": {
+            "fi": "Mittarilukema",
+            "en": "Odometer"
+          },
+          "unit": "km",
+          "expression": "[B10:B12]",
+          "confidence": "confirmed",
+          "source": [
+            "obdb",
+            "own-snaps"
+          ],
+          "notes": "km in B10..B12; US cars set to miles read 0 there and keep miles in B13..B15, so the dashboard does not show 0. Sample 34 370 km."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "abs",
+      "name": {
+        "fi": "ABS / ESC",
+        "en": "ABS / ESC"
+      },
+      "request": "0x7D1",
+      "response": "0x7D9",
+      "notes": "Answers 0xC101; wheel speeds there were 0 in every sample, so they are not used.",
+      "dids": [],
+      "discovered": []
+    },
+    {
+      "id": "mdps",
+      "name": {
+        "fi": "Ohjaustehostin (MDPS)",
+        "en": "Power steering (MDPS)"
+      },
+      "request": "0x7D4",
+      "response": "0x7DC",
+      "dids": [
+        {
+          "did": "0x0101",
+          "name": {
+            "fi": "Ohjauskulma (ehdokas)",
+            "en": "Steering angle (candidate)"
+          },
+          "unit": "deg",
+          "expression": "S[B11:B12]/10",
+          "confidence": "unverified",
+          "source": [
+            "obdb",
+            "own-snaps"
+          ],
+          "notes": "S[B11:B12]/10 degrees. OBDb calls it the absolute wheel angle (NIROEV_WHEEL_ANGLE_ABS) and has a steering wheel angle on 0x730 F010, but the readings here go beyond any road wheel angle: -375 to -383 degrees in the OBDb captures of a parked 2024 car and 24.1 / -69.8 degrees on a 2024 EU car, which fits a steering wheel angle; the zero point is unknown."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "ecu7e6",
+      "name": {
+        "fi": "Tuntematon 0x7E6",
+        "en": "Unknown 0x7E6"
+      },
+      "request": "0x7E6",
+      "response": "0x7EE",
+      "notes": "Answers only OBD-II mode 01 PID 0101 in the captures; no 0x22 identifiers known.",
+      "dids": [],
+      "discovered": []
+    }
+  ],
+  "confidence_levels": {
+    "confirmed": "Checked against the dashboard or another known value on a real car: the car this file was tested on, or recordings of real cars published by others",
+    "reported": "Name or formula from one source (a publication or a single own observation), not checked against a known value",
+    "unverified": "Identifier responds; the formula is an educated guess",
+    "unknown": "Identifier responds; the meaning of the bytes is not worked out"
+  },
+  "blocks": [
+    {
+      "id": "known",
+      "name": {
+        "fi": "Tunnetut - ei skannausta",
+        "en": "Known - no scan"
+      },
+      "order": 0,
+      "runtime": "seconds",
+      "why": "Read the catalogued identifiers first. Plausible SOC, voltage and odometer prove the chain works."
+    },
+    {
+      "id": "01xx",
+      "name": {
+        "fi": "BMS 0100-01FF",
+        "en": "BMS 0100-01FF"
+      },
+      "range": [
+        "0x0100",
+        "0x01FF"
+      ],
+      "count": 256,
+      "order": 1,
+      "ecus": [
+        "bms"
+      ],
+      "runtime": "under a minute",
+      "why": "Where this platform keeps its battery data."
+    },
+    {
+      "id": "e0xx",
+      "name": {
+        "fi": "VCU E000-E0FF",
+        "en": "VCU E000-E0FF"
+      },
+      "range": [
+        "0xE000",
+        "0xE0FF"
+      ],
+      "count": 256,
+      "order": 1,
+      "ecus": [
+        "vcu"
+      ],
+      "runtime": "under a minute",
+      "why": "Where the newer Hyundai/Kia control units keep their status blocks; gear and pedal states."
+    },
+    {
+      "id": "f1xx",
+      "name": {
+        "fi": "ISO-tunnistelohko",
+        "en": "ISO identification block"
+      },
+      "range": [
+        "0xF100",
+        "0xF1FF"
+      ],
+      "count": 256,
+      "order": 2,
+      "ecus": [
+        "bms"
+      ],
+      "runtime": "under a minute",
+      "why": "ISO 14229 identification: part numbers, software versions."
+    }
+  ],
+  "cautions": [
+    "Read-only. This program sends only services 0x22, 0x24, 0x19 and 0x3E.",
+    "Tested on one 2024 EU car: SOC, voltage, current, cell voltages, temperatures, speed, odometer and outside temperature agree with the car. Cell voltages come in 20 mV steps. The remaining energy value is not confirmed and not shown (see 0x0105)."
+  ],
+  "sources": [
+    {
+      "id": "obdb",
+      "url": "https://github.com/OBDb/Kia-Niro-EV",
+      "notes": "OBDb signal definitions (CC BY-SA 4.0) and captured replies from US 2023/2024/2026 Niro EVs; positions re-checked against the captures by hand. Facts only, no definitions copied. Some OBDb definitions are carried over from other models and do not fit this car; those are left out."
+    },
+    {
+      "id": "ovms-ioniq5",
+      "url": "https://github.com/openvehicles/Open-Vehicle-Monitoring-System-3",
+      "notes": "OVMS v3 Hyundai Ioniq 5 (E-GMP) module. OVMS issue #912 reports that the 2023 Niro EV behaves like E-GMP; used for meanings the Niro captures cannot show (gear, tyre layout)."
+    },
+    {
+      "id": "wican",
+      "url": "https://github.com/meatpiHQ/wican-fw",
+      "notes": "WiCAN vehicle profiles (Hyundai Ioniq 5/6, Kia Niro EV): E-GMP meanings of 0x0105 (power limits, remaining energy, temperatures 6-16)."
+    },
+    {
+      "id": "evdash",
+      "url": "https://github.com/nickn17/evDash/blob/master/src/CarHyundaiEgmp.cpp",
+      "notes": "Open-source EV dashboard (MIT). Its E-GMP decoder confirms the temperature layout of 0x0101/0x0105."
+    },
+    {
+      "id": "own-scan",
+      "notes": "A scan of an identifier range by this program on a car; the notes give the dates."
+    },
+    {
+      "id": "own-snaps",
+      "notes": "Snapshots (every identifier read once) by this program on a car; the notes give the dates."
+    },
+    {
+      "id": "own-watch",
+      "notes": "Watching identifiers over time with this program on a car; the notes give the dates."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>EscoEvObdScanner.Tests</RootNamespace>
+    <!-- every test runs in milliseconds; passing the test cancellation token everywhere buys nothing -->
+    <NoWarn>$(NoWarn);xUnit1051</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageReference Include="xunit.v3" Version="4.0.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EscoEvObdScanner.Core\EscoEvObdScanner.Core.csproj" />
+    <ProjectReference Include="..\EscoEvObdScanner.AppLogic\EscoEvObdScanner.AppLogic.csproj" />
+    <!-- built first, not referenced: the command-line tests run its executable -->
+    <ProjectReference Include="..\EscoEvObdScanner\EscoEvObdScanner.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\EscoEvObdScanner\cars\*.json" Link="cars\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

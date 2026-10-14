@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esco EV OBD Scanner – käyttöohje</title>
+<style>
+  :root { --bg: #f6f7f9; --panel: #ffffff; --text: #1d2430; --muted: #5b6575; --line: #dde2ea; --accent: #0891b2; --good: #15803d; --watch: #b45309; --bad: #b91c1c; --code: #eef2f6; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1117; --panel: #161b22; --text: #e6edf3; --muted: #9aa5b4; --line: #2b3440; --accent: #22d3ee; --good: #4ade80; --watch: #fbbf24; --bad: #f87171; --code: #1f2630; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 20px 64px; }
+  header h1 { margin: 0; font-size: 30px; color: var(--accent); }
+  header p { margin: 6px 0 0; color: var(--muted); }
+  nav { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 20px; margin: 24px 0; }
+  nav ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+  nav a { color: var(--text); text-decoration: none; }
+  nav a:hover { color: var(--accent); }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 24px 16px; margin: 18px 0; }
+  h2 { font-size: 21px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  h3 { font-size: 17px; margin-bottom: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 15px; }
+  th, td { border: 1px solid var(--line); padding: 6px 9px; text-align: left; vertical-align: top; }
+  th { background: var(--code); }
+  code, kbd { background: var(--code); border-radius: 4px; padding: 1px 5px; font-size: 14px; }
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps li { counter-increment: step; position: relative; padding-left: 44px; margin: 12px 0; }
+  .steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--bg); font-weight: 700; text-align: center; line-height: 30px; }
+  .note { border-left: 4px solid var(--accent); background: var(--code); padding: 8px 14px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+  .warn { border-left-color: var(--watch); }
+  .good { color: var(--good); font-weight: 600; } .watch { color: var(--watch); font-weight: 600; } .bad { color: var(--bad); font-weight: 600; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: 14px; text-align: center; margin-top: 32px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Esco EV OBD Scanner</h1>
+  <p>Sähköauton akun ja vikakoodien luku OBD-liitännän kautta. Ohjelma vain lukee: se ei kirjoita autoon, tyhjennä vikakoodeja eikä avaa suojauksia.</p>
+</header>
+
+<nav>
+  <ol>
+    <li><a href="#tarvitset">Mitä tarvitset</a></li>
+    <li><a href="#alkuun">Ensimmäinen kerta</a></li>
+    <li><a href="#valilehdet">Välilehdet</a></li>
+    <li><a href="#seuranta">Seuranta ja ajo</a></li>
+    <li><a href="#raportti">Akkuraportti</a></li>
+    <li><a href="#rajat">Arvioiden rajat ja lähteet</a></li>
+    <li><a href="#vikakoodit">Vikakoodit</a></li>
+    <li><a href="#turvallisuus">Turvallisuus</a></li>
+    <li><a href="#vianetsinta">Vianetsintä</a></li>
+    <li><a href="#tiedostot">Missä tulokset ovat</a></li>
+    <li><a href="#tietoja">Tietoja ohjelmasta</a></li>
+  </ol>
+</nav>
+
+<section id="tarvitset">
+<h2>1. Mitä tarvitset</h2>
+<ul>
+  <li><b>Windows-tietokone</b>, johon ohjelma on asennettu.</li>
+  <li><b>ELM327- tai STN-adapteri</b>, joka näkyy Windowsissa COM-porttina: USB-johdolla tai perinteisellä Bluetoothilla. Wi-Fi- ja Bluetooth LE -adapterit eivät toimi. Windows 11 näyttää Bluetooth-OBD-adapterin pariutettavana vasta, kun kohdassa <i>Asetukset → Bluetooth ja laitteet → Laitteet → Bluetooth-laitteiden haku</i> on valittu <b>Lisäasetukset</b> (englanninkielisessä Windowsissa <i>Bluetooth devices discovery</i> → <b>Advanced</b>). Pariutus luo kaksi COM-porttia; käytä lähtevää.</li>
+  <li><b>Tuettu auto</b>:
+    <table>
+      <tr><th>Alusta</th><th>Autot</th><th>Testattu</th></tr>
+      <tr><td>Stellantis e-CMP</td><td>Opel Mokka-e, Corsa-e; Peugeot e-208, e-2008; Citroën e-C4; DS 3 E-Tense</td><td>2023 Mokka-e</td></tr>
+      <tr><td>Kia Niro EV (2022–)</td><td>Toisen sukupolven Niro EV</td><td>2024 Niro EV</td></tr>
+      <tr><td>Kia e-Niro / Hyundai Kona Electric (2018–2022)</td><td>Ensimmäinen sukupolvi</td><td>ei testattu</td></tr>
+    </table>
+  </li>
+</ul>
+<p>Ohjelmassa on myös <b>demoauto</b>, joka toimii ilman adapteria. Sen data on oikean auton mittauksista, joten sillä voi kokeilla kaikkea kotona.</p>
+<div class="note">Ohjelma on kehitetty ja testattu <b>OBDLink EX</b> -USB-adapterilla, joten ainakin se toimii varmasti. Tunnisteskannaukset on ajettu myös Bluetoothilla <b>OBDLink LX</b> -adapterilla. Muiden adapterien pitäisi toimia, jos ne näkyvät COM-porttina, mutta niitä ei ole testattu.</div>
+<div class="note warn"><b>Tärkein ero adapterien välillä:</b> adapterin pitää tukea pitkiä, monesta kehyksestä koostuvia vastauksia ja vuonohjauksen asetuskomentoja (<code>ATFCSH</code>, <code>ATFCSD</code>, <code>ATFCSM</code>). Kennojännitteet tulevat juuri tällaisina vastauksina (Stellantiksella kaikki 108 kennoa yhdessä 243 tavun vastauksessa). Ilman näitä varaus ja jännitteet näkyvät, mutta kennojännitteet eivät. Testaa uusi adapteri <b>Akku</b>-välilehdeltä: jos kaikki kennot näkyvät, adapteri on kunnossa.</div>
+</section>
+
+<section id="alkuun">
+<h2>2. Ensimmäinen kerta</h2>
+<ol class="steps">
+  <li><b>Kytke adapteri</b> auton OBD-liitäntään (yleensä kojelaudan alla kuljettajan puolella) ja käynnistä auto <b>READY</b>-tilaan.</li>
+  <li><b>Yhteys</b>-välilehdellä paina <b>Lisää ajoneuvo…</b>. Anna nimi, esim. rekisteritunnus, ja <b>valitse oikea alusta</b>. Väärä alusta on yleisin syy siihen, ettei autosta tule mitään.</li>
+  <li>Valitse <b>Portti</b> (adapterin COM-portti). Jos portti puuttuu, paina <kbd>⟳</kbd>.</li>
+  <li>Paina <b>Yhdistä</b>. Lokiin tulee "Yhdistetty", ja jos auto kertoo, myös VIN.</li>
+  <li><b>Mittaristo</b>-välilehdellä paina <b>Aloita seuranta</b>. Mittariston luvut alkavat päivittyä.</li>
+  <li>Aja lenkki seuranta päällä, lue <b>Vikakoodit</b> (syvä haku) auton seistessä, ja tee lopuksi <b>Akku</b>-välilehdellä <b>Luo raportti (PDF)</b>.</li>
+</ol>
+<div class="note">Jokaisella ajoneuvolla on omat tulokset ja ajohistoria. Kun mittaat toista autoa, lisää sille oma ajoneuvo, niin tulokset eivät sekoitu. Ohjelma tunnistaa auton ja varoittaa, jos adapteri on eri autossa kuin valittu ajoneuvo.</div>
+</section>
+
+<section id="valilehdet">
+<h2>3. Välilehdet</h2>
+<table>
+  <tr><th>Välilehti</th><th>Mitä siellä on</th></tr>
+  <tr><td>Yhteys</td><td>Ajoneuvot, portti, yhdistäminen ja loki.</td></tr>
+  <tr><td>Mittaristo</td><td>Seuranta käynnistyy painikkeesta <i>Aloita seuranta</i>, tai itse heti yhdistämisen jälkeen, kun <i>Aloita seuranta automaattisesti</i> on valittuna (läppäri voi jäädä autoon), ellei mikään auton tiedoston ohjainlaitteista vastaa.
+    <ul>
+      <li><b>Mittarit:</b> teho (otsikko kertoo tilanteen: ajoteho, talteenotto, latausteho tai kulutus seis), nopeus ja moottorin kierrokset, varaus ja virta.</li>
+      <li><b>Ajo:</b> vaihde, ajotila, kulutus, ulkolämpö ja mittarilukema.</li>
+      <li><b>Range:</b> arvio nykyisellä varauksella aiempien ajojen ja tämän ajon kulutuksella (kun auto kertoo akun jäljellä olevan energian) sekä aiempien ajojen kulutus.</li>
+      <li><b>Lataus:</b> latausjohto, verkkojännite, arvioitu aika täyteen, tämän seurannan aikana akkuun ladattu energia ja latausraja.</li>
+      <li><b>Akku:</b> jännite, jäljellä oleva energia, akun kunto, keskilämpö, kylmin ja lämpimin lukema, kennoero, alin kenno, purkuraja, eristysvastus ja 12 V:n akku.</li>
+      <li><b>Lämpötilat:</b> moottori, invertteri, DC/DC-muunnin, jäähdytysneste ja 12 V:n akku.</li>
+      <li><b>Matka (tämä seuranta):</b> matka, käytetty ja talteen otettu energia, nettokulutus, keskikulutus ja paljonko varausta kului. <b>Huiput (tämä seuranta):</b> huipputeho ja talteenoton huippu.</li>
+      <li><b>Koko ikä (auton omat laskurit):</b> akusta otettu ja akkuun mennyt energia sekä keskikulutus. <b>Sähkö (arvio):</b> verkosta otettu sähkö ja sen hinta annetulla hinnalla ja latauksen häviöllä, koko iältä ja vuotta kohden käyttöönottopäivästä ja silloisesta mittarilukemasta.</li>
+    </ul>
+    Ruutu tai ryhmä näkyy vain, kun auton tiedosto kertoo sen arvon.</td></tr>
+  <tr><td>Akku</td><td>Jokainen kenno ja lämpötila-anturi värikoodattuna, kennojen kunto (kun auto kertoo sen, e-CMP), kennot kuormassa ja PDF-raportti.</td></tr>
+  <tr><td>Käyrät</td><td>Teho, nopeus, virta, varaus, jännite, kennoero ja lämpötilat käyrinä seurannan ajalta; aikaikkunan voi valita.</td></tr>
+  <tr><td>Vikakoodit</td><td>Vikakoodien luku ohjainlaitteittain ja aiemmat luennat.</td></tr>
+  <tr><td>Ohjainlaitteet</td><td>Auton tiedoston ohjainlaitteet ja niiden tunnisteet: tunnetut, kaikki tai vain tuntemattomat. <b>Lue</b> lukee näkyvien arvot kerran. <b>Testaa valittujen laitteiden yhteys</b> näyttää, mitkä valituista laitteista vastaavat. Harvoin muuttuvat arvot (esim. versiot ja asetukset) ja tunnisteet, joiden arvon ohjainlaite kielsi, ovat piilossa, kunnes valitset ne. Laitteet, jotka eivät ole koskaan vastanneet tähän autoon, ovat listan lopussa omana ryhmänään eivätkä ole valittuina.</td></tr>
+  <tr><td>Etsintä</td><td>Tutkimustyökalu uusien ohjainlaitteiden ja tunnisteiden etsimiseen. Tavallinen käyttäjä ei tarvitse sitä. Ohjainlaitehaku ja skannaus kertovat, jos auton tiedoston mukaan valittu alue on jo etsitty tai skannattu.</td></tr>
+  <tr><td>Vertailu</td><td>Kaksi tilannekuvaa (snap) rinnakkain: mikä muuttui esim. latauksen aikana. Snap lukee auton tiedoston tunnisteet paitsi harvoin muuttuviksi merkityt ja ne, joiden arvon ohjainlaite kielsi; ne saa mukaan valinnoilla <i>Lue myös harvoin muuttuvat</i> ja <i>Lue myös kielletyt</i>.</td></tr>
+</table>
+<p>Kun seuranta on käynnissä, se varaa adapterin. Autoa lukevien välilehtien (Vikakoodit, Ohjainlaitteet, Etsintä, Vertailu) toiminnot odottavat, ja kun jokin niistä on valittuna, ikkunan alareunassa näkyy ilmoitus ja <b>Lopeta seuranta</b> -painike.</p>
+</section>
+
+<section id="seuranta">
+<h2>4. Seuranta ja ajo</h2>
+<ul>
+  <li>Seuranta tallentuu automaattisesti tiedostoon, josta raportin voi tehdä myöhemmin (<b>Raportti tallenteesta…</b>).</li>
+  <li><b>Kennot kuormassa</b> tarvitsee sekä kuormalukemia (kiihdytykset, vähintään 40 A) että lepolukemia (pysähdykset, enintään 5 A). Aja siis vaihtelevasti ja pysähdy välillä.</li>
+  <li><b>Range-arvio</b> lasketaan akun jäljellä olevasta energiasta ja kulutuksesta: ajohistorian kulutuksella (myös tämä ajo), kun ajoja on vähintään 30 km, ja tämän ajon kulutuksella 5 km:n ajon jälkeen. Auton oman mittariston range-arviota ohjelma ei lue.</li>
+</ul>
+</section>
+
+<section id="raportti">
+<h2>5. Akkuraportti</h2>
+<p>Raportti tehdään <b>Akku</b>-välilehdeltä. Kenttään <b>Teksti raporttiin</b> voi kirjoittaa esim. kenen auto on tai VIN:n, jos auto ei kerro sitä itse (testatussa e-CMP-autossa VIN ei ole luettavissa OBD-liitännästä).</p>
+<h3>Mitä raportissa on</h3>
+<ul>
+  <li><b>VIN</b>: vertaa tuulilasin alakulmaan ja rekisteriotteeseen. Näin raportti on sidottu mitattuun autoon.</li>
+  <li><b>Yhteenveto</b>: arviot <span class="good">Hyvä</span>, <span class="watch">Huomio</span> ja <span class="bad">Tarkista</span>.</li>
+  <li><b>Akun arvot, ajo, kennot kuormassa, kennot ja anturit, vikakoodit</b> sekä auton omat laskurit koko käyttöajalta, jos auto kertoo ne (Kia Niro EV: akkuun mennyt ja siitä otettu energia sekä lataukset; Stellantis: akkuun mennyt ja siitä otettu energia, käynnistyskerrat ja aika yli 55 °C). Stellantis kertoo akkuun menneen energian vasta, kun autolla on herätyksen jälkeen ajettu tai sitä on ladattu; siihen asti rivi puuttuu.</li>
+  <li><b>Akku ja akunhallinta</b> (Stellantis): akunhallinnan valmistuspäivä, siitä laskettu ikä, kulumisvauhti ((100 % − SOH) vuotta ja 10 000 km kohti; olettaa uuden akun kunnoksi 100 % ja akun yhtä vanhaksi kuin akunhallinnan) sekä ohjelmisto- ja laitteistoversio. Ne luetaan yhteyden alussa ja tallennetaan ajoneuvolle, joten myös tallenteesta tehty raportti saa ne lukupäivän kanssa.</li>
+  <li><b>12 V:n akku</b>: jännite ja tieto, onko se lepojännite (auto seisoo, ajoakun virta enintään 5 A, alle 13 V) vai lataako DC/DC akkua (13 V tai yli). Lepojännitteen vertailuarvot (täysi noin 12,65 V, puolillaan noin 12,24 V; Battery University BU-903 [6]) ovat suuntaa antavia: luotettava lukema vaatii tuntien levon.</li>
+  <li><b>Lähde-sarake</b> kertoo jokaisesta luvusta, onko se <i>auton</i> ilmoittama sellaisenaan vai ohjelman <i>laskema</i> auton arvoista.</li>
+  <li><b>Näin luvut on laskettu</b>: jokaisen lasketun luvun kaava.</li>
+  <li><b>Arvioiden rajat</b>: jokaisen arvion rajat ja niiden peruste (ks. seuraava kohta).</li>
+</ul>
+<div class="note warn">Raportti ei ole valmistajan tai korjaamon akkutesti eikä takuu akun kunnosta. PDF-tiedostoa voi muokata: auton kaupassa luotettavin tulos saadaan, kun ostaja on itse mukana mittauksessa.</div>
+</section>
+
+<section id="rajat">
+<h2>6. Arvioiden rajat ja lähteet</h2>
+<table>
+  <tr><th>Arvio</th><th class="good">Hyvä</th><th class="watch">Huomio</th><th class="bad">Tarkista</th><th>Peruste</th></tr>
+  <tr><td>Akun kunto (SOH)</td><td>90 % tai yli</td><td>80–90 %</td><td>alle 80 %</td><td>Ohjelman oma raja. Vertailuksi akkutakuut: Kia 70 % (7 v / 150 000 km) [1], Stellantis noin 70 % (8 v / 160 000 km) [2].</td></tr>
+  <tr><td>Kennojen jännite-ero (levossa)</td><td>alle 30 mV</td><td>30–80 mV</td><td>80 mV tai yli</td><td>Terveen akun kennot ovat 10–20 mV:n sisällä, ja 50–100 mV on hälytysmerkki valmistajasta riippuen [3].</td></tr>
+  <tr><td>Kennot kuormassa</td><td>alle 5 mV / 100 A</td><td>5–15</td><td>15 tai yli</td><td>Ohjelman oma raja; julkaistua lähdettä ei ole. Periaate: kennon sisäinen vastus kasvaa sen vanhetessa ja näkyy notkahduksena kuormassa. Rajat nousevat mittaustarkkuuden mukaan (Kia ilmoittaa kennojännitteet 20 mV:n portain). Kun akun kylmin anturi on kuormassa alle 10 °C, arvio on enintään Huomio: kylmässä kennojen vastus kasvaa, eniten akun kylmimmissä osissa.</td></tr>
+  <tr><td>Lämpötilaero akussa</td><td>alle 5 °C</td><td>5–10 °C</td><td>10 °C tai yli</td><td>Akkujen lämmönhallinnan tavoite on alle 5 °C:n ero kennojen välillä [4]. 10 °C on ohjelman oma raja.</td></tr>
+  <tr><td>Eristysvastus</td><td>500 kΩ tai yli</td><td>säädöksen raja – 500 kΩ</td><td>alle säädöksen rajan</td><td>UNECE R100 -säädös: vähintään 500 Ω/V akun jännitteestä (400 V:n akulle 200 kΩ) [5]. 500 kΩ on ohjelman oma raja; yli 1000 V:n akulla hyvä alkaa säädöksen rajasta.</td></tr>
+  <tr><td>Akun vikakoodit</td><td>ei vikoja</td><td>ollut, ei nyt</td><td>aktiivinen</td><td>Aktiivinen vika on päällä nyt, aiempi on ollut joskus, ei nyt.</td></tr>
+</table>
+<p>Lähteet:</p>
+<ol>
+  <li><a href="https://www.kia.com/sk/predajca/aspekta/o-nas/zazitok-kia/zodpovednost/electrification/">Kia: akkutakuu</a></li>
+  <li><a href="https://www.carwow.es/blog/mantenimiento-peugeot-e-208">Carwow: Peugeot e-208:n akkutakuu</a></li>
+  <li><a href="https://www.midtronics.com/blog/early-signs-of-cell-imbalance-in-high-voltage-ev-batteries/">Midtronics: Early Signs of Cell Imbalance in High Voltage EV Batteries (2025)</a></li>
+  <li><a href="https://www.scitepress.org/Papers/2022/110307/110307.pdf">Battery Thermal Management Systems for EVs and Its Applications (SciTePress 2022)</a></li>
+  <li><a href="https://www.lexaris.de/library/tableofcontents/2059009">UNECE Regulation No 100, kohta 5.1.3</a></li>
+  <li><a href="https://batteryuniversity.com/article/bu-903-how-to-measure-state-of-charge">Battery University: BU-903 How to Measure State-of-charge</a> (12 V:n akun lepojännite)</li>
+</ol>
+</section>
+
+<section id="vikakoodit">
+<h2>7. Vikakoodit</h2>
+<ul>
+  <li><b>Lue vikakoodit</b> lukee koodit tunnetuilta ohjainlaitteilta. Laitteet, jotka eivät ole koskaan vastanneet tähän autoon, ohitetaan, ellei <b>Kysy myös laitteilta, jotka eivät ole vastanneet</b> ole valittuna. <b>Syvä haku</b> lukee lisäksi vian tilannekuvan ja laskurit. e-CMP-autoissa <b>Syntyi</b>-sarake näyttää myös, milloin ja millä kilometrillä vika syntyi.</li>
+  <li><b>aktiivinen</b> = vika päällä nyt, <b>ollut, ei nyt</b> = vika on havaittu aiemmin, mutta se ei ole päällä nyt.</li>
+  <li><b>Vian tyyppi (SAE J2012-DA)</b> näyttää koodin viimeisen tavun (esim. U1208-<b>29</b>) standardin nimellä kääntämättä, esimerkiksi 13 = Circuit Open, 29 = Signal Invalid. Valmistajan omille arvoille nimeä ei ole.</li>
+  <li><b>Tilabitit (ISO 14229-1)</b> näyttää auton ilmoittaman tilatavun bitit standardin nimillä ja <b>Tarkoittaa</b> samat bitit selväkielisinä, esimerkiksi testFailed = vika päällä nyt, confirmedDTC = vahvistettu vika, warningIndicatorRequested = pyytää varoitusvaloa.</li>
+  <li>Ohjelma ei koskaan tyhjennä vikakoodeja.</li>
+  <li>Lue vikakoodit auton seistessä READY-tilassa. Seuranta varaa adapterin, joten lopeta seuranta ensin.</li>
+</ul>
+</section>
+
+<section id="turvallisuus">
+<h2>8. Turvallisuus</h2>
+<ul>
+  <li>Ohjelma lähettää vain lukupyyntöjä. Kirjoittavia, tyhjentäviä tai suojauksia avaavia komentoja ei ole ohjelmassa lainkaan.</li>
+  <li>Pitkä mittaus pitää auton hereillä ja kuluttaa 12 V:n akkua. Pidä auto READY-tilassa tai latauksessa, ja irrota adapteri, kun lopetat.</li>
+  <li>Jotkin e-208:n ja Corsa-e:n omistajat kertovat, että ajon aikana käytetty OBD-adapteri on sekoittanut auton infotainmentin tai näytöt. Jos auton näytöt käyttäytyvät oudosti seurannan aikana, lopeta seuranta ja irrota adapteri.</li>
+  <li>Älä käytä ohjelmaa itse ajaessasi. Anna matkustajan hoitaa kone tai tee toimet pysähdyksissä.</li>
+</ul>
+</section>
+
+<section id="vianetsinta">
+<h2>9. Vianetsintä</h2>
+<table>
+  <tr><th>Oire</th><th>Syy ja korjaus</th></tr>
+  <tr><td>Arvoja ei tule, ja ohjainlaitteet "eivät vastanneet" (adapterin liikenteessä NO DATA)</td><td>Väärä alusta. Katkaise yhteys, poista ajoneuvo ja lisää se uudelleen oikealla alustalla.</td></tr>
+  <tr><td>Yhdistä ei onnistu, adapteri ei vastaa</td><td>Väärä portti tai nopeus. Kokeile nopeutta 38400. Jotkin adapterit nukahtavat, kun auto on levossa: irrota ja kytke adapteri.</td></tr>
+  <tr><td>Portti on varattu</td><td>Jokin toinen ohjelma käyttää adapteria. Sulje se.</td></tr>
+  <tr><td>Varoitus: adapteri on eri autossa kuin valittu ajoneuvo</td><td>Valitse oikea ajoneuvo tai lisää uusi. Jos auto on varmasti sama (esim. akunhallinta on vaihdettu), vastaa <b>Kyllä</b>.</td></tr>
+  <tr><td>Raportissa "VIN: auto ei kertonut"</td><td>Auto ei anna VIN:iä OBD-liitännän kautta (näin testatussa e-CMP-autossa). Kirjoita VIN kenttään <b>Teksti raporttiin</b>.</td></tr>
+  <tr><td>Kennot eivät näy, muut arvot näkyvät</td><td>Adapteri ei tue pitkiä vastauksia tai vuonohjauksen komentoja (tyypillistä halvoille kopioille). Kokeile toista adapteria.</td></tr>
+  <tr><td>Raportin kohdassa Kennot kuormassa: "Kennoja ei järjestetä"</td><td>Kuorma- tai lepolukemia on liian vähän. Aja pidempään, kiihdytä välillä ja pysähdy välillä.</td></tr>
+</table>
+</section>
+
+<section id="tiedostot">
+<h2>10. Missä tulokset ovat</h2>
+<p>Tulokset tallentuvat kansioon <code>Dokumentit\EscoEvObdScanner\&lt;ajoneuvo&gt;</code>: raportit, seurannan tallenteet, vikakoodiluennat, tilannekuvat ja lokit. <b>Yhteys</b>-välilehden <b>Avaa kansio</b> avaa kansion <code>Dokumentit\EscoEvObdScanner</code>, jossa jokaisella ajoneuvolla on oma kansionsa.</p>
+<p>Tiedostot voivat sisältää ohjainlaitteiden sarjanumeroita ja auton VIN:n. Mieti, kenelle niitä jaat.</p>
+</section>
+
+<section id="tietoja">
+<h2>11. Tietoja ohjelmasta</h2>
+<ul>
+  <li>Ohjelma on ilmainen ja avointa lähdekoodia: <a href="https://github.com/EsaHub/EscoEvObdScanner">github.com/EsaHub/EscoEvObdScanner</a>.</li>
+  <li>Lisenssi: ohjelmakoodi MIT, autotiedostot CC BY 4.0 (vapaasti käytettävissä, kun lähde mainitaan). Nimi "Esco EV OBD Scanner" ja logo eivät kuulu lisenssiin.</li>
+  <li>Ohjelma lukee auton ilmoittamat tiedot eikä voi taata niiden oikeellisuutta. Laskelmat ja arviot ovat suuntaa antavia. Ohjelma toimitetaan sellaisenaan, ilman takuuta.</li>
+  <li>Tekninen tausta, löydökset autoista ja lähteet: <a href="https://github.com/EsaHub/EscoEvObdScanner#readme">README GitHubissa</a> (englanniksi).</li>
+  <li>Löydöt ja korjaukset ovat tervetulleita GitHubin kautta.</li>
+</ul>
+</section>
+
+<footer>Esco EV OBD Scanner – käyttöohje</footer>
+</main>
+</body>
+</html>

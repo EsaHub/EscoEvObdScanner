@@ -1,0 +1,29 @@
+# Build output
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Run files and logs written by the tool. They contain the car's VIN and
+# ECU serial numbers, so they stay out of the repository.
+*.jsonl
+# (written as .jsonl.part until complete; one cut short stays behind)
+*.jsonl.part
+# ...except the anonymised demo car data, which is part of the source
+!EscoEvObdScanner.Core/Resources/demo-car.jsonl
+logs/
+# live view recordings and battery reports, if written inside the repository
+live_*.csv
+battery_report*.pdf
+
+# Published app and installer
+publish/
+
+# Test results, UI self-test screenshots, upgrade logs
+TestResults/
+out/
+UpgradeLog*.htm
+

@@ -1,0 +1,50 @@
+name: Bug report
+description: Something in the program does not work as it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Remove the VIN and ECU serial numbers** from anything you paste: logs and result files contain them.
+  - type: input
+    id: version
+    attributes:
+      label: Program version
+      description: Shown at the bottom of a battery report, or in Windows under installed apps.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: car
+    attributes:
+      label: Car
+      description: Make, model and year.
+      placeholder: "Opel Mokka-e 2023"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Car file chosen in the program
+      placeholder: "Stellantis e-CMP"
+  - type: input
+    id: adapter
+    attributes:
+      label: Adapter
+      description: Make and model, and USB or Bluetooth.
+      placeholder: "OBDLink EX (USB)"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+      description: The steps that lead to it, and what the car was doing (standing in Ready, driving, charging).
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log lines
+      description: From Documents\EscoEvObdScanner\<vehicle>\logs, the lines around the problem. Remove the VIN and serial numbers first.
+      render: text

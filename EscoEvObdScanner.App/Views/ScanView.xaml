@@ -1,0 +1,53 @@
+<UserControl x:Class="EscoEvObdScanner.App.Views.ScanView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="clr-namespace:EscoEvObdScanner.App.Infrastructure">
+    <DockPanel Margin="4">
+        <Border DockPanel.Dock="Top" Style="{StaticResource Panel}">
+            <StackPanel>
+                <TextBlock Text="{i:T ScanHead}" Style="{StaticResource Caption}" />
+                <WrapPanel>
+                    <StackPanel Margin="0,0,16,0">
+                        <TextBlock Text="{i:T Ecu}" Margin="0,0,0,4" />
+                        <ComboBox ItemsSource="{Binding Ecus}" SelectedItem="{Binding Ecu}" DisplayMemberPath="Name" Width="260" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,16,0">
+                        <TextBlock Text="{i:T Block}" Margin="0,0,0,4" />
+                        <ComboBox ItemsSource="{Binding Blocks}" SelectedItem="{Binding Block}" DisplayMemberPath="Text" Width="300" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,8,0">
+                        <TextBlock Text="{i:T From}" Margin="0,0,0,4" />
+                        <TextBox Text="{Binding From, UpdateSourceTrigger=PropertyChanged}" Width="90" FontFamily="{StaticResource MonoFont}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,16,0">
+                        <TextBlock Text="{i:T To}" Margin="0,0,0,4" />
+                        <TextBox Text="{Binding To, UpdateSourceTrigger=PropertyChanged}" Width="90" FontFamily="{StaticResource MonoFont}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                        <Button Content="{i:T Start}" Command="{Binding Start}" Style="{StaticResource AccentButton}" Margin="0,0,8,0" />
+                        <Button Content="{i:T Stop}" Command="{Binding Stop}" />
+                        <Button Content="{i:T MergeToCatalog}" Command="{Binding Merge}" />
+                        <Button Content="{i:T OpenFolder}" Command="{Binding OpenFolder}" />
+                    </StackPanel>
+                </WrapPanel>
+                <ProgressBar Value="{Binding Progress, Mode=OneWay}" Height="6" Margin="0,14,0,6" />
+                <TextBlock Text="{Binding Status}" Style="{StaticResource Mono}" />
+                <TextBlock Text="{Binding ScannedInfo}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                <TextBlock Text="{Binding SavedInfo}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,8,0,0" />
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource Panel}" Padding="0">
+            <DataGrid ItemsSource="{Binding Rows}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="DID" Binding="{Binding Did}" Width="80" />
+                    <DataGridTextColumn Header="{i:T Name}" Binding="{Binding Name}" Width="170" />
+                    <DataGridTextColumn Header="{i:T Kind}" Binding="{Binding Kind}" Width="120" />
+                    <DataGridTextColumn Header="{i:T Bytes}" Binding="{Binding Length}" Width="60" />
+                    <DataGridTextColumn Header="HEX" Binding="{Binding Hex}" Width="*" />
+                    <DataGridTextColumn Header="ASCII" Binding="{Binding Ascii}" Width="120" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </DockPanel>
+</UserControl>

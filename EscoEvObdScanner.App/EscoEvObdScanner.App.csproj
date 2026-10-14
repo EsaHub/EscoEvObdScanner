@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>EscoEvObdScanner.App</RootNamespace>
+    <AssemblyName>EscoEvObdScanner.App</AssemblyName>
+    <Product>Esco EV OBD Scanner</Product>
+    <ApplicationIcon>Themes\app.ico</ApplicationIcon>
+    <!-- ThemeMode (Fluent dark theme) is marked experimental in WPF -->
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EscoEvObdScanner.AppLogic\EscoEvObdScanner.AppLogic.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\EscoEvObdScanner\cars\*.json" Link="cars\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- the user guide, one page per language, opened from the ? button and the Start menu -->
+    <Content Include="Help\*.html" Link="help\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Resource Include="Themes\app.ico" />
+  </ItemGroup>
+
+</Project>

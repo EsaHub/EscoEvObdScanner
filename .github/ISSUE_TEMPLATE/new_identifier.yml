@@ -1,0 +1,45 @@
+name: New identifier or car
+description: A value you have worked out, a correction to a car file, or a car you would like supported
+labels: [car file]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Findings are welcome. **Remove the VIN and ECU serial numbers** from anything you paste: replies to F18C, F190 and similar identifiers contain them.
+  - type: input
+    id: car
+    attributes:
+      label: Car
+      description: Make, model, year and market (EU, US...).
+      placeholder: "Kia Niro EV 2024, EU"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is it?
+      options:
+        - A new identifier or value
+        - A correction to a car file
+        - A car I would like supported
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: ECU and identifier
+      description: The ECU (request / reply address or its id in the car file) and the DID.
+      placeholder: "bms (0x7E4 / 0x7EC), DID 0x0101"
+  - type: textarea
+    id: replies
+    attributes:
+      label: Raw replies
+      description: The reply bytes, from a snap, a scan or the log, and what the car was doing at the time (standing, driving at what speed, charging at what power).
+      render: text
+  - type: textarea
+    id: meaning
+    attributes:
+      label: What it means, and how you know
+      description: For example "byte 12 follows the charge, 2 = 1 %: checked against the dashboard at 40 % and 80 %".
+    validations:
+      required: true
