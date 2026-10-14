@@ -67,6 +67,24 @@ namespace EscoEvObdScanner.Tests
         }
 
         [Fact]
+        public void LifetimeCountersKeepTheirLastValueWhenAReadFails()
+        {
+            var (car, scanner, catalog) = TestData.DemoCar();
+            var poller = new LivePoller(scanner, catalog);
+            var first = poller.Poll();                         // round 0 reads the rare values
+            Assert.NotNull(first.LifetimeDischargedKwh);
+
+            // the car switched off for a moment: the counters come back too short to read
+            car.SetData(0x6B4, 0xD42E, new byte[] { 0x00 });
+            VehicleState s = first;
+            for (int i = 0; i < LivePoller.RareEvery; i++) s = poller.Poll();
+
+            Assert.Equal(2, car.Requests.Count(r => r == "22D42E"));     // read again, and failed
+            Assert.Equal(first.LifetimeDischargedKwh, s.LifetimeDischargedKwh);
+            Assert.Equal(first.LifetimeChargedKwh, s.LifetimeChargedKwh);
+        }
+
+        [Fact]
         public void SlowValuesAreKeptBetweenRounds()
         {
             var (car, scanner, catalog) = TestData.DemoCar();

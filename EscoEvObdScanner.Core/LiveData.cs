@@ -256,7 +256,11 @@ namespace EscoEvObdScanner
                 try
                 {
                     if (unreachable.Contains(ecu!.Id)) { Clear(name); continue; }
-                    if (Scalars.TryGetValue(name, out var set)) set(_state, YesNoValues.Contains(name) ? YesNo(src, Scalar(src, ecu)) : Scalar(src, ecu));
+                    if (Scalars.TryGetValue(name, out var set))
+                    {
+                        double? value = YesNoValues.Contains(name) ? YesNo(src, Scalar(src, ecu)) : Scalar(src, ecu);
+                        if (value != null || !Counters.Contains(name)) set(_state, value);
+                    }
                     else if (Texts.TryGetValue(name, out var setText)) setText(_state, Reply(src, ecu), src);
                     else if (Arrays.Contains(name))
                     {
@@ -281,12 +285,24 @@ namespace EscoEvObdScanner
             return _state.Clone();
         }
 
-        /// <summary>Empties a scalar or text value whose ECU could not be reached.</summary>
+        /// <summary>Empties a scalar or text value whose ECU could not be reached; a counter keeps its last value.</summary>
         void Clear(string name)
         {
+            if (Counters.Contains(name)) return;
             if (Scalars.TryGetValue(name, out var scalar)) scalar(_state, null);
             else if (Texts.TryGetValue(name, out var text) && _catalog.LiveOf(name) is { } src) text(_state, null, src);
         }
+
+        /// <summary>
+        /// The car's lifetime counters. They change slowly, so a read that fails (the car
+        /// switched off for a moment, a read refused) keeps the last value of this session
+        /// instead of emptying it; what was never read stays empty.
+        /// </summary>
+        public static readonly IReadOnlySet<string> Counters = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "lifetime_charged_kwh", "lifetime_discharged_kwh", "ac_charges", "dc_charges",
+            "ac_charged_kwh", "dc_charged_kwh", "contactor_closes", "time_above_55c"
+        };
 
         /// <summary>The value names that are yes/no: only these take a car file's "on" codes.</summary>
         public static readonly IReadOnlySet<string> YesNoValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "charging" };
