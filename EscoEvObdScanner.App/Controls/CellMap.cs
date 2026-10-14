@@ -121,12 +121,19 @@ namespace EscoEvObdScanner.App.Controls
 
                 if (rect.Width > 34 && rect.Height > 26)
                 {
+                    // the text grows with the cell (a quarter of its height for the number, two fifths for the value),
+                    // never smaller than in a small cell, and the value is narrowed to fit the cell's width
+                    double numSize = Math.Max(Math.Min(10, rect.Height * 0.28), Math.Min(rect.Height * 0.24, rect.Width * 0.2));
                     var num = new FormattedText((i + 1).ToString(CultureInfo.CurrentCulture), CultureInfo.CurrentCulture,
-                        FlowDirection.LeftToRight, Face, Math.Min(10, rect.Height * 0.28), Dark, dpi);
+                        FlowDirection.LeftToRight, Face, numSize, Dark, dpi);
                     dc.DrawText(num, new Point(rect.Left + 4, rect.Top + 2));
 
-                    var val = new FormattedText(values[i].ToString(Format, CultureInfo.CurrentCulture), CultureInfo.CurrentCulture,
-                        FlowDirection.LeftToRight, Bold, Math.Min(13, rect.Width * 0.2), Dark, dpi);
+                    string text = values[i].ToString(Format, CultureInfo.CurrentCulture);
+                    double valSize = Math.Max(Math.Min(13, rect.Width * 0.2), Math.Min(rect.Height * 0.4, rect.Width * 0.24));
+                    var val = new FormattedText(text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, Bold, valSize, Dark, dpi);
+                    if (val.Width > rect.Width - 6)
+                        val = new FormattedText(text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, Bold,
+                            Math.Max(6, valSize * (rect.Width - 6) / val.Width), Dark, dpi);
                     dc.DrawText(val, new Point(rect.Left + (rect.Width - val.Width) / 2, rect.Bottom - val.Height - 3));
                 }
             }
