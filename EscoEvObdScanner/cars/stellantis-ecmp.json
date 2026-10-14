@@ -17114,13 +17114,8 @@
       "notes": "Found by the full ECU sweep on 2026-09-26. Response is request - 0x100, unlike the - 0x20 of the ECUs in 0x680-0x6FF, so probably another group or bus behind the gateway. Identified by name in the PSA AEE2010 diagnostic ID list (opendbc psa_aee2010_r3.dbc, for the ICE 208 on the same architecture) as CVM, the multifunction windscreen camera behind the mirror (traffic signs, lane keeping, emergency braking); its picture is not shown anywhere. The car shows the speed limit read from signs (2026-10-03), so it has a working camera. F18B 05 04 23 = 5.4.2023. Holds an ACTIVE fault U1208-29 (29 = invalid data received from another ECU) with the warning indicator bit set since at least 2026-09-26, while the dashboard shows no warning and the speed limit display works. PyPSADiag: CVM3 at 0x74A/0x64A. arduino-psa-diag ECU_LIST also lists the rain/light sensor family (CPL) at 0x74A.",
       "scanned": [
         {
-          "range": "0x0000-0x6FFF",
-          "notes": "2026-10-13 parked awake: scanned in full (Done), 0x2200-0x6FFF in the evening until the car fell asleep at 0x7000; the pages listed separately were scanned earlier; no further identifiers"
-        },
-        {
-          "range": "0x7000-0xCFFF",
-          "step": 16,
-          "notes": "2026-10-10 in Ready: sample of every 16th identifier only (0x7000, 0x7010, ...); the pages it hit, and some of the pages where other ECUs answered, were then scanned in full (listed separately); the rest of the range is not scanned in full"
+          "range": "0x0000-0xCFFF",
+          "notes": "Scanned in full (Done) while parked awake: 0x0000-0x21FF and 0x2200-0x6FFF on 2026-10-13, 0x7000-0xCFFF on 2026-10-14; the pages listed separately were scanned earlier; no further identifiers"
         },
         {
           "range": "0x0100-0x01FF",
