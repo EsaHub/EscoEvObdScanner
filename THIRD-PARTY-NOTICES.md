@@ -7,8 +7,9 @@ the following third-party material, each under the license shown.
 
 The self-contained app and its installer include the .NET runtime, with the
 System.IO.Ports and System.Management packages, and the
-Microsoft.Extensions.Logging.Abstractions and
-Microsoft.Extensions.DependencyInjection.Abstractions packages that PDFsharp uses.
+Microsoft.Extensions.Logging.Abstractions,
+Microsoft.Extensions.DependencyInjection.Abstractions and
+System.Security.Cryptography.Pkcs packages that PDFsharp uses.
 
 Copyright (c) .NET Foundation and Contributors. MIT License (text below).
 https://github.com/dotnet/runtime. The runtime's own notices for the components
