@@ -5,8 +5,10 @@
   <img src="assets/logo.svg" alt="Esco EV OBD Scanner" width="380">
 </picture>
 
-Read-only diagnostics for electric cars over a serial ELM327 or STN adapter:
-a Windows app with a live dashboard, battery cell view and charts, and a
+Read-only diagnostics for electric cars over a serial ELM327 or STN adapter,
+made first of all for the Stellantis e-CMP platform (Opel Mokka-e and
+Corsa-e, Peugeot e-208 and e-2008, Citroën e-C4, DS 3 E-Tense): a Windows
+app with a live dashboard, battery cell view and charts, and a
 command-line scanner for working out what undocumented identifiers mean.
 
 > **Just want to use it?** Download the MSI from [Releases](https://github.com/EsaHub/EscoEvObdScanner/releases),
@@ -22,7 +24,11 @@ identifiers, formulas, where the dashboard reads each value, how many cells the
 battery has - comes from a car file in the `cars` folder, and the app lets you
 pick the car. `cars/stellantis-ecmp.json` covers the
 Stellantis e-CMP platform (Opel Mokka-e/Corsa-e, Peugeot e-208/e-2008, Citroën
-e-C4, DS 3 E-Tense), tested on a Mokka-e.
+e-C4, DS 3 E-Tense), tested on a 2023 Mokka-e and a 2023 Citroën e-C4. It is the main car
+file: seven of its ECUs have been scanned through every identifier on the Mokka-e, and about 150
+identifiers have been worked out or checked on the author's own drives, charges and
+snaps, cell health included.
+The Kia files are smaller and rest mostly on what other projects have published.
 `cars/kia-niro-ev-2022.json` covers the second-generation Kia Niro EV (2022 on,
 96 cells) from replies other people captured on US cars (OBDb), tested on a 2024
 EU Niro EV. `cars/kia-eniro.json` covers the Kia e-Niro and Hyundai Kona Electric
