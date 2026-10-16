@@ -218,16 +218,16 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <TextBlock Grid.Row="0" Text="{i:T PriceLabel}" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,6,3" />
-                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PriceText, UpdateSourceTrigger=LostFocus}" Width="76" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PriceText, UpdateSourceTrigger=LostFocus}" Width="92" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
                                              VerticalContentAlignment="Center" ToolTip="{i:T PriceHint}" />
                                     <TextBlock Grid.Row="1" Text="{i:T LossLabel}" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,6,3" />
-                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LossText, UpdateSourceTrigger=LostFocus}" Width="76" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LossText, UpdateSourceTrigger=LostFocus}" Width="92" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
                                              VerticalContentAlignment="Center" ToolTip="{i:T LossHint}" />
                                     <TextBlock Grid.Row="2" Text="{i:T InUseLabel}" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,6,3" />
-                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding InUseText, UpdateSourceTrigger=LostFocus}" Width="76" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding InUseText, UpdateSourceTrigger=LostFocus}" Width="92" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
                                              VerticalContentAlignment="Center" ToolTip="{i:T InUseHint}" />
                                     <TextBlock Grid.Row="3" Text="{i:T InUseKmLabel}" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,6,0" />
-                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding InUseKmText, UpdateSourceTrigger=LostFocus}" Width="76" Height="26" MinHeight="0" Padding="4,0"
+                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding InUseKmText, UpdateSourceTrigger=LostFocus}" Width="92" Height="26" MinHeight="0" Padding="4,0"
                                              VerticalContentAlignment="Center" ToolTip="{i:T InUseKmHint}" />
                                 </Grid>
                                 <!-- only when a figure was not understood -->
