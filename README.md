@@ -27,7 +27,8 @@ Stellantis e-CMP platform (Opel Mokka-e/Corsa-e, Peugeot e-208/e-2008, Citroën
 e-C4, DS 3 E-Tense), tested on a 2023 Mokka-e and a 2023 Citroën e-C4. It is the main car
 file: seven of its ECUs have been scanned through every identifier on the Mokka-e, and about 150
 identifiers have been worked out or checked on the author's own drives, charges and
-snaps, cell health included.
+snaps, cell health included. About 1,000 more answer, but what they mean is not
+known yet; the file lists them for anyone who wants to work them out.
 The Kia files are smaller and rest mostly on what other projects have published.
 `cars/kia-niro-ev-2022.json` covers the second-generation Kia Niro EV (2022 on,
 96 cells) from replies other people captured on US cars (OBDb), tested on a 2024
