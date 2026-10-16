@@ -97,13 +97,19 @@
   <tr><td>Connection</td><td>Vehicles, port, connecting and the log.</td></tr>
   <tr><td>Dashboard</td><td>The live view starts with <i>Start live view</i>, or by itself right after connecting when <i>Start the live view automatically</i> is chosen (the laptop can stay in the car), unless none of the car file's ECUs answers.
     <ul>
-      <li><b>Gauges:</b> power (its title gives the situation: drive power, regeneration, charging power or draw while parked), speed and motor rpm, charge and current.</li>
-      <li><b>Driving:</b> gear, drive mode, consumption, outside temperature and odometer.</li>
+      <li><b>Gauges</b>, each with the readings that belong with it (below the dial and in its top corners):
+        <ul>
+          <li>power (its title gives the situation: drive power, regeneration, charging power or draw while parked); consumption; the peak power and peak regeneration of this session.</li>
+          <li>speed; motor rpm and odometer; gear and drive mode.</li>
+          <li>charge; the range estimate and the energy left; battery health and cell spread.</li>
+          <li>current; voltage; discharge and charge limit.</li>
+          <li>average battery temperature; coldest and warmest reading; outside temperature and coolant.</li>
+        </ul></li>
       <li><b>Range:</b> an estimate at the current charge with your earlier drives' and this drive's consumption (where the car gives the battery's energy left), and the consumption of earlier drives.</li>
-      <li><b>Charging:</b> charge cable, grid voltage, time to full, the energy charged into the battery this session and the charge limit.</li>
-      <li><b>Battery:</b> voltage, energy left, battery health, average temperature, coldest and warmest reading, cell spread, lowest cell, discharge limit, insulation resistance and the 12 V battery.</li>
-      <li><b>Temperatures:</b> motor, inverter, DC-DC converter, coolant and 12 V battery.</li>
-      <li><b>Trip (this session):</b> distance, energy used and regenerated, net used, average consumption and how much charge was used. <b>Peaks (this session):</b> peak power and peak regeneration.</li>
+      <li><b>Battery:</b> lowest cell, insulation resistance and the 12 V battery.</li>
+      <li><b>Charging:</b> charge cable, grid voltage, time to full and the energy charged into the battery this session.</li>
+      <li><b>Temperatures:</b> motor, inverter, charger, DC-DC converter and 12 V battery.</li>
+      <li><b>Trip (this session):</b> distance, energy used and regenerated, net used, average consumption and how much charge was used.</li>
       <li><b>Lifetime (the car’s own counters):</b> energy taken from and put into the battery, and the average consumption. <b>Electricity (estimate):</b> the electricity from the grid and its cost at your price and charging loss, over the car’s life and per year from the day it was taken into use and the odometer reading then.</li>
     </ul>
     A tile or group shows only where the car file gives its value.</td></tr>

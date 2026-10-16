@@ -8,6 +8,7 @@ namespace EscoEvObdScanner.App.Controls
     /// A round 270° gauge. The arc is drawn from <see cref="Origin"/> to the
     /// value, so a power gauge can swing both ways from zero: discharge to the
     /// right in the accent colour, regeneration and charging to the left in green.
+    /// Related readings can sit under the value and in the two top corners.
     /// </summary>
     public sealed class Gauge : FrameworkElement
     {
@@ -24,6 +25,12 @@ namespace EscoEvObdScanner.App.Controls
         public static readonly DependencyProperty NegativeAccentProperty = Reg(nameof(NegativeAccent), typeof(Brush), Brushes.LimeGreen);
         public static readonly DependencyProperty MagnitudeProperty = Reg(nameof(Magnitude), typeof(bool), false);
         public static readonly DependencyProperty DetailProperty = Reg(nameof(Detail), typeof(string), "");
+        public static readonly DependencyProperty Detail2Property = Reg(nameof(Detail2), typeof(string), "");
+        public static readonly DependencyProperty LeftLabelProperty = Reg(nameof(LeftLabel), typeof(string), "");
+        public static readonly DependencyProperty LeftValueProperty = Reg(nameof(LeftValue), typeof(string), "");
+        public static readonly DependencyProperty LeftAccentProperty = Reg(nameof(LeftAccent), typeof(Brush), null);
+        public static readonly DependencyProperty RightLabelProperty = Reg(nameof(RightLabel), typeof(string), "");
+        public static readonly DependencyProperty RightValueProperty = Reg(nameof(RightValue), typeof(string), "");
 
         static DependencyProperty Reg(string name, Type type, object? def) =>
             DependencyProperty.Register(name, type, typeof(Gauge),
@@ -44,6 +51,20 @@ namespace EscoEvObdScanner.App.Controls
 
         /// <summary>A second, smaller reading under the unit (the motor speed, the range); empty for none.</summary>
         public string Detail { get => (string)GetValue(DetailProperty); set => SetValue(DetailProperty, value); }
+
+        /// <summary>A third reading under <see cref="Detail"/>, in the muted colour; empty for none.</summary>
+        public string Detail2 { get => (string)GetValue(Detail2Property); set => SetValue(Detail2Property, value); }
+
+        /// <summary>A related reading in the top left corner: a small label over its value; no value, nothing drawn.</summary>
+        public string LeftLabel { get => (string)GetValue(LeftLabelProperty); set => SetValue(LeftLabelProperty, value); }
+        public string LeftValue { get => (string)GetValue(LeftValueProperty); set => SetValue(LeftValueProperty, value); }
+
+        /// <summary>The colour of the top left value; null: the ordinary text colour.</summary>
+        public Brush? LeftAccent { get => (Brush?)GetValue(LeftAccentProperty); set => SetValue(LeftAccentProperty, value); }
+
+        /// <summary>A related reading in the top right corner, as on the left.</summary>
+        public string RightLabel { get => (string)GetValue(RightLabelProperty); set => SetValue(RightLabelProperty, value); }
+        public string RightValue { get => (string)GetValue(RightValueProperty); set => SetValue(RightValueProperty, value); }
 
         static readonly Brush Track = Frozen(Color.FromRgb(0x22, 0x2C, 0x38));
         static readonly Brush Tick = Frozen(Color.FromRgb(0x3A, 0x47, 0x56));
@@ -68,7 +89,9 @@ namespace EscoEvObdScanner.App.Controls
             double size = Math.Min(ActualWidth, ActualHeight);
             if (size < 40) return;
 
-            var center = new Point(ActualWidth / 2, ActualHeight / 2 + size * 0.04);
+            // with corner readings the dial moves down a little, away from them
+            bool corners = !string.IsNullOrEmpty(LeftValue) || !string.IsNullOrEmpty(RightValue);
+            var center = new Point(ActualWidth / 2, ActualHeight / 2 + size * (corners ? 0.07 : 0.04));
             double radius = size * 0.42;
             double thickness = size * 0.075;
             double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
@@ -106,14 +129,36 @@ namespace EscoEvObdScanner.App.Controls
             string valueText = Value is double val && !double.IsNaN(val)
                 ? Shown(val).ToString(Format, CultureInfo.CurrentCulture) : "—";
             var big = Text(valueText, Numbers, size * 0.2, TextBrush, dpi);
-            dc.DrawText(big, new Point(center.X - big.Width / 2, center.Y - big.Height * 0.62));
+            // a third line lifts the whole block by its height, so it stays clear of the title
+            var detail2 = string.IsNullOrEmpty(Detail2) ? null : Text(Detail2, Labels, size * 0.06, Muted, dpi);
+            double lift = detail2?.Height ?? 0;
+            dc.DrawText(big, new Point(center.X - big.Width / 2, center.Y - big.Height * 0.62 - lift));
 
             var unit = Text(Unit, Labels, size * 0.085, Muted, dpi);
-            dc.DrawText(unit, new Point(center.X - unit.Width / 2, center.Y + big.Height * 0.36));
+            dc.DrawText(unit, new Point(center.X - unit.Width / 2, center.Y + big.Height * 0.36 - lift));
+            double below = center.Y + big.Height * 0.36 + unit.Height * 1.05 - lift;
             if (!string.IsNullOrEmpty(Detail))
             {
                 var detail = Text(Detail, Numbers, size * 0.075, TextBrush, dpi);
-                dc.DrawText(detail, new Point(center.X - detail.Width / 2, center.Y + big.Height * 0.36 + unit.Height * 1.05));
+                dc.DrawText(detail, new Point(center.X - detail.Width / 2, below));
+                below += detail.Height;
+            }
+            if (detail2 != null) dc.DrawText(detail2, new Point(center.X - detail2.Width / 2, below));
+
+            // the corner readings: label over value, left-aligned on the left and right-aligned on the right
+            if (!string.IsNullOrEmpty(LeftValue))
+            {
+                var label = Text(LeftLabel.ToUpper(CultureInfo.CurrentCulture), Labels, size * 0.05, Muted, dpi);
+                var value = Text(LeftValue, Numbers, size * 0.085, LeftAccent ?? TextBrush, dpi);
+                dc.DrawText(label, new Point(4, 2));
+                dc.DrawText(value, new Point(4, 2 + label.Height));
+            }
+            if (!string.IsNullOrEmpty(RightValue))
+            {
+                var label = Text(RightLabel.ToUpper(CultureInfo.CurrentCulture), Labels, size * 0.05, Muted, dpi);
+                var value = Text(RightValue, Numbers, size * 0.085, TextBrush, dpi);
+                dc.DrawText(label, new Point(ActualWidth - 4 - label.Width, 2));
+                dc.DrawText(value, new Point(ActualWidth - 4 - value.Width, 2 + label.Height));
             }
 
 

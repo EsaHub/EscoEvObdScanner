@@ -3,6 +3,56 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:i="clr-namespace:EscoEvObdScanner.App.Infrastructure"
              xmlns:c="clr-namespace:EscoEvObdScanner.App.Controls">
+    <UserControl.Resources>
+        <!-- on this page a value is one line: its name on the left, the number and unit on the right,
+             and a note (what a figure rests on) in small print under the name and as a tooltip -->
+        <Style TargetType="c:Tile">
+            <Setter Property="Accent" Value="{StaticResource TextBrush}" />
+            <Setter Property="ToolTip" Value="{Binding Note, RelativeSource={RelativeSource Self}}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="c:Tile">
+                        <Border Background="Transparent" BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="0,0,0,1" Padding="2,3">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{TemplateBinding Title}" Foreground="{StaticResource MutedBrush}" FontSize="14" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock x:Name="NoteText" Text="{TemplateBinding Note}" Foreground="{StaticResource MutedBrush}" FontSize="12"
+                                               Opacity="0.75" TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
+                                    <TextBlock Text="{TemplateBinding Value}" Foreground="{TemplateBinding Accent}"
+                                               FontFamily="{StaticResource NumberFont}" FontSize="19" FontWeight="SemiBold" />
+                                    <TextBlock Text="{TemplateBinding Unit}" Foreground="{StaticResource MutedBrush}" FontSize="12"
+                                               Margin="4,0,0,2" VerticalAlignment="Bottom" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Note" Value="">
+                                <Setter TargetName="NoteText" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- a group of values: tighter than the app's usual panel -->
+        <Style x:Key="Group" TargetType="Border" BasedOn="{StaticResource Panel}">
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <!-- a group's heading: larger and brighter than the app's usual caption -->
+        <Style x:Key="GroupCaption" TargetType="TextBlock" BasedOn="{StaticResource Caption}">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        </Style>
+    </UserControl.Resources>
+
     <DockPanel Margin="4">
         <!-- toolbar -->
         <DockPanel DockPanel.Dock="Top" Margin="6,4,6,8">
@@ -14,187 +64,188 @@
         </DockPanel>
         <TextBlock DockPanel.Dock="Top" Text="{i:T LiveHint}" Style="{StaticResource Hint}" Margin="8,0,8,6" />
 
+        <!-- fits a window of the default size; a smaller one scrolls -->
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <!-- gauges -->
-                <UniformGrid Columns="4" Height="250">
-                    <Border Style="{StaticResource Panel}" Padding="6">
+                <!-- gauges, each with the readings that belong with it -->
+                <UniformGrid Columns="5" Height="310">
+                    <Border Style="{StaticResource Panel}" Padding="8" Margin="4">
                         <c:Gauge Value="{Binding Now.Power}" Minimum="{Binding PowerMin}" Maximum="{Binding PowerMax}" Origin="0" Format="F1"
-                                 Magnitude="True" Title="{Binding PowerTitle}" Unit="kW" Accent="{StaticResource AccentBrush}" NegativeAccent="{StaticResource GoodBrush}" />
+                                 Magnitude="True" Title="{Binding PowerTitle}" Unit="kW" Accent="{StaticResource AccentBrush}" NegativeAccent="{StaticResource GoodBrush}"
+                                 Detail="{Binding Now.Consumption, StringFormat={}{0:F1} kWh/100 km, TargetNullValue=''}"
+                                 LeftLabel="{i:T PeakPower}" LeftValue="{Binding PeakPowerKw, StringFormat={}{0:F0} kW}" LeftAccent="{StaticResource AccentBrush}"
+                                 RightLabel="{i:T PeakRegen}" RightValue="{Binding PeakRegenKw, StringFormat={}{0:F0} kW}" />
                     </Border>
-                    <Border Style="{StaticResource Panel}" Padding="6">
+                    <Border Style="{StaticResource Panel}" Padding="8" Margin="4">
                         <c:Gauge Value="{Binding Now.Speed}" Minimum="0" Maximum="{Binding SpeedMax}" Format="F0"
-                                 Title="{i:T Speed}" Unit="km/h" Detail="{Binding RpmText}" Accent="{StaticResource VioletBrush}" />
+                                 Title="{i:T Speed}" Unit="km/h" Detail="{Binding RpmText}" Accent="{StaticResource VioletBrush}"
+                                 Detail2="{Binding Now.Odometer, StringFormat={}{0:N0} km, TargetNullValue=''}"
+                                 LeftLabel="{i:T Gear}" LeftValue="{Binding GearText}" LeftAccent="{StaticResource VioletBrush}"
+                                 RightLabel="{i:T DriveMode}" RightValue="{Binding DriveModeText}" />
                     </Border>
-                    <Border Style="{StaticResource Panel}" Padding="6">
+                    <Border Style="{StaticResource Panel}" Padding="8" Margin="4">
                         <c:Gauge Value="{Binding Now.Soc}" Minimum="0" Maximum="100" Format="F1"
-                                 Title="{i:T Soc}" Unit="%" Detail="{Binding RangeGaugeText}" Accent="{StaticResource GoodBrush}" />
+                                 Title="{i:T Soc}" Unit="%" Detail="{Binding RangeGaugeText}" Accent="{StaticResource GoodBrush}"
+                                 Detail2="{Binding Now.Energy, StringFormat={}{0:F1} kWh, TargetNullValue=''}"
+                                 LeftLabel="{i:T Soh}" LeftValue="{Binding Now.Soh, StringFormat={}{0:F1} %, TargetNullValue=''}"
+                                 RightLabel="{i:T CellSpread}" RightValue="{Binding Now.CellSpread, StringFormat={}{0:F0} mV, TargetNullValue='', Converter={x:Static c:ScaleConverter.Times1000}}" />
                     </Border>
-                    <Border Style="{StaticResource Panel}" Padding="6">
+                    <Border Style="{StaticResource Panel}" Padding="8" Margin="4">
                         <c:Gauge Value="{Binding Now.Current}" Minimum="{Binding CurrentMin}" Maximum="{Binding CurrentMax}" Origin="0" Format="F1"
-                                 Magnitude="True" Title="{Binding CurrentTitle}" Unit="A" Accent="{StaticResource WarnBrush}" NegativeAccent="{StaticResource GoodBrush}" />
+                                 Magnitude="True" Title="{Binding CurrentTitle}" Unit="A" Accent="{StaticResource WarnBrush}" NegativeAccent="{StaticResource GoodBrush}"
+                                 Detail="{Binding Now.Voltage, StringFormat={}{0:F1} V, TargetNullValue=''}"
+                                 LeftLabel="{i:T MaxDischarge}" LeftValue="{Binding Now.MaxDischargePower, StringFormat={}{0:F0} kW, TargetNullValue=''}"
+                                 RightLabel="{i:T MaxCharge}" RightValue="{Binding Now.MaxChargePower, StringFormat={}{0:F0} kW, TargetNullValue=''}" />
+                    </Border>
+                    <Border Style="{StaticResource Panel}" Padding="8" Margin="4">
+                        <c:Gauge Value="{Binding Now.TempAvg}" Minimum="-20" Maximum="50" Format="F0"
+                                 Title="{i:T BatteryTemp}" Unit="°C" Accent="{StaticResource BadBrush}"
+                                 LeftLabel="{i:T Ambient}" LeftValue="{Binding Now.Ambient, StringFormat={}{0:F0} °C, TargetNullValue=''}"
+                                 RightLabel="{i:T TempCoolant}" RightValue="{Binding Now.CoolantTemp, StringFormat={}{0:F0} °C, TargetNullValue=''}">
+                            <c:Gauge.Detail>
+                                <MultiBinding StringFormat="{}min {0:F0} · max {1:F0} °C" TargetNullValue="">
+                                    <Binding Path="Now.TempMin" />
+                                    <Binding Path="Now.TempMax" />
+                                </MultiBinding>
+                            </c:Gauge.Detail>
+                        </c:Gauge>
                     </Border>
                 </UniformGrid>
 
-                <!-- numbers in groups: driving, range, charging, battery, temperatures -->
-                <WrapPanel Margin="0,4,0,0">
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock Text="{i:T GroupDrive}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
-                                <c:Tile Title="{i:T Gear}" Value="{Binding GearText}" Accent="{StaticResource AccentBrush}" />
-                                <c:Tile Title="{i:T DriveMode}" Value="{Binding DriveModeText}" />
-                                <c:Tile Title="{i:T Consumption}" Unit="kWh/100 km" Value="{Binding Now.Consumption, StringFormat={}{0:F1}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T Ambient}" Unit="°C" Value="{Binding Now.Ambient, StringFormat={}{0:F0}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T Odometer}" Unit="km" Value="{Binding Now.Odometer, StringFormat={}{0:N0}, TargetNullValue=—}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock Text="{i:T GroupRange}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
+                <!-- the rest of the values, in five columns of groups -->
+                <Grid Margin="0,2,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- range and battery -->
+                    <StackPanel Grid.Column="0">
+                        <Border Style="{StaticResource Group}">
+                            <StackPanel>
+                                <TextBlock Text="{i:T GroupRange}" Style="{StaticResource GroupCaption}" Margin="0,0,0,4" TextWrapping="Wrap" />
                                 <c:Tile Title="{i:T RangeHistory}" Unit="km" Value="{Binding RangeHistory, StringFormat={}{0:F0}, TargetNullValue=—}" Note="{i:T RangeHistoryNote}" Accent="{StaticResource GoodBrush}" />
                                 <c:Tile Title="{i:T RangeTrip}" Unit="km" Value="{Binding RangeTrip, StringFormat={}{0:F0}, TargetNullValue=—}" Note="{i:T RangeTripNote}" />
                                 <c:Tile Title="{Binding HistoryTitle}" Value="{Binding HistoryValue}" Unit="{Binding HistoryUnit}" Note="{Binding HistoryNote}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock Text="{i:T GroupCharging}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource Group}">
+                            <StackPanel>
+                                <TextBlock Text="{i:T GroupBattery}" Style="{StaticResource GroupCaption}" Margin="0,0,0,4" TextWrapping="Wrap" />
+                                <c:Tile Title="{i:T LowestCell}" Unit="#" Value="{Binding Now.LowestCell, TargetNullValue=—}" />
+                                <c:Tile Title="{i:T Isolation}" Unit="MΩ" Value="{Binding Now.IsolationMin, StringFormat={}{0:F1}, TargetNullValue=—, Converter={x:Static c:ScaleConverter.Div1000}}" />
+                                <c:Tile Title="{i:T Aux}" Unit="V" Value="{Binding Now.AuxVoltage, StringFormat={}{0:F2}, TargetNullValue=—}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- charging, and the car's own lifetime counters (only cars whose file gives them) -->
+                    <StackPanel Grid.Column="1">
+                        <Border Style="{StaticResource Group}">
+                            <StackPanel>
+                                <TextBlock Text="{i:T GroupCharging}" Style="{StaticResource GroupCaption}" Margin="0,0,0,4" TextWrapping="Wrap" />
                                 <c:Tile Title="{i:T Charging}" Value="{Binding ChargingText}" />
                                 <c:Tile Title="{i:T GridVoltage}" Unit="V" Value="{Binding Now.GridVoltage, StringFormat={}{0:F0}, TargetNullValue=—}" />
                                 <c:Tile Title="{i:T ChargeEta}" Value="{Binding ChargeEta}" Accent="{StaticResource GoodBrush}" />
                                 <c:Tile Title="{i:T ChargedNow}" Unit="kWh" Value="{Binding ChargedKwh, StringFormat={}{0:F2}}" Note="{i:T ChargedNowNote}" />
-                                <c:Tile Title="{i:T MaxCharge}" Unit="kW" Visibility="{Binding HasMaxCharge, Converter={StaticResource BoolToVisibility}}" Value="{Binding Now.MaxChargePower, StringFormat={}{0:F1}, TargetNullValue=—}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock Text="{i:T GroupBattery}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
-                                <c:Tile Title="{i:T Voltage}" Unit="V" Value="{Binding Now.Voltage, StringFormat={}{0:F1}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T Energy}" Unit="kWh" Value="{Binding Now.Energy, StringFormat={}{0:F1}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T Soh}" Unit="%" Value="{Binding Now.Soh, StringFormat={}{0:F1}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T BatteryTemp}" Unit="°C" Value="{Binding Now.TempAvg, StringFormat={}{0:F0}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T TempMinMax}" Unit="°C">
-                                    <c:Tile.Value>
-                                        <MultiBinding Converter="{x:Static c:PairConverter.Instance}">
-                                            <Binding Path="Now.TempMin" />
-                                            <Binding Path="Now.TempMax" />
-                                        </MultiBinding>
-                                    </c:Tile.Value>
-                                </c:Tile>
-                                <c:Tile Title="{i:T CellSpread}" Unit="mV" Value="{Binding Now.CellSpread, StringFormat={}{0:F0}, TargetNullValue=—, Converter={x:Static c:ScaleConverter.Times1000}}" />
-                                <c:Tile Title="{i:T LowestCell}" Unit="#" Value="{Binding Now.LowestCell, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T MaxDischarge}" Unit="kW" Visibility="{Binding HasMaxDischarge, Converter={StaticResource BoolToVisibility}}" Value="{Binding Now.MaxDischargePower, StringFormat={}{0:F1}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T Isolation}" Unit="MΩ" Value="{Binding Now.IsolationMin, StringFormat={}{0:F1}, TargetNullValue=—, Converter={x:Static c:ScaleConverter.Div1000}}" />
-                                <c:Tile Title="{i:T Aux}" Unit="V" Value="{Binding Now.AuxVoltage, StringFormat={}{0:F2}, TargetNullValue=—}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-                    <!-- only cars whose file gives drivetrain temperatures -->
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top"
-                            Visibility="{Binding Now.HasDrivetrainTemps, Converter={StaticResource BoolToVisibility}, FallbackValue=Collapsed}">
-                        <StackPanel>
-                            <TextBlock Text="{i:T GroupTemps}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource Group}"
+                                Visibility="{Binding HasLifetime, Converter={StaticResource BoolToVisibility}}">
+                            <StackPanel>
+                                <TextBlock Text="{i:T GroupLifetime}" Style="{StaticResource GroupCaption}" Margin="0,0,0,4" TextWrapping="Wrap" />
+                                <c:Tile Title="{i:T LifeOut}" Unit="kWh" Value="{Binding LifeOut, StringFormat={}{0:N0}, TargetNullValue=—}" />
+                                <c:Tile Title="{i:T LifeIn}" Unit="kWh" Value="{Binding LifeIn, StringFormat={}{0:N0}, TargetNullValue=—}" Note="{Binding LifeInNote}" />
+                                <c:Tile Title="{i:T LifeAvg}" Unit="kWh/100 km" Value="{Binding LifeAverage, StringFormat={}{0:F1}, TargetNullValue=—}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- temperatures; only cars whose file gives drivetrain temperatures -->
+                    <StackPanel Grid.Column="2">
+                        <Border Style="{StaticResource Group}"
+                                Visibility="{Binding Now.HasDrivetrainTemps, Converter={StaticResource BoolToVisibility}, FallbackValue=Collapsed}">
+                            <StackPanel>
+                                <TextBlock Text="{i:T GroupTemps}" Style="{StaticResource GroupCaption}" Margin="0,0,0,4" TextWrapping="Wrap" />
                                 <c:Tile Title="{i:T TempMotor}" Unit="°C" Visibility="{Binding HasMotorTemp, Converter={StaticResource BoolToVisibility}}" Value="{Binding Now.MotorTemp, StringFormat={}{0:F0}, TargetNullValue=—}" />
                                 <c:Tile Title="{i:T TempInverter}" Unit="°C" Visibility="{Binding HasInverterTemp, Converter={StaticResource BoolToVisibility}}" Value="{Binding Now.InverterTemp, StringFormat={}{0:F0}, TargetNullValue=—}" />
                                 <c:Tile Title="{i:T TempCharger}" Unit="°C" Visibility="{Binding HasChargerTemp, Converter={StaticResource BoolToVisibility}}" Value="{Binding Now.ChargerTemp, StringFormat={}{0:F0}, TargetNullValue=—}" />
                                 <c:Tile Title="{i:T TempDcDc}" Unit="°C" Visibility="{Binding HasDcDcTemp, Converter={StaticResource BoolToVisibility}}" Value="{Binding Now.DcDcTemp, StringFormat={}{0:F0}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T TempCoolant}" Unit="°C" Visibility="{Binding HasCoolantTemp, Converter={StaticResource BoolToVisibility}}" Value="{Binding Now.CoolantTemp, StringFormat={}{0:F0}, TargetNullValue=—}" />
                                 <c:Tile Title="{i:T TempAuxBattery}" Unit="°C" Visibility="{Binding HasAuxBatteryTemp, Converter={StaticResource BoolToVisibility}}" Value="{Binding Now.AuxBatteryTemp, StringFormat={}{0:F0}, TargetNullValue=—}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
 
-                <!-- trip computer: energy over the session, and its peaks -->
-                <WrapPanel>
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock Text="{i:T Trip}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
+                    <!-- trip computer: energy over the session -->
+                    <StackPanel Grid.Column="3">
+                        <Border Style="{StaticResource Group}">
+                            <StackPanel>
+                                <TextBlock Text="{i:T Trip}" Style="{StaticResource GroupCaption}" Margin="0,0,0,4" TextWrapping="Wrap" />
                                 <c:Tile Title="{i:T TripDistance}" Unit="km" Value="{Binding TripKm, StringFormat={}{0:F2}}" />
                                 <c:Tile Title="{i:T TripEnergy}" Unit="kWh" Value="{Binding TripKwh, StringFormat={}{0:F2}}" />
-                                <c:Tile Title="{i:T TripRegen}" Unit="kWh" Value="{Binding TripRegenKwh, StringFormat={}{0:F2}}"
-                                        Accent="{StaticResource GoodBrush}" />
+                                <c:Tile Title="{i:T TripRegen}" Unit="kWh" Value="{Binding TripRegenKwh, StringFormat={}{0:F2}}" Accent="{StaticResource GoodBrush}" />
                                 <c:Tile Title="{i:T TripNet}" Unit="kWh" Value="{Binding TripNetKwh, StringFormat={}{0:F2}}" />
                                 <c:Tile Title="{i:T TripAvg}" Unit="kWh/100 km" Value="{Binding TripAverage, StringFormat={}{0:F1}, TargetNullValue=—}" />
                                 <c:Tile Title="{i:T TripSoc}" Unit="%" Value="{Binding TripSocUsed, StringFormat={}{0:F1}, TargetNullValue=—}" Note="{Binding TripSocNote}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock Text="{i:T Peaks}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
-                                <c:Tile Title="{i:T PeakPower}" Unit="kW" Value="{Binding PeakPowerKw, StringFormat={}{0:F1}}"
-                                        Accent="{StaticResource AccentBrush}" />
-                                <c:Tile Title="{i:T PeakRegen}" Unit="kW" Value="{Binding PeakRegenKw, StringFormat={}{0:F1}}"
-                                        Accent="{StaticResource GoodBrush}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
 
-                <!-- the car's own lifetime counters, and what that energy cost; only cars whose file gives them -->
-                <WrapPanel Visibility="{Binding HasLifetime, Converter={StaticResource BoolToVisibility}}">
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock Text="{i:T GroupLifetime}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
-                                <c:Tile Title="{i:T LifeOut}" Unit="kWh" Value="{Binding LifeOut, StringFormat={}{0:N0}, TargetNullValue=—}" />
-                                <c:Tile Title="{i:T LifeIn}" Unit="kWh" Value="{Binding LifeIn, StringFormat={}{0:N0}, TargetNullValue=—}" Note="{Binding LifeInNote}" />
-                                <c:Tile Title="{i:T LifeAvg}" Unit="kWh/100 km" Value="{Binding LifeAverage, StringFormat={}{0:F1}, TargetNullValue=—}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-                    <Border Style="{StaticResource Panel}" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock Text="{i:T GroupCost}" Style="{StaticResource Caption}" />
-                            <WrapPanel>
+                    <!-- what that energy cost; only cars whose file gives the lifetime counters -->
+                    <StackPanel Grid.Column="4" Visibility="{Binding HasLifetime, Converter={StaticResource BoolToVisibility}}">
+                        <Border Style="{StaticResource Group}" ToolTip="{i:T LifeHint}">
+                            <StackPanel>
+                                <TextBlock Text="{i:T GroupCost}" Style="{StaticResource GroupCaption}" Margin="0,0,0,4" />
                                 <c:Tile Title="{i:T LifeGrid}" Unit="kWh" Value="{Binding LifeFromGrid, StringFormat={}{0:N0}, TargetNullValue=—}" Note="{i:T LifeGridNote}" />
                                 <c:Tile Title="{i:T LifeCost}" Unit="€" Value="{Binding LifeCost, StringFormat={}{0:N0}, TargetNullValue=—}" Note="{Binding LifeCostNote}"
                                         Accent="{StaticResource AccentBrush}" />
                                 <c:Tile Title="{i:T LifeYear}" Unit="kWh" Value="{Binding LifeKwhYear, StringFormat={}{0:N0}, TargetNullValue=—}" Note="{Binding LifeYearNote}" />
                                 <c:Tile Title="{i:T LifeCostYear}" Unit="€" Value="{Binding LifeCostYear, StringFormat={}{0:N0}, TargetNullValue=—}" Note="{Binding LifeYearNote}"
                                         Accent="{StaticResource AccentBrush}" />
-                            </WrapPanel>
-                            <!-- the owner's figures the estimate needs, in a grid so the boxes line up -->
-                            <Grid Margin="8,6,8,4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{i:T PriceLabel}" VerticalAlignment="Center" Margin="0,0,6,4" />
-                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PriceText, UpdateSourceTrigger=LostFocus}" Width="110" Margin="0,0,0,4"
-                                         VerticalContentAlignment="Center" ToolTip="{i:T PriceHint}" />
-                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{i:T LossLabel}" VerticalAlignment="Center" Margin="16,0,6,4" />
-                                <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding LossText, UpdateSourceTrigger=LostFocus}" Width="90" Margin="0,0,0,4"
-                                         VerticalContentAlignment="Center" ToolTip="{i:T LossHint}" />
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{i:T InUseLabel}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding InUseText, UpdateSourceTrigger=LostFocus}" Width="110"
-                                         VerticalContentAlignment="Center" ToolTip="{i:T InUseHint}" />
-                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{i:T InUseKmLabel}" VerticalAlignment="Center" Margin="16,0,6,0" />
-                                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding InUseKmText, UpdateSourceTrigger=LostFocus}" Width="90"
-                                         VerticalContentAlignment="Center" ToolTip="{i:T InUseKmHint}" />
-                            </Grid>
-                            <TextBlock Text="{Binding InputError}" Foreground="{StaticResource WarnBrush}" TextWrapping="Wrap" Margin="8,0,8,4" MaxWidth="640" HorizontalAlignment="Left" />
-                            <TextBlock Text="{i:T LifeHint}" Style="{StaticResource Hint}" Margin="8,2,8,4" TextWrapping="Wrap" MaxWidth="640" HorizontalAlignment="Left" />
-                        </StackPanel>
-                    </Border>
-                </WrapPanel>
+                                <!-- the owner's figures the estimate needs, in a grid so the boxes line up -->
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="{i:T PriceLabel}" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,6,3" />
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PriceText, UpdateSourceTrigger=LostFocus}" Width="76" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
+                                             VerticalContentAlignment="Center" ToolTip="{i:T PriceHint}" />
+                                    <TextBlock Grid.Row="1" Text="{i:T LossLabel}" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,6,3" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LossText, UpdateSourceTrigger=LostFocus}" Width="76" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
+                                             VerticalContentAlignment="Center" ToolTip="{i:T LossHint}" />
+                                    <TextBlock Grid.Row="2" Text="{i:T InUseLabel}" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,6,3" />
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding InUseText, UpdateSourceTrigger=LostFocus}" Width="76" Height="26" MinHeight="0" Padding="4,0" Margin="0,0,0,3"
+                                             VerticalContentAlignment="Center" ToolTip="{i:T InUseHint}" />
+                                    <TextBlock Grid.Row="3" Text="{i:T InUseKmLabel}" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,6,0" />
+                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding InUseKmText, UpdateSourceTrigger=LostFocus}" Width="76" Height="26" MinHeight="0" Padding="4,0"
+                                             VerticalContentAlignment="Center" ToolTip="{i:T InUseKmHint}" />
+                                </Grid>
+                                <!-- only when a figure was not understood -->
+                                <TextBlock Text="{Binding InputError}" Foreground="{StaticResource WarnBrush}" TextWrapping="Wrap" Margin="0,4,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

@@ -114,7 +114,7 @@ Even so:
 
 ![The Dashboard tab during a drive (demo car)](assets/screenshots/dashboard.png)
 
-![The lower part of the Dashboard: the trip and peaks of this session, the car’s own lifetime counters and the electricity estimate at a given price (demo car)](assets/screenshots/dashboard-lifetime.png)
+![The lower part of the Dashboard: the trip of this session, the car’s own lifetime counters and the electricity estimate at a given price (demo car)](assets/screenshots/dashboard-lifetime.png)
 
 ![Cell voltages and temperature probes (demo car)](assets/screenshots/battery.png)
 

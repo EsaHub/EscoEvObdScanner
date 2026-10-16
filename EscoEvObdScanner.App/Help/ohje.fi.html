@@ -97,13 +97,19 @@
   <tr><td>Yhteys</td><td>Ajoneuvot, portti, yhdistäminen ja loki.</td></tr>
   <tr><td>Mittaristo</td><td>Seuranta käynnistyy painikkeesta <i>Aloita seuranta</i>, tai itse heti yhdistämisen jälkeen, kun <i>Aloita seuranta automaattisesti</i> on valittuna (läppäri voi jäädä autoon), ellei mikään auton tiedoston ohjainlaitteista vastaa.
     <ul>
-      <li><b>Mittarit:</b> teho (otsikko kertoo tilanteen: ajoteho, talteenotto, latausteho tai kulutus seis), nopeus ja moottorin kierrokset, varaus ja virta.</li>
-      <li><b>Ajo:</b> vaihde, ajotila, kulutus, ulkolämpö ja mittarilukema.</li>
+      <li><b>Mittarit</b>, kukin niihin kuuluvine lukemineen (mittarin alla ja yläkulmissa):
+        <ul>
+          <li>teho (otsikko kertoo tilanteen: ajoteho, talteenotto, latausteho tai kulutus seis); kulutus; tämän seurannan huipputeho ja talteenoton huippu.</li>
+          <li>nopeus; moottorin kierrokset ja mittarilukema; vaihde ja ajotila.</li>
+          <li>varaus; range-arvio ja jäljellä oleva energia; akun kunto ja kennoero.</li>
+          <li>virta; jännite; purku- ja latausraja.</li>
+          <li>akun keskilämpö; kylmin ja lämpimin lukema; ulkolämpö ja jäähdytysneste.</li>
+        </ul></li>
       <li><b>Range:</b> arvio nykyisellä varauksella aiempien ajojen ja tämän ajon kulutuksella (kun auto kertoo akun jäljellä olevan energian) sekä aiempien ajojen kulutus.</li>
-      <li><b>Lataus:</b> latausjohto, verkkojännite, arvioitu aika täyteen, tämän seurannan aikana akkuun ladattu energia ja latausraja.</li>
-      <li><b>Akku:</b> jännite, jäljellä oleva energia, akun kunto, keskilämpö, kylmin ja lämpimin lukema, kennoero, alin kenno, purkuraja, eristysvastus ja 12 V:n akku.</li>
-      <li><b>Lämpötilat:</b> moottori, invertteri, DC/DC-muunnin, jäähdytysneste ja 12 V:n akku.</li>
-      <li><b>Matka (tämä seuranta):</b> matka, käytetty ja talteen otettu energia, nettokulutus, keskikulutus ja paljonko varausta kului. <b>Huiput (tämä seuranta):</b> huipputeho ja talteenoton huippu.</li>
+      <li><b>Akku:</b> alin kenno, eristysvastus ja 12 V:n akku.</li>
+      <li><b>Lataus:</b> latausjohto, verkkojännite, arvioitu aika täyteen ja tämän seurannan aikana akkuun ladattu energia.</li>
+      <li><b>Lämpötilat:</b> moottori, invertteri, laturi, DC/DC-muunnin ja 12 V:n akku.</li>
+      <li><b>Matka (tämä seuranta):</b> matka, käytetty ja talteen otettu energia, nettokulutus, keskikulutus ja paljonko varausta kului.</li>
       <li><b>Koko ikä (auton omat laskurit):</b> akusta otettu ja akkuun mennyt energia sekä keskikulutus. <b>Sähkö (arvio):</b> verkosta otettu sähkö ja sen hinta annetulla hinnalla ja latauksen häviöllä, koko iältä ja vuotta kohden käyttöönottopäivästä ja silloisesta mittarilukemasta.</li>
     </ul>
     Ruutu tai ryhmä näkyy vain, kun auton tiedosto kertoo sen arvon.</td></tr>
