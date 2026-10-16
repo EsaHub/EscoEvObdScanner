@@ -131,12 +131,13 @@ namespace EscoEvObdScanner.App
                 vm.Live.ShowCellHealth = true;
                 await Shot(2, "battery_health_en", 800);
                 vm.Live.ShowCellHealth = false;
-                await Shot(1, "dashboard_live_en", 800);
-                // the lower part with a price and a day taken into use, so the electricity estimate is filled in
+                // with a price and a day taken into use, so the electricity estimate is filled in
                 string shotPrice = vm.Live.PriceText, shotInUse = vm.Live.InUseText, shotInUseKm = vm.Live.InUseKmText;
                 vm.Live.PriceText = "16";
                 vm.Live.InUseText = "2024-12-04";
                 vm.Live.InUseKmText = "0";
+                await Shot(1, "dashboard_live_en", 800);
+                // the lower part
                 foreach (var sv in Descendants<ScrollViewer>(window).Where(s => s.IsVisible)) sv.ScrollToEnd();
                 await Shot(1, "dashboard_lower_en", 800);
                 foreach (var sv in Descendants<ScrollViewer>(window).Where(s => s.IsVisible)) sv.ScrollToHome();

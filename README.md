@@ -118,9 +118,7 @@ Even so:
 
 ## Using the app
 
-![The Dashboard tab during a drive (demo car)](assets/screenshots/dashboard.png)
-
-![The lower part of the Dashboard: the trip of this session, the car’s own lifetime counters and the electricity estimate at a given price (demo car)](assets/screenshots/dashboard-lifetime.png)
+![The Dashboard tab during a drive: gauges with their readings, the trip of this session, the car’s own lifetime counters and the electricity estimate at a given price (demo car)](assets/screenshots/dashboard.png)
 
 ![Cell voltages and temperature probes (demo car)](assets/screenshots/battery.png)
 
@@ -243,7 +241,7 @@ dotnet test --project EscoEvObdScanner.Tests          # unit + simulated-car tes
 `--selftest <folder>` drives the real UI against the demo car (connect, live
 view, every tab and action), saves a screenshot of each tab and writes
 `report.txt`. The screenshots in `assets/screenshots` are its `03_battery_health_en.png`,
-`03_battery_en.png`, `02_dashboard_live_en.png` and `02_dashboard_lower_en.png`, made in a folder whose path holds no user name;
+`03_battery_en.png` and `02_dashboard_live_en.png`, made in a folder whose path holds no user name;
 `cells-under-load.png` is the Battery tab's **Cells under load** view with a real drive of the author's car opened from **Open recording…**. It uses its own folders, never the user's results or settings.
 
 ## Car files
