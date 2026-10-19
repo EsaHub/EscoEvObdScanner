@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "version": 1,
+  "version": 2,
   "license": "CC-BY-4.0",
   "attribution": "Esco EV OBD Scanner car files by Esa Pelttari, CC BY 4.0, https://github.com/EsaHub/EscoEvObdScanner",
   "platform": {
@@ -317,7 +317,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "62 bytes. Positions checked against OBDb captures of US 2023/2024/2026 cars (sample: SOC 22.5 %, 15.8 A, 342.6 V, cells 3.56 V, 34 370 km). Holds: BMS SOC B8/2 %, current S[B14:B15]/10 A (positive = discharge), voltage [B16:B17]/10 V, max/min pack temperature SB18/SB19 °C, module temperatures SB20..SB24 °C (five here), highest cell B27/50 V (number B28), lowest cell B29/50 V (number B30), 12 V B33/10 V, cumulative charged [B34:B37]/10 Ah and discharged [B38:B41]/10 Ah, cumulative charged energy [B42:B45]/10 kWh and discharged [B46:B49]/10 kWh, operating time [B50:B53] s, inverter capacitor voltage [B55:B56] V, motor rpm S[B57:B58], insulation resistance [B61:B62] kOhm (3000 with the HV system off, in every OBDb capture at 0 A, so the dashboard does not show 3000; 2782 in Ready on a 2024 EU car, 2026-10-04). B9..B12 are zero except in a few captures that look plugged in (0x10B0 then 0x0156 or 0x01A4); OVMS Ioniq 5 reads B9:B10 as available power and B11:B12 as charge current request /10 A (34.2 / 42.0 A there), evDash E-GMP as available charge/discharge power /100 kW: meaning open; B13 is always 0 (gen-1 keeps status bits there); B26 is not the pack inlet temperature (45-83 °C in the samples). Shown here: voltage. On a 2024 EU car (about 65 000 km): 381 V and 3.96 V cells at 75 % SOC, 25 A at 62 km/h and 5 425 rpm, 12 V 13.7 V, all as the car showed; cumulative about 13 700 kWh charged and 13 100 kWh discharged."
+          "notes": "62 bytes. Positions checked against OBDb captures of US 2023/2024/2026 cars (sample: SOC 22.5 %, 15.8 A, 342.6 V, cells 3.56 V, 34 370 km). Holds: BMS SOC B8/2 %, current S[B14:B15]/10 A (positive = discharge), voltage [B16:B17]/10 V, max/min pack temperature SB18/SB19 °C, module temperatures SB20..SB24 °C (five here), highest cell B27/50 V (number B28), lowest cell B29/50 V (number B30), 12 V B33/10 V, cumulative charged [B34:B37]/10 Ah and discharged [B38:B41]/10 Ah, cumulative charged energy [B42:B45]/10 kWh and discharged [B46:B49]/10 kWh, operating time [B50:B53] s, inverter capacitor voltage [B55:B56] V, motor rpm S[B57:B58], insulation resistance [B61:B62] kOhm (3000 in 15 of the 16 OBDb captures at 0 A, the other reading 2661, and in one at 3.9 A, so the dashboard does not show 3000; 2782 in Ready on a 2024 EU car, 2026-10-04). B9..B12 are zero except in a few captures that look plugged in (0x10B0 then 0x0156 or 0x01A4); OVMS Ioniq 5 reads B9:B10 as available power and B11:B12 as charge current request /10 A (34.2 / 42.0 A there), evDash E-GMP as available charge/discharge power /100 kW: meaning open; B13 is always 0 (gen-1 keeps status bits there); B26 is not the pack inlet temperature (39-83 °C in the samples). Shown here: voltage. On a 2024 EU car (about 65 000 km): 381 V and 3.96 V cells at 75 % SOC, 25 A at 62 km/h and 5 425 rpm, 12 V 13.7 V, all as the car showed; cumulative about 13 700 kWh charged and 13 100 kWh discharged."
         },
         {
           "did": "0x0102",
@@ -329,9 +329,10 @@
           "expression": "B8/50",
           "confidence": "confirmed",
           "source": [
-            "obdb"
+            "obdb",
+            "own-snaps"
           ],
-          "notes": "B4..B7 a cell-present mask (FF FF FF FF), then 32 cells in B8..B39, 0.02 V steps. The expression shows the first cell."
+          "notes": "B4..B7 a cell-present mask (FF FF FF FF), then 32 cells in B8..B39, 0.02 V steps. The expression shows the first cell. On a 2024 EU car, 2026-10-04: 0x0102..0x0104 all cells 3.94-3.96 V."
         },
         {
           "did": "0x0103",
@@ -343,7 +344,8 @@
           "expression": "B8/50",
           "confidence": "confirmed",
           "source": [
-            "obdb"
+            "obdb",
+            "own-snaps"
           ],
           "notes": "As 0x0102, cells 33-64."
         },
@@ -357,7 +359,8 @@
           "expression": "B8/50",
           "confidence": "confirmed",
           "source": [
-            "obdb"
+            "obdb",
+            "own-snaps"
           ],
           "notes": "As 0x0102, cells 65-96. The pack has 96 cells: no cell number above 96 in the captures, and pack voltage is 96 x the cell voltage. 0x010A..0x010C answer with no cells (E-GMP packs use them)."
         },
@@ -378,7 +381,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "46 bytes. Module temperatures SB13..SB19 °C (probes 6-12) and SB43..SB46 °C (probes 13-16) per the WiCAN Ioniq 5/6 profile and evDash E-GMP. Maximum charge/regeneration power [B20:B21]/100 kW, maximum discharge power [B22:B23]/100 kW and remaining energy [B32:B33]*2 Wh per the WiCAN Ioniq 5/6 profile only (evDash E-GMP takes the power limits from 0x0101 B9:B12; OVMS does not read them); the Niro captures fit the power limits (charge limit 38.5 kW at 100 %, discharge limit 182 kW at low SOC). OBDb and OVMS read [B32:B33] as minimum deterioration /10 %, which gives 535-2923 % on these cars, so the energy meaning is the likelier one. From OBDb: cell voltage deviation B24/50 V, SOH [B29:B30]/10 % (100.0 in every OBDb sample, so the scale is untested on a worn pack), display SOC B35/2 %. Shown here: SOH. No per-cell health: B31 is the most deteriorated cell number per OBDb (27 to 46 in the 2023-2026 captures, all at SOH 100 %; 96 on a 2024 EU car at SOH 99.8 %); its meaning is unconfirmed. The energy reading fits the captures with a display SOC: 58.5 kWh at 100 %, 52.8 at 87 %, 46.7 at 81 %. On a 2024 EU car at SOH 99.8 %: about 41.6 kWh at 75 % and 36.2 kWh at 66 % display SOC, about 55 kWh at 100 % against 64.8 kWh nominal, so what the remaining energy value measures (usable energy above a reserve, or another quantity) is open; it is not used for the dashboard or the range."
+          "notes": "46 bytes. Module temperatures SB13..SB19 °C (probes 6-12) and SB43..SB46 °C (probes 13-16) per the WiCAN Ioniq 5/6 profile and evDash E-GMP. Maximum charge/regeneration power [B20:B21]/100 kW, maximum discharge power [B22:B23]/100 kW and remaining energy [B32:B33]*2 Wh per the WiCAN Ioniq 5/6 profile only (evDash E-GMP takes the power limits from 0x0101 B9:B12; OVMS does not read them); the Niro captures fit the power limits (charge limit 38.5 kW at 100 % and 182 kW at 20-25 %, discharge limit 182 kW at 66 % and above and 117.6 kW at 20 %). OBDb and OVMS read [B32:B33] as minimum deterioration /10 %, which gives 535-2923 % on these cars, so the energy meaning is the likelier one. From OBDb: cell voltage deviation B24/50 V, SOH [B29:B30]/10 % (100.0 in every OBDb sample, so the scale is untested on a worn pack), display SOC B35/2 %. Shown here: SOH. No per-cell health: B31 is the most deteriorated cell number per OBDb (27 to 46 in the 2023-2026 captures, all at SOH 100 %; 96 on a 2024 EU car at SOH 99.8 %); its meaning is unconfirmed. The energy reading fits the captures with a display SOC: 58.5 kWh at 100 %, 52.8 at 87 %, 46.7 at 81 %. On a 2024 EU car at SOH 99.8 %: about 41.6 kWh at 75 % and 36.2 kWh at 66 % display SOC, about 55 kWh at 100 % against 64.8 kWh nominal, so what the remaining energy value measures (usable energy above a reserve, or another quantity) is open; it is not used for the dashboard or the range."
         },
         {
           "did": "0x0111",
@@ -489,7 +492,7 @@
             "obdb",
             "own-snaps"
           ],
-          "notes": "Control pilot voltage B10/10 V, CP duty [B11:B12]/10 %, HV voltage [B17:B18]/10 V, SOC B19/2 %, EV max voltage [B24:B25]/10 V, max current [B26:B27]/10 A, AC/DC charge counts [B34:B35]/[B36:B37], AC/DC charge hours [B38:B39]/[B40:B41]. None of the OBDb captures is known to be taken while charging, and the readings of a 2024 EU car were not; on that car SOC 72 % and HV 381.5 V matched the BMS. The charging values themselves have not been checked, so the entry stays reported. Shown here: SOC."
+          "notes": "Control pilot voltage B10/10 V, CP duty [B11:B12]/10 %, HV voltage [B17:B18]/10 V, SOC B19/2 %, EV max voltage [B24:B25]/10 V, max current [B26:B27]/10 A, AC/DC charge counts [B34:B35]/[B36:B37], AC/DC charge hours [B38:B39]/[B40:B41]. Four OBDb 2024 captures show an active pilot (CP 5.9 V, duty 26.4 %) at HV 342 V and SOC 15.5-16 %, and two 0x0101 captures at the same voltage read -9 A, so they look taken while AC charging; the readings of a 2024 EU car were not; on that car SOC 72 % and HV 381.5 V matched the BMS. The charging values themselves have not been checked, so the entry stays reported. Shown here: SOC."
         },
         {
           "did": "0xE004",
@@ -635,7 +638,7 @@
             "obdb",
             "own-snaps"
           ],
-          "notes": "S[B11:B12]/10 degrees. OBDb calls it the absolute wheel angle (NIROEV_WHEEL_ANGLE_ABS) and has a steering wheel angle on 0x730 F010, but the readings here go beyond any road wheel angle: -375 to -383 degrees in the OBDb captures of a parked 2024 car and 24.1 / -69.8 degrees on a 2024 EU car, which fits a steering wheel angle; the zero point is unknown."
+          "notes": "S[B11:B12]/10 degrees. OBDb calls it the absolute wheel angle (NIROEV_WHEEL_ANGLE_ABS) and has a steering wheel angle on 0x730 F010, which the OBDb 2024 car does not answer, but the readings here go beyond any road wheel angle: -375 to -383 degrees in the OBDb captures of a parked 2024 car and 24.1 / -69.8 degrees on a 2024 EU car, which fits a steering wheel angle; the zero point is unknown."
         }
       ],
       "discovered": []
@@ -655,7 +658,7 @@
   ],
   "confidence_levels": {
     "confirmed": "Checked against the dashboard or another known value on a real car: the car this file was tested on, or recordings of real cars published by others",
-    "reported": "Name or formula from one source (a publication or a single own observation), not checked against a known value",
+    "reported": "Name or formula from published sources or a single own observation, not checked against a known value",
     "unverified": "Identifier responds; the formula is an educated guess",
     "unknown": "Identifier responds; the meaning of the bytes is not worked out"
   },

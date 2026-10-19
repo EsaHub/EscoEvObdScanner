@@ -1,11 +1,11 @@
 {
   "schema": 2,
-  "version": 1,
+  "version": 2,
   "license": "CC-BY-4.0",
   "attribution": "Esco EV OBD Scanner car files by Esa Pelttari, CC BY 4.0, https://github.com/EsaHub/EscoEvObdScanner",
   "platform": {
     "name": "Stellantis e-CMP",
-    "cars": "Opel Mokka-e, Corsa-e; Peugeot e-208, e-2008; Citroën e-C4; DS 3 E-Tense (tested: 2023 Mokka-e)",
+    "cars": "Opel Mokka-e, Corsa-e; Peugeot e-208, e-2008; Citroën e-C4; DS 3 E-Tense (tested: 2023 Mokka-e; once on a 2023 Citroën e-C4)",
     "elm_protocol": "6",
     "probe_from": "0x600",
     "main_range": [
@@ -430,7 +430,7 @@
             "wican-fw#278",
             "own-scan"
           ],
-          "notes": "Only updates with ignition on. An early reading: raw 0x8996 = 68.79 %, dashboard showed 68 %."
+          "notes": "wican-fw#278 reports SOC only with ignition on (Opel Astra). It rose 46.73 -> 48.76 % in the first 6 min of the AC charge of 2026-10-14 (watch_bms_vcu_20261014_215130). An early reading: raw 0x8996 = 68.79 %, dashboard showed 68 %."
         },
         {
           "did": "0xD42E",
@@ -443,7 +443,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "Three 32-bit counters. Word 0: energy into the battery including regeneration, 1/16 kWh. Over a DC fast charge it grew 23.06 kWh against 23.68 kWh on the charger (2026-10-11, 27.6 -> 83.6 %, snap_20261011_082224 -> _091220), and 0.375 kWh over a 9 km drive without charging (watch_bms_20261011_091702). Word 1: energy out of the battery, 1/16 kWh: +68.4 kWh over 341 km is 20.1 kWh/100 km against 19.5 on the trip computer (2026-10-05 to 2026-10-10); +2.06 kWh on the 9 km drive; +1 count over the 2026-10-05/06 charge (+134 over the night of 2026-10-02/03, cause not known). Word 2: the odometer 0xD49C + 9 km in all 39 snaps. Word 0 reads 0 after the car wakes until it has driven or charged (26 of 83 snaps 2026-09-29 to 2026-10-11, also 15 min in Ready standing on 2026-10-12); word 1 never reads 0. The dashboard then leaves the energy into the battery empty. The dashboard reads words 0 and 1 as lifetime_charged_kwh and lifetime_discharged_kwh.",
+          "notes": "Three 32-bit counters. Word 0: energy into the battery including regeneration, 1/16 kWh. Over a DC fast charge it grew 23.06 kWh against 23.68 kWh on the charger (2026-10-11, 27.6 -> 83.6 %, snap_20261011_082224 -> _091220), and 0.375 kWh over a 9 km drive without charging (watch_bms_20261011_091702). Word 1: energy out of the battery, 1/16 kWh: +68.4 kWh over 341 km is 20.1 kWh/100 km against 19.5 on the trip computer (2026-10-05 to 2026-10-10); +2.00 kWh over the 9 km drive (09:17-09:33) and +2.31 kWh over the whole recording to 09:55; +1 count over the 2026-10-05/06 charge (+134 over the night of 2026-10-02/03, cause not known). Word 2: the odometer 0xD49C + 9 km in all 39 snaps. Word 0 reads 0 after the car wakes until it has driven or charged (26 of 83 snaps 2026-09-29 to 2026-10-11, also 15 min in Ready standing on 2026-10-12); word 1 never reads 0. The dashboard then leaves the energy into the battery empty. The dashboard reads words 0 and 1 as lifetime_charged_kwh and lifetime_discharged_kwh.",
           "samples": [
             {
               "ts": "2026-09-26T13:47:33.3469480Z",
@@ -473,7 +473,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "With the contactors closed it reads 0.31 V below the pack voltage 0xD815 (median of 62 standing snaps 2026-09-29 to 2026-10-11, -1.2 to +0.7 V) and 0.13 V below the VCU HV bus voltage 0xD8E6. With the contactors open (0xD813 = 0) it read 79.5 V (2026-09-29 18:56), 37.7 V (2026-10-05 21:30) and 53.6 V (2026-10-11 09:12), and 52.7 V not in Ready in the scan of 2026-09-26, while 0xD815 stayed at the pack voltage (407.2 V on 2026-10-05, 428.1 V on 2026-10-11) and 0xD434 and 0xD8E6 read about 12 V. Which node keeps this residual voltage is open."
+          "notes": "With the contactors closed it reads 0.31 V below the pack voltage 0xD815 (median of 62 standing snaps 2026-09-29 to 2026-10-11, -1.2 to +0.7 V) and a median 0.125 V above the VCU HV bus voltage 0xD8E6, which reads in whole volts (89 snaps 2026-09-29 to 2026-10-15 with both over 300 V; -2.1 to +1.4 V standing, -6 to +2.8 V while driving). With the contactors open (0xD813 = 0) it read 79.5 V (2026-09-29 18:56), 37.7 V (2026-10-05 21:30) and 53.6 V (2026-10-11 09:12), and 52.7 V not in Ready in the scan of 2026-09-26, while 0xD815 stayed at the pack voltage (407.2 V on 2026-10-05, 428.1 V on 2026-10-11) and 0xD434 and 0xD8E6 read about 12 V. Which node keeps this residual voltage is open."
         },
         {
           "did": "0xD434",
@@ -750,7 +750,7 @@
             "battery-emulator",
             "own-snaps"
           ],
-          "notes": "108 x 2 bytes, /16 = %, one per cell (the expression shows the first). Name from Battery-Emulator (ECMP-BATTERY), which polls it on real e-CMP packs. Its lowest value equals the pack SOH 0xD860 exactly (0x060A = 96.625 %, cells 33 and 101, 2026-10-03), which confirms the /16 scale.",
+          "notes": "108 x 2 bytes, /16 = %, one per cell (the expression shows the first). Name from Battery-Emulator (ECMP-BATTERY), which polls it on real e-CMP packs. Its lowest value equals the pack SOH 0xD860 exactly (0x060A = 96.625 %, cells 33 and 101, 2026-10-03), which confirms the /16 scale. On 2026-10-19 every cell read exactly 0.125 lower (lowest 96.5 %, again cells 33 and 101, the lowest in every reading since 2026-09-29; average 99.18 % against 99.30 %) and 0xD860 read 96.5 %.",
           "samples": [
             {
               "ts": "2026-09-26T13:47:54.9220004Z",
@@ -801,7 +801,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "Listed as SOC by wican-fw#278 without an expression. Same /512 scale as 0xD410 but moves on its own: equal raw bytes (0x8996) in one reading, 0x88F7 = 68.48 % some minutes later (scan of the 0xD8xx range, 2026-09-26 10:30 UTC). OBDb Peugeot-208 gives it as 208_HVBAT_SOC_RAW, /512. Checked against 0xD410 in 83 snaps 2026-09-29 to 2026-10-11 over 27.6-99.9 %: slope 0.998, rms 0.11 points, at most 0.42 apart. It runs ahead of 0xD410: about 0.25 points higher while DC charging (2026-10-11), up to 0.4 points lower while driving (2026-10-07), consistent with an unfiltered value."
+          "notes": "Listed as SOC by wican-fw#278 without an expression. Same /512 scale as 0xD410 but moves on its own: equal raw bytes (0x8996) in one reading, 0x88F7 = 68.48 % some minutes later (scan of the 0xD8xx range, 2026-09-26 10:30 UTC). OBDb Peugeot-208 gives it as 208_HVBAT_SOC_RAW, /512. Checked against 0xD410 in 83 snaps 2026-09-29 to 2026-10-11 over 27.6-99.9 %: slope 0.998, rms 0.11 points, at most 0.43 apart. It runs ahead of 0xD410: about 0.25 points higher while DC charging (2026-10-11), up to 0.4 points lower while driving (2026-10-07), consistent with an unfiltered value."
         },
         {
           "did": "0xD815",
@@ -820,7 +820,7 @@
             "battery-emulator",
             "own-scan"
           ],
-          "notes": "2026-09-26 10:30 UTC (scan of the 0xD8xx range, before the readings at 41 % that afternoon): raw 0x19ED = 414.81 V with cells at 3.82-3.84 V. 414.81 / 3.83 = 108.3, consistent with 108 cells in series. Battery-Emulator adds 80 V for its 'MysteryVan' pack; OBDb and evDash /16 fit this car."
+          "notes": "2026-09-26 10:30 UTC (scan of the 0xD8xx range, before the readings at 41 % that afternoon): raw 0x19ED = 414.81 V with cells at 3.82-3.84 V. 414.81 / 3.83 = 108.3, consistent with 108 cells in series. Battery-Emulator reads it as 0.1 V steps plus 80 V, only for its 'MysteryVan' pack; OBDb and evDash /16 fit this car."
         },
         {
           "did": "0xD816",
@@ -898,7 +898,7 @@
             "battery-emulator",
             "own-snaps"
           ],
-          "notes": "3-byte response, [B5:B6]/16 (evDash reads the same bytes with /16); owner-reported values 94.6 and 98.1 are 1/16 steps (94.625, 98.125) rounded to one decimal. Equals the lowest per-cell health in 0xD4B5 exactly (0x060A = 96.625 %, cells 33 and 101, snaps of 2026-10-03; cell average 99.3 %): the pack SOH is the weakest cell. The car does not display SOH. Battery-Emulator calls it PID_ENERGY_CAPACITY and uses the raw value as Wh, only for the 50/75 kWh 'MysteryVan' pack; on this car it equals the weakest cell health, so SOH."
+          "notes": "3-byte response, [B5:B6]/16 (evDash reads the same bytes with /16); owner-reported values 94.6 and 98.1 are 1/16 steps (94.625, 98.125) rounded to one decimal. Equals the lowest per-cell health in 0xD4B5 exactly (0x060A = 96.625 %, cells 33 and 101, snaps of 2026-10-03; cell average 99.3 %): the pack SOH is the weakest cell. Still equal on 2026-10-19: 96.5 % (0x0608), every cell 0.125 lower, cells 33 and 101 still the lowest. The car does not display SOH. Battery-Emulator calls it PID_ENERGY_CAPACITY and uses the raw value as Wh, only for the 50/75 kWh 'MysteryVan' pack; on this car it equals the weakest cell health, so SOH."
         },
         {
           "did": "0xD865",
@@ -916,7 +916,7 @@
             "obdb-peugeot-208",
             "own-snaps"
           ],
-          "notes": "Divisor 64 (as evDash), checked by a charge test 2026-09-26: SOC 40.29 -> 58.77 % raised it by 528 counts = 8.25 kWh, against 8.26 kWh expected (18.47 % of 46.3 kWh net x 96.6 % SOH); /56 or /50 would give 9.4 or 10.6 kWh. It is the BMS's estimate of energy left and follows SOC: value / SOC = 41.1 and 41.0 kWh at 81 % and 61 % (2026-10-02), 40.4-41.4 kWh in all snaps 2026-09-29 to 2026-10-04, 40.0 and 40.3 kWh on 2026-10-05/06 (pack 12-13 °C). Full: 41.02 kWh at 99.9 % on 2026-10-03, 40.28 kWh at 99.9 % on 2026-10-06.",
+          "notes": "Divisor 64 (as evDash), checked by a charge test 2026-09-26: SOC 40.29 -> 58.77 % raised it by 528 counts = 8.25 kWh, against 8.26 kWh expected (18.47 % of 46.3 kWh net x 96.6 % SOH); /56 or /50 would give 9.4 or 10.6 kWh. It is the BMS's estimate of energy left and follows SOC: value / SOC = 41.1 and 41.0 kWh at 81 % and 61 % (2026-10-02), 40.4-41.4 kWh in all snaps 2026-09-29 to 2026-10-04, 40.0 and 40.3 kWh on 2026-10-05/06 (pack 12-13 °C). Full: 41.02 kWh at 99.9 % on 2026-10-03, 40.28 kWh at 99.9 % on 2026-10-06. Lower when cold: 37.53 kWh at 96.55 % (2026-10-10, pack 4-7 °C), 36.89-37.16 kWh at 95-97 % (2026-10-13, pack minimum 4 °C). Over the AC charge of 2026-10-14/15 (and the 30 km drive after it) it rose 17.94 -> 34.53 kWh while 0xD410 rose 46.62 -> 85.80 %.",
           "samples": [
             {
               "hex": "092D"
@@ -936,7 +936,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "8 in Ready, 0 when on but not Ready, with or without the charge cable. The same value on the VCU, the BMS and the charger, so a vehicle-wide state. The owner checked 8 = Ready against the car. With the car off the BMS does not answer at all (2026-10-03 06:13). 2026-10-03: snaps on (not Ready) with and without the charge cable, and seven in Ready. Own scan 2026-09-26.",
+          "notes": "8 in Ready, 0 when on but not Ready, with or without the charge cable. The same value on the VCU, the BMS and the charger in every snap that read all three (92, 2026-09-29 to 2026-10-15), except 2026-10-14 18:34 (VCU and BMS 8, charger 0 read 23 s after the VCU). The owner checked 8 = Ready against the car. With the car off the BMS does not answer at all (2026-10-03 06:13). 2026-10-03: snaps on (not Ready) with and without the charge cable, and seven in Ready. Own scan 2026-09-26. One snap noted as Ready read 0 (2026-10-11 17:15, 0xD813 also 0).",
           "samples": [
             {
               "ts": "2026-09-26T10:30:09.1464882Z",
@@ -959,7 +959,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "Works on Corsa-e. Reported as not working on at least one e-208. 2026-09-26 10:30 UTC (scan of the 0xD8xx range): 3820 mV, consistent with pack voltage / 108 cells. At rest (battery current within 3 A) it equals the minimum of the 108 cells of 0xD440 within 2 mV in 44 of 48 snaps to 2026-10-13; under load the two differ by up to about 30 mV, as the array is read a moment later."
+          "notes": "wican-fw#278 lists it as min_mV; one user (car model not named) reported min_mV and max_mV not working. 2026-09-26 10:30 UTC (scan of the 0xD8xx range): 3820 mV, consistent with pack voltage / 108 cells. At rest (battery current within 3 A) it equals the minimum of the 108 cells of 0xD440 within 2 mV in 44 of 48 snaps to 2026-10-13; under load the two differ by up to 37 mV, as the array is read a moment later."
         },
         {
           "did": "0xD870",
@@ -996,7 +996,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "Battery-Emulator names it PID_MAX_CHARGE_10S. [B4:B7]/128-500 kW (OBDb's scale raw×1953/250000−500 is the same within 0.01 %). Negative in the charging direction. Own snaps 2026-10-05 to 10-11: -153 kW at 28 % SOC and 6 °C, shrinking as the battery fills (-132 kW at 67 %, -82 kW at 84 %, -32 to -38 kW at 96-100 %), as a charge limit does, and never smaller in size than the 30 s limit 0xD872. Regeneration of -67.7 kW (-155 A at 436.7 V) on 2026-10-04 08:15:52 stayed within the -82 kW it gave then; DC charging on 2026-10-11 08:31-09:04 drew 29-35 kW against -153 to -90 kW."
+          "notes": "Battery-Emulator names it PID_MAX_CHARGE_10S. [B4:B7]/128-500 kW (OBDb's scale raw×1953/250000−500 is the same within 0.01 %). Negative in the charging direction. Own snaps 2026-10-05 to 10-11: -153 kW at 28 % SOC and 6 °C, shrinking as the battery fills (-132 kW at 67 %, -82 kW at 84 %, -32 to -38 kW at 96-100 %), as a charge limit does, and never smaller in size than the 30 s limit 0xD872. Regeneration of -67.7 kW (-155 A at 436.7 V) on 2026-10-04 08:15:52 stayed within the -82 kW it gave then; DC charging on 2026-10-11 08:31-09:04 drew 29-35 kW against -153 to -90 kW. evDash reads it as raw/1000 kW without offset, which does not fit these values. The live value max_charge_power reads it as 500-[B4:B7]/128, the same limit as a positive number."
         },
         {
           "did": "0xD872",
@@ -1044,7 +1044,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "Battery-Emulator names it PID_MAX_DISCHARGE_10S. [B4:B7]/128-500 kW (OBDb's scale raw×1953/250000−500 is the same within 0.01 %). Own snaps 2026-10-05 to 10-11: 138 kW at 28 % SOC and 6 °C, rising with SOC and temperature to a ceiling of exactly 160.0 kW (raw 84480) at 77-100 % SOC with the pack at 12 °C or more. Drives on 2026-10-04 drew up to 114.1 kW (273.6 A), within it."
+          "notes": "Battery-Emulator names it PID_MAX_DISCHARGE_10S. [B4:B7]/128-500 kW (OBDb's scale raw×1953/250000−500 is the same within 0.01 %). Own snaps 2026-10-05 to 10-11: 138 kW at 28 % SOC and 6 °C, rising with SOC and temperature to a ceiling of exactly 160.0 kW (raw 84480): reached in 26 snaps at 73-100 % SOC with the pack average at 10-17 °C (2026-10-02 to 2026-10-15); not reached at 72-76 % and 13 °C (157.2-158.9 kW, 2026-09-29), at 79 % and 11 °C (159.4 kW, 2026-10-07) or at 95-97 % and 4-5 °C (158.9-159.3 kW, 2026-10-10 and 2026-10-13). Drives on 2026-10-04 drew up to 114.1 kW (273.6 A), within it. evDash reads it as raw/1000 kW without offset, which does not fit these values."
         },
         {
           "did": "0xD874",
@@ -1234,7 +1234,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "27 blocks x 2 bytes, /16 = % (0x0640 = 100 %), one per block (the expression shows the first). evDash takes the minimum as SOH. 2026-09-26: lowest 0x0611 = 97.1 %, unchanged in all snaps to 2026-10-06; the pack SOH 0xD860 reads 96.625 %, so the minimum here is 0.4 points above it.",
+          "notes": "27 blocks x 2 bytes, /16 = % (0x0640 = 100 %), one per block (the expression shows the first). evDash takes the minimum as SOH. 2026-09-26 to 2026-10-07: 15 blocks filled, lowest 0x0611 = 97.1 %, 0.4 points above the pack SOH 0xD860 (96.625 %). From 2026-10-09 a 16th block reads 0x060A = 96.625 %, so the minimum equals 0xD860 (all snaps to 2026-10-15).",
           "samples": [
             {
               "ts": "2026-09-26T13:47:32.0644106Z",
@@ -1558,7 +1558,7 @@
             "battery-emulator",
             "own-scan"
           ],
-          "notes": "Name from Battery-Emulator (github.com/dalathegreat/Battery-Emulator, ECMP-BATTERY), which polls it on real e-CMP packs; scale from OBDb Peugeot-208. The raw value is in kOhm. Own data: 13161-60000 kOhm; 60000 is also the ceiling of 0xD87C, so likely capped at 60 MOhm. The saved samples give 41707 and 40382 kOhm.",
+          "notes": "Name from Battery-Emulator (github.com/dalathegreat/Battery-Emulator, ECMP-BATTERY), which polls it on real e-CMP packs; scale from OBDb Peugeot-208. The raw value is in kOhm. Own data: 13161-60000 kOhm, except 2639 kOhm throughout the DC charge of 2026-10-11 08:31-09:04 (0xD87C read the same, 0xD87B 60000); 60000 is also the ceiling of 0xD87C, so likely capped at 60 MOhm. The saved samples give 41707 and 40382 kOhm.",
           "samples": [
             {
               "ts": "2026-09-26T13:47:45.4862770Z",
@@ -1752,7 +1752,7 @@
             "battery-emulator",
             "own-snaps"
           ],
-          "notes": "Name from Battery-Emulator (github.com/dalathegreat/Battery-Emulator, ECMP-BATTERY), which polls it on real e-CMP packs; scale not given there. Own data 2026-09-29 to 2026-10-11: 0 with the contactors open, 2 with them closed. They are closed in Ready, also after leaving Ready and while the charge cable is in (the HV bus 0xD433 then reads the pack voltage); open at the first switch-on before Ready (2026-09-29 18:56, 2026-10-05 21:30) and after the DC charge ended (2026-10-11 09:12).",
+          "notes": "Name from Battery-Emulator (github.com/dalathegreat/Battery-Emulator, ECMP-BATTERY), which polls it on real e-CMP packs; scale not given there. Own data 2026-09-29 to 2026-10-15: 0 with the contactors open, 2 with them closed, except 2026-10-11 17:15: 0, read 10-14 s after 0xD44C/0xD44D 1, 0xD452/0xD453 3 and 0xD433 439.4 V in the same snap, with 0xD866 0; the VCU read its HV bus 0xD8E6 at 12 V 38 s later. They are closed in Ready, also after leaving Ready and while the charge cable is in (the HV bus 0xD433 then reads the pack voltage); open at the first switch-on before Ready (2026-09-29 18:56, 2026-10-05 21:30) and after the DC charge ended (2026-10-11 09:12).",
           "samples": [
             {
               "ts": "2026-09-26T10:29:55.8601463Z",
@@ -1924,7 +1924,7 @@
             "battery-emulator",
             "own-scan"
           ],
-          "notes": "2026-09-26: 16633 kOhm. Reads at most 60000, like 0xD47A and 0xD87B, so likely capped at 60 MOhm."
+          "notes": "2026-09-26: 16633 kOhm. Reads at most 60000, like 0xD47A and 0xD87B, so likely capped at 60 MOhm. Read 2639 kOhm throughout the DC charge of 2026-10-11 08:31-09:04, the same as 0xD47A."
         },
         {
           "did": "0xD87F",
@@ -2070,7 +2070,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "Above about 40 % SOC follows 0xD410 lower, the gap growing with SOC: 2.5 and 3.5 points on 2026-09-26 (37.8 % vs 40.3 % and 55.3 % vs 58.8 %, dashboard 59 %), 3.4-9.0 points in the snaps of 2026-09-29 to 2026-10-06 (ratio 0.94 at 60 %, 0.91 at 100 %; 90.89 % vs 99.94 % on 2026-10-06). Within 0.2 points of 0xD863 in 20 of 39 snaps, at most 0.96 apart. OBDb and Battery-Emulator call it the minimum cell capacity (B4/2 %, the same number), which would make it the SOC of the weakest cell rather than SOC without buffer; which it is is open. Over the DC charge of 2026-10-11 08:31-09:04 (41.1 Ah integrated from 0xD816) 0xD410 rose 41.10 points, 0xD862 34.33, 0xD863 34.42 and 0xD413 35.28: about 1.2 Ah per point against 1.0 Ah for 0xD410, which fits SOC on the gross capacity with 0xD410 on the usable window. At low SOC they read above 0xD410 (2026-10-11: 0xD862 29.70 vs 27.64 % at 08:22, 40.50 vs 38.22 % at 07:46), the lines crossing at about 40 % in that session. This rests on one DC session."
+          "notes": "Above about 40 % SOC follows 0xD410 lower, the gap growing with SOC: 2.5 and 3.5 points on 2026-09-26 (37.8 % vs 40.3 % and 55.3 % vs 58.8 %, dashboard 59 %), 3.4-9.0 points in the snaps of 2026-09-29 to 2026-10-06 (ratio 0.94 at 60 %, 0.91 at 100 %; 90.89 % vs 99.94 % on 2026-10-06). Within 0.2 points of 0xD863 in 20 of 39 snaps, at most 0.96 apart. OBDb and Battery-Emulator call it the minimum cell capacity (B4/2 %, the same number), which would make it the SOC of the weakest cell rather than SOC without buffer; which it is is open. Over the DC charge of 2026-10-11 08:31-09:04 (41.1 Ah integrated from 0xD816) 0xD410 rose 41.10 points, 0xD862 34.33, 0xD863 34.42 and 0xD413 35.28: about 1.2 Ah per point against 1.0 Ah for 0xD410, which fits SOC on the gross capacity with 0xD410 on the usable window. At low SOC they read above 0xD410 (2026-10-11: 0xD862 29.70 vs 27.64 % at 08:22, 40.50 vs 38.22 % at 07:46), the lines crossing at about 40 % in that session. The overnight AC charge of 2026-10-14/15, with a 30 km drive before the second snap, gave the same ratio: 0xD410 +39.18 points, 0xD862 +32.72, 0xD863 +32.78, 0xD413 +32.93 (snap_20261014_214846 -> snap_20261015_081309)."
         },
         {
           "did": "0xD425",
@@ -2131,7 +2131,7 @@
           "source": [
             "own-snaps"
           ],
-          "notes": "Same scale as the battery current 0xD816. In 39 snaps (2026-09-29 to 2026-10-06) it differs from it by -15.3 to +7.7 A, within 3 A in most. With the contactors open it reads +2.3 and +3.1 A while 0xD816 reads 0 (2026-09-29 18:56, 2026-10-05 21:30), and it takes only 14 distinct values in steps of about 0.84 A, so it is coarse and offset rather than a copy of 0xD816. 0xD449 is a third current reading (confirmed). The fit over 61 snaps standing, charging and with the contactors open (2026-09-29 to 2026-10-11) gives slope 0.99 and a median of +0.94 A above 0xD816, with a zero offset of +1 to +3 A and steps of about 0.84 A: possibly a coarse second current sensor. DC charging 2026-10-11: -85.19 vs -87.02 A (08:31), -64.73 vs -66.61 A (09:04).",
+          "notes": "Same scale as the battery current 0xD816. In 39 snaps (2026-09-29 to 2026-10-06) it differs from it by -15.3 to +7.7 A, within 3 A in most. With the contactors open it reads +2.3 and +3.1 A while 0xD816 reads 0 (2026-09-29 18:56, 2026-10-05 21:30), and it takes only 14 distinct values in steps of about 0.84 A, so it is coarse and offset rather than a copy of 0xD816. 0xD449 is a third current reading (confirmed). The fit over 61 snaps standing, charging and with the contactors open (2026-09-29 to 2026-10-11) gives slope 0.99 and a median of +0.94 A above 0xD816, with a zero offset of +1 to +3 A and steps of about 0.84 A: possibly a coarse second current sensor. DC charging 2026-10-11: -85.19 vs -87.02 A (08:31), -64.73 vs -66.61 A (09:04). During the AC charge watch of 2026-10-14 it averaged -13.2 A against -15.3 A on 0xD816 (watch_bms_vcu_20261014_215130).",
           "samples": [
             {
               "ts": "2026-09-26T13:47:37.8459316Z",
@@ -2157,7 +2157,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "Above about 40 % SOC follows below 0xD410, the gap growing with SOC: 3.3-5.3 points on 2026-09-26 (37.0 / 53.5 / 48.7 / 45.6 % vs 40.3 / 58.8 / 53.2 / 49.8 %), 5.0-10.5 points in the snaps of 2026-09-29 to 2026-10-06 (89.48 % vs 99.94 % on 2026-10-06). Meaning open. Over the DC charge of 2026-10-11 08:31-09:04 (41.1 Ah integrated from 0xD816) 0xD410 rose 41.10 points, 0xD862 34.33, 0xD863 34.42 and 0xD413 35.28: about 1.2 Ah per point against 1.0 Ah for 0xD410, which fits SOC on the gross capacity with 0xD410 on the usable window. At low SOC they read above 0xD410 (2026-10-11: 0xD862 29.70 vs 27.64 % at 08:22, 40.50 vs 38.22 % at 07:46), the lines crossing at about 40 % in that session. This rests on one DC session."
+          "notes": "Above about 40 % SOC follows below 0xD410, the gap growing with SOC: 3.3-5.3 points on 2026-09-26 (37.0 / 53.5 / 48.7 / 45.6 % vs 40.3 / 58.8 / 53.2 / 49.8 %), 5.0-10.5 points in the snaps of 2026-09-29 to 2026-10-06 (89.48 % vs 99.94 % on 2026-10-06). Meaning open. Over the DC charge of 2026-10-11 08:31-09:04 (41.1 Ah integrated from 0xD816) 0xD410 rose 41.10 points, 0xD862 34.33, 0xD863 34.42 and 0xD413 35.28: about 1.2 Ah per point against 1.0 Ah for 0xD410, which fits SOC on the gross capacity with 0xD410 on the usable window. At low SOC they read above 0xD410 (2026-10-11: 0xD862 29.70 vs 27.64 % at 08:22, 40.50 vs 38.22 % at 07:46), the lines crossing at about 40 % in that session. The overnight AC charge of 2026-10-14/15, with a 30 km drive before the second snap, gave the same ratio: 0xD410 +39.18 points, 0xD862 +32.72, 0xD863 +32.78, 0xD413 +32.93 (snap_20261014_214846 -> snap_20261015_081309)."
         },
         {
           "did": "0xD863",
@@ -2173,7 +2173,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "Follows SOC, slightly above 0xD862 (38.7 / 55.0 / 50.2 / 47.2 %). See 0xD862. Own scan 2026-09-26. Over the DC charge of 2026-10-11 08:31-09:04 (41.1 Ah integrated from 0xD816) 0xD410 rose 41.10 points, 0xD862 34.33, 0xD863 34.42 and 0xD413 35.28: about 1.2 Ah per point against 1.0 Ah for 0xD410, which fits SOC on the gross capacity with 0xD410 on the usable window. At low SOC they read above 0xD410 (2026-10-11: 0xD862 29.70 vs 27.64 % at 08:22, 40.50 vs 38.22 % at 07:46), the lines crossing at about 40 % in that session. This rests on one DC session. 0xD863 - 0xD862 stays 1.3-2.1 points in 83 snaps to 2026-10-11; 0xD413 lies between them in most."
+          "notes": "Follows SOC, slightly above 0xD862 (38.7 / 55.0 / 50.2 / 47.2 %). See 0xD862. Own scan 2026-09-26. Over the DC charge of 2026-10-11 08:31-09:04 (41.1 Ah integrated from 0xD816) 0xD410 rose 41.10 points, 0xD862 34.33, 0xD863 34.42 and 0xD413 35.28: about 1.2 Ah per point against 1.0 Ah for 0xD410, which fits SOC on the gross capacity with 0xD410 on the usable window. At low SOC they read above 0xD410 (2026-10-11: 0xD862 29.70 vs 27.64 % at 08:22, 40.50 vs 38.22 % at 07:46), the lines crossing at about 40 % in that session. The overnight AC charge of 2026-10-14/15, with a 30 km drive before the second snap, gave the same ratio: 0xD410 +39.18 points, 0xD862 +32.72, 0xD863 +32.78, 0xD413 +32.93 (snap_20261014_214846 -> snap_20261015_081309). 0xD863 - 0xD862 stays 1.3-2.1 points in 83 snaps to 2026-10-11; 0xD413 lies between them in most."
         },
         {
           "did": "0xD450",
@@ -3801,7 +3801,7 @@
       },
       "request": "0x6A2",
       "response": "0x682",
-      "notes": "The VCU (vehicle control unit) according to evDash and the PSA AEE2010 diagnostic ID list. PyPSADiag names the ECU at 0x6A2/0x682 E_VCU_CTE1. The full ECU sweep of 2026-09-26 also saw 0x682 answer while probing 0x7E0, right after the broadcast address 0x7DF: this ECU's late answer to the broadcast, not another ECU. 0xE031-0xE03A: ten records of the same layout that shift one step (0xE031 newest) after a charge (2026-10-09 to 2026-10-10), not after a drive: a log of the last ten charges; the fields are not worked out. It does not answer TesterPresent (3E 00): ECU searches find it through the read of 0xF186.",
+      "notes": "The VCU (vehicle control unit) according to evDash and the PSA AEE2010 diagnostic ID list. PyPSADiag names the ECU at 0x6A2/0x682 E_VCU_CTE1. The full ECU sweep of 2026-09-26 also saw 0x682 answer while probing 0x7E0, right after the broadcast address 0x7DF: this ECU's late answer to the broadcast, not another ECU. 0xE031-0xE03A: ten records of the same layout, 0xE031 newest; a new record pushes the older ones down and the oldest drops out of 0xE03A. Records added between consecutive snaps: 0 over a 4 km drive (2026-10-09 18:09-18:18) and over the DC charge (2026-10-11 08:22-09:12); 1 from 2026-10-09 18:37 to 2026-10-10 06:46 (AC charge, odometer +6 km); 5 to 2026-10-11 07:46; 4 over a 28 km drive without charging (2026-10-11 07:48-08:22); 5 to 2026-10-11 17:11; 9 to 2026-10-13 06:30; 10 or more to 2026-10-14 18:34; 4 from 2026-10-14 21:48 to 2026-10-15 08:13 (overnight AC charge, then a 30 km drive). Records come with drives as well as charges. What adds a record, and the fields, are not worked out. It does not answer TesterPresent (3E 00): ECU searches find it through the read of 0xF186.",
       "scanned": [
         {
           "range": "0x0000-0xCFFF",
@@ -3860,7 +3860,7 @@
             "obdb-peugeot-208",
             "own-watch"
           ],
-          "notes": "Scale from evDash. Speed integrated over drives against the odometer (whole km only): 7.6 km vs 7 km (2026-09-26); 28.8 and 28.4 km vs 28 km on two drives (2026-10-02). OBDb Peugeot-208 gives /10 (208_VSS), which would mean 1414 km/h at the 2026-10-11 maximum raw 14138; evDash ×0.00794 gives 112 km/h. The meaning is confirmed; the odometer check (whole km, ±1 km over 28 km) cannot tell the factor ×0.00794 from /128 (1.6 % apart)."
+          "notes": "Scale from evDash. Speed integrated over drives against the odometer (whole km only): 7.6 km vs 7 km (2026-09-26); 28.8 and 28.4 km vs 28 km on two drives (2026-10-02). OBDb Peugeot-208 gives /100 (208_VSS), which would mean 141 km/h at the 2026-10-11 maximum raw 14138 and 36.2 and 35.7 km over the two 28 km drives; evDash ×0.00794 gives 112 km/h. The meaning is confirmed; the odometer check (whole km, ±1 km over 28 km) cannot tell the factor ×0.00794 from /128 (1.6 % apart)."
         },
         {
           "did": "0xD403",
@@ -3876,7 +3876,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "2026-09-29: 1 with the brake pedal pressed (in P and in D), 0 released; the selector made no difference. Also 1 on 2026-10-02 17:49 (Ready, P) together with 0xD463, 0xD85B and 0xD85F, and on 2026-10-03 06:26 (switching to Ready) as the only one of 0xD403, 0xD463, 0xD4B7 and 0xD85F. 2026-10-11 16:49-16:50 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 01 with the brake pedal pressed and 00 released over six presses in P and D, in step with 0xD463, 0xD4B7 and 0xD85B during this watch.",
+          "notes": "2026-09-29: 1 with the brake pedal pressed (in P and in D), 0 released; the selector made no difference. Also 1 on 2026-10-02 17:49 (Ready, P) together with 0xD463, 0xD85B and 0xD85F, and on 2026-10-03 06:26 (switching to Ready) as the only one of 0xD403, 0xD463, 0xD4B7 and 0xD85F. 2026-10-11 16:49-17:03 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 01 with the brake pedal pressed and 00 released over six presses in P and D, in step with 0xD463 and 0xD4B7 during this watch (0xD85B also, except 02 for about 4 s of the last press).",
           "samples": [
             {
               "ts": "2026-09-26T13:51:12.6775172Z",
@@ -3899,7 +3899,7 @@
             "obdb-peugeot-208",
             "own-watch"
           ],
-          "notes": "Name published by others: GoingElectric t=80016 tested it on a Toyota Proace City EV, without a scale; OBDb Peugeot-208 gives it as % and also lists it on the MCU and the BMS. It reads 0 at rest and with the pedal released. While accelerating the raw value goes 0-199 (199 on 2026-10-07 19:01, 99 at 19:08, 133 on 2026-10-09, watch). Raw 191-199 at peak torque (0xD8D0 about 230-260 Nm, 2026-10-07 watch) and 0 whenever the torque is negative; odd values occur (70 of 164 changes). 2026-10-11 16:50 (watch_vcu_ecu6b5_obc_bms_20261011_164848), standing in P: raw 199 with the pedal fully down, 95 at about half, 0 released, so B4/2 % (full pedal 99.5 %).",
+          "notes": "Name published by others: GoingElectric t=80016 tested it on a Toyota Proace City EV, without a scale; OBDb Peugeot-208 does not list it on the VCU; it lists it on the MCU 0x6A6 and the BMS 0x6B4 as % (raw byte) and on 0x6A8 as /128. It reads 0 at rest and with the pedal released. While accelerating the raw value goes 0-199 (199 on 2026-10-07 19:01, 99 at 19:08, 133 on 2026-10-09, watch). Raw 191-199 at peak torque (0xD8D0 about 230-260 Nm, 2026-10-07 watch) and 0 whenever the torque is negative; odd values occur (70 of 164 changes). 2026-10-11 16:50 (watch_vcu_ecu6b5_obc_bms_20261011_164848), standing in P: raw 199 with the pedal fully down, 95 at about half, 0 released, so B4/2 % (full pedal 99.5 %).",
           "samples": [
             {
               "ts": "2026-09-26T13:51:13.2698968Z",
@@ -3946,7 +3946,7 @@
             "wican-fw#278",
             "own-snaps"
           ],
-          "notes": "Raw 0x0C = 12 °C matched the dashboard (2026-09-26). Read as signed (SB4) so that a sub-zero reading in two's complement (0xFB = -5 °C) is not taken for 251 °C. 7-14 °C in the snaps of 2026-09-29 to 2026-10-06; down to -3 °C on 2026-10-11 07:46.",
+          "notes": "Raw 0x0C = 12 °C matched the dashboard (2026-09-26). On 2026-10-14 18:34 it read 5 °C (0xD414 also 5) while the dashboard showed 6 °C. Read as signed (SB4) so that a sub-zero reading in two's complement (0xFB = -5 °C) is not taken for 251 °C. 7-14 °C in the snaps of 2026-09-29 to 2026-10-06; down to -3 °C on 2026-10-11 07:46.",
           "samples": [
             {
               "hex": "0A"
@@ -3967,7 +3967,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "2026-09-29: 1 with the brake pedal pressed (in P and in D), 0 released; the selector made no difference. Also 1 on 2026-10-02 17:49 (Ready, P) together with 0xD403; 0 on 2026-10-03 06:26 (switching to Ready) when 0xD403 read 1. 2026-10-11 16:49-16:50 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 01 with the brake pedal pressed and 00 released over six presses in P and D, in step with 0xD403, 0xD4B7 and 0xD85B during this watch.",
+          "notes": "2026-09-29: 1 with the brake pedal pressed (in P and in D), 0 released; the selector made no difference. Also 1 on 2026-10-02 17:49 (Ready, P) together with 0xD403; 0 on 2026-10-03 06:26 (switching to Ready) when 0xD403 read 1. 2026-10-11 16:49-17:03 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 01 with the brake pedal pressed and 00 released over six presses in P and D, in step with 0xD403 and 0xD4B7 during this watch (0xD85B also, except 02 for about 4 s of the last press).",
           "samples": [
             {
               "ts": "2026-09-26T13:51:27.1961324Z",
@@ -4006,7 +4006,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "2026-09-29: 1 with the brake pedal pressed (in P and in D), 0 released; the selector made no difference. 0 on 2026-10-02 17:49 (Ready, P) when 0xD403, 0xD463 and 0xD85F read 1, and on 2026-10-03 06:26 when 0xD403 read 1. 2026-10-11 16:49-16:50 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 01 with the brake pedal pressed and 00 released over six presses in P and D, in step with 0xD403, 0xD463 and 0xD85B during this watch.",
+          "notes": "2026-09-29: 1 with the brake pedal pressed (in P and in D), 0 released; the selector made no difference. 0 on 2026-10-02 17:49 (Ready, P) when 0xD403, 0xD463 and 0xD85F read 1, and on 2026-10-03 06:26 when 0xD403 read 1. 2026-10-11 16:49-17:03 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 01 with the brake pedal pressed and 00 released over six presses in P and D, in step with 0xD403 and 0xD463 during this watch (0xD85B also, except 02 for about 4 s of the last press).",
           "samples": [
             {
               "ts": "2026-09-26T13:51:40.0014406Z",
@@ -4027,7 +4027,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "1 in Ready, 0 otherwise, with or without the charge cable and while charging; the charger 0xD4B9 reads the same. 1 exactly when 0xD866 = 8 (Ready, checked against the car). Snaps of 2026-09-29 to 2026-10-06: 29 in Ready, nine on but not Ready (three with the charge cable in, one of them while charging on 2026-10-02 19:54). With the car off (2026-10-03 06:13) the VCU did not answer. Own scan 2026-09-26.",
+          "notes": "1 in Ready, 0 otherwise, with or without the charge cable and while charging; the charger 0xD4B9 reads the same, except 2026-10-14 18:34 (charger 0, read 22 s after the VCU's 1). 1 exactly when 0xD866 = 8 (Ready, checked against the car). Snaps of 2026-09-29 to 2026-10-06: 29 in Ready, nine on but not Ready (three with the charge cable in, one of them while charging on 2026-10-02 19:54). With the car off (2026-10-03 06:13) the VCU did not answer. Own scan 2026-09-26.",
           "samples": [
             {
               "ts": "2026-09-26T13:51:40.2894782Z",
@@ -4052,7 +4052,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "3 in Ready, 0 otherwise. Snaps 2026-10-04 to 2026-10-11: 3 in all 35 Ready snaps (including 2026-10-07 17:58 with Ready checked on the dashboard, 2026-10-10 06:46 and 2026-10-11 08:22); 0 in 16 snaps on but not Ready with the HV contactors closed (2026-10-04 06:58; cable in on 2026-10-06 07:19; AC charging 2026-10-09 18:28-18:37 and 2026-10-11 07:48; cable in without current 2026-10-11 07:46; DC charging 2026-10-11 08:31-09:04); 0 in the 2 snaps with the contactors open (2026-10-05 21:30, 2026-10-11 09:12). With the car off (2026-10-03 06:13) the VCU did not answer. Own scan 2026-09-26.",
+          "notes": "3 in Ready, 0 otherwise. Snaps 2026-10-04 to 2026-10-11: 3 in all 35 Ready snaps (including 2026-10-07 17:58 with Ready checked on the dashboard, 2026-10-10 06:46 and 2026-10-11 08:22); 0 in 15 snaps on but not Ready with the HV contactors closed (2026-10-04 06:58; cable in on 2026-10-06 07:19; AC charging 2026-10-09 18:28-18:37 and 2026-10-11 07:48; cable in without current 2026-10-11 07:46; DC charging 2026-10-11 08:31-09:04); 0 in the 3 snaps with the contactors open (2026-10-05 21:30, 2026-10-11 09:12, 2026-10-11 17:15). With the car off (2026-10-03 06:13) the VCU did not answer. Own scan 2026-09-26.",
           "samples": [
             {
               "ts": "2026-09-26T13:51:41.3086294Z",
@@ -4118,7 +4118,7 @@
           "source": [
             "own-snaps"
           ],
-          "notes": "3 in Ready, 4 on but not Ready with the HV contactors closed (with or without the charge cable, also while charging), 0 with the contactors open (BMS 0xD813 = 0). Snaps 2026-09-29 to 2026-10-11: 4 while AC charging (2026-10-09 18:28-18:37, 2026-10-11 07:48), with the cable in but no current (2026-10-11 07:46) and DC charging (2026-10-11 08:31-09:04); 0 on 2026-09-29 18:56, 2026-10-05 21:30 and 2026-10-11 09:12 after the DC charge; 3 in every Ready snap (2026-10-10 06:46 and 2026-10-11 08:22 among them).",
+          "notes": "3 in Ready, 4 on but not Ready with the HV contactors closed (with or without the charge cable, also while charging), 0 with the contactors open (BMS 0xD813 = 0). Snaps 2026-09-29 to 2026-10-11: 4 while AC charging (2026-10-09 18:28-18:37, 2026-10-11 07:48), with the cable in but no current (2026-10-11 07:46) and DC charging (2026-10-11 08:31-09:04); 0 on 2026-09-29 18:56, 2026-10-05 21:30, 2026-10-11 09:12 after the DC charge and 2026-10-11 17:15; 3 in every Ready snap (2026-10-10 06:46 and 2026-10-11 08:22 among them).",
           "samples": [
             {
               "ts": "2026-09-26T13:51:59.5462993Z",
@@ -4145,28 +4145,6 @@
             "own-watch"
           ],
           "notes": "Snaps in P with only the drive mode changed (2026-09-29): Normal 06 (twice), Sport 02, Eco 07. No other identifier on the VCU, BMS or MCU followed the mode. Followed every change live on the dashboard (2026-09-29)."
-        },
-        {
-          "did": "0xD85B",
-          "name": {
-            "en": "Brake pedal pressed (1 pressed, 0 released)",
-            "fi": "Jarrupoljin painettu (1 painettu, 0 vapaa)"
-          },
-          "bytes": 1,
-          "expression": "B4",
-          "confidence": "confirmed",
-          "source": [
-            "own-scan",
-            "own-snaps",
-            "own-watch"
-          ],
-          "notes": "2026-09-29: 1 with the brake pressed in P but 0 with it pressed in D; on 2026-10-11 it followed the pedal in D as well, so that 2026-09-29 reading in D is unexplained. Also 1 on 2026-10-02 17:49 (Ready, P) together with 0xD403, 0xD463 and 0xD85F; 0 in all other snaps of 2026-09-29 to 2026-10-06. 2026-10-11 16:49-16:50 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 01 with the brake pedal pressed and 00 released over six presses in P and D, in step with 0xD403, 0xD463 and 0xD4B7 during this watch.",
-          "samples": [
-            {
-              "ts": "2026-09-26T13:52:09.3745415Z",
-              "hex": "00"
-            }
-          ]
         },
         {
           "did": "0xD85D",
@@ -4206,7 +4184,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "8 in Ready, 0 on but not Ready, with or without the charge cable and while charging. The same value on the VCU, the BMS and the charger, so a vehicle-wide state. The owner checked 8 = Ready against the car. Snaps of 2026-09-29 to 2026-10-06: 29 in Ready, nine on but not Ready (three with the charge cable in, one of them while charging on 2026-10-02 19:54). With the car off (2026-10-03 06:13) the VCU did not answer. Own scan 2026-09-26.",
+          "notes": "8 in Ready, 0 on but not Ready, with or without the charge cable and while charging. The same value on the VCU, the BMS and the charger in every snap that read all three (92, 2026-09-29 to 2026-10-15), except 2026-10-14 18:34 (VCU and BMS 8, charger 0 read 23 s after the VCU). The owner checked 8 = Ready against the car. Snaps of 2026-09-29 to 2026-10-06: 29 in Ready, nine on but not Ready (three with the charge cable in, one of them while charging on 2026-10-02 19:54). With the car off (2026-10-03 06:13) the VCU did not answer. Own scan 2026-09-26.",
           "samples": [
             {
               "ts": "2026-09-26T13:52:10.9801764Z",
@@ -4230,7 +4208,7 @@
           "source": [
             "own-snaps"
           ],
-          "notes": "VCU and OBC read the same value in all 49 snaps where both were read (2026-09-29 to 2026-10-11). 0 during a charge session, AC (2026-10-02 19:54, 2026-10-09 18:28 and 18:37, 2026-10-11 07:48 at -4.5 A) and DC (2026-10-11 08:31-09:04, -87 to -67 A); also 0 at 2026-10-11 07:46 with the cable in but no charge current (+2.6 A, after an overnight charge that did not start), so 0 means a session is active or waiting, not that current flows. 2 with the cable in after a finished charge, at 99.9 % (2026-10-03 06:19, 2026-10-06 07:19). 3 with the cable out (0xD854 = 0), Ready or not, including after unplugging from the DC charger (2026-10-11 09:12). With the car off (2026-10-03 06:13) the VCU did not answer.",
+          "notes": "VCU and OBC read the same value in all 92 snaps where both were read (2026-09-29 to 2026-10-15). 0 during a charge session, AC (2026-10-02 19:54, 2026-10-09 18:28 and 18:37, 2026-10-11 07:48 at -4.5 A) and DC (2026-10-11 08:31-09:04, -87 to -67 A); also 0 at 2026-10-11 07:46 with the cable in but no charge current (+2.6 A, after an overnight charge that did not start), so 0 means a session is active or waiting, not that current flows. 2 with the cable in after a finished charge, at 99.9 % (2026-10-03 06:19, 2026-10-06 07:19). 3 with the cable out (0xD854 = 0), Ready or not, including after unplugging from the DC charger (2026-10-11 09:12). With the car off (2026-10-03 06:13) the VCU did not answer.",
           "samples": [
             {
               "ts": "2026-09-26T13:52:20.8354168Z",
@@ -4270,8 +4248,8 @@
         {
           "did": "0xD8C4",
           "name": {
-            "fi": "Ei P-asennossa (0 P, 1 R, N tai D, 3 P ilman jarruja)",
-            "en": "Not in P (0 P, 1 R, N or D, 3 P without brakes)"
+            "fi": "Vaihde- ja jarrutila (0 P, 1 R, N tai D, 3 P ilman jarruja)",
+            "en": "Gear and brake state (0 P, 1 R, N or D, 3 P without brakes)"
           },
           "bytes": 1,
           "expression": "B4",
@@ -4280,7 +4258,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "2026-09-29: 0 in P, 1 in R, N and D. A bit field: bit 0 = not in P (01 in N and D, 00 in P in all 57 snaps to 2026-10-13, as the gear selector 0xD4E7); bit 1 set in P with the parking brake released and the brake pedal up (03 in three snaps over 14 minutes on 2026-10-13), 00 in P with the parking brake applied or the pedal pressed. The expression reads the whole byte, so it shows 3 in that state. Bit 0 agrees with the gear selector 0xD4E7 in all 60 snaps to 2026-10-13.",
+          "notes": "2026-09-29: 0 in P, 1 in R, N and D. In the 97 snaps to 2026-10-15: 1 in all 34 in R, N or D; in P, 0 in 56 and 3 in 7. The 3s are all on 2026-10-13 06:36-07:03, in P with the parking brake released and the brake pedal up, Ready or not; 0 in P with the parking brake applied or the pedal pressed. 3 has bit 0 set, so bit 0 alone is not a not-in-P flag.",
           "samples": [
             {
               "ts": "2026-09-26T13:52:24.6450198Z",
@@ -4410,7 +4388,7 @@
           "source": [
             "own-snaps"
           ],
-          "notes": "Equals the BMS state of charge 0xD410 within 0.06 % in the 33 snaps of 2026-09-29 to 2026-10-06 below full charge (57.5-99.2 %), and reads 1000 (100.0 %) at 99.5-99.9 % just after a full charge (2026-10-03, 2026-10-04, 2026-10-06). The dashboard % in the 12 snap notes that give it equals the value rounded down (74, 71, 80, 71, 71, 60, 57, 100, 100, 88, 72, 60 %). Follows the BMS available energy 0xD865 only through the SOC (24.2-25.0 counts per kWh).",
+          "notes": "Equals the BMS state of charge 0xD410 within 0.06 % in the 33 snaps of 2026-09-29 to 2026-10-06 below full charge (57.5-99.2 %), and reads 1000 (100.0 %) at 99.5-99.9 % just after a full charge (2026-10-03, 2026-10-04, 2026-10-06). The dashboard % in the 12 snap notes that give it equals the value rounded down (74, 71, 80, 71, 71, 60, 57, 100, 100, 88, 72, 60 %). Follows the BMS available energy 0xD865 only through the SOC (24.2-25.0 counts per kWh). Later snap notes: 97 % at 96.5 (2026-10-10 06:46, not rounded down), 83 % at 83.6 (2026-10-11 09:12) and 46 % at 46.6 (2026-10-14 21:48).",
           "samples": [
             {
               "ts": "2026-09-26T13:52:30.6635564Z",
@@ -4516,7 +4494,7 @@
             "obdb-peugeot-208",
             "own-watch"
           ],
-          "notes": "Meaning and scale published by others (OBDb ×1953/250000 = /128). 0 at rest; on a drive on 2026-10-09 (watch_vcu_20261009_181107, 252 reads) up to 0x2262 = 68.8 km/h. Not yet compared with 0xD402 in the same recording.",
+          "notes": "Meaning and scale published by others (OBDb ×1953/250000 = /128). 0 at rest; on a drive on 2026-10-09 (watch_vcu_20261009_181107, 252 reads) up to 0x2262 = 68.8 km/h. No watch holds 0xD802 and 0xD402 together; snaps read both about 16 s apart (both 0 in 85 of 97, the other 12 while driving on 2026-10-07).",
           "samples": [
             {
               "ts": "2026-09-26T13:51:56.2545986Z",
@@ -4538,7 +4516,7 @@
             "obdb-peugeot-208",
             "own-watch"
           ],
-          "notes": "Name from OBDb Peugeot-208; the data cannot tell requested from actual torque. Tracks 0xD8D0 within one polling cycle (D8D0 ≈ 0.098 × raw, r 0.985, D880 about 0.2 s first); peak 261 Nm against 259 Nm for 0xD8D0 and 260 Nm rated; (raw/10) × 0xD8CF × 2π/60 relates to 0xD8D9 as 0xD8D0 does (median 1.16 driving, 0.91 regenerating), 2026-10-07 watches. It reads 0 Nm at rest.",
+          "notes": "Name from OBDb Peugeot-208, which gives /100 (26.1 Nm at the 2026-10-07 peak); /10 is used because it matches 0xD8D0. The data cannot tell requested from actual torque. Tracks 0xD8D0 within one polling cycle (D8D0 ≈ 0.098 × raw, r 0.985, D880 about 0.2 s first); peak 261 Nm against 259 Nm for 0xD8D0 and 260 Nm rated; (raw/10) × 0xD8CF × 2π/60 relates to 0xD8D9 as 0xD8D0 does (median 1.16 driving, 0.91 regenerating), 2026-10-07 watches. It reads 0 Nm at rest.",
           "samples": [
             {
               "ts": "2026-09-26T13:52:14.7527044Z",
@@ -4643,7 +4621,7 @@
             "ovms",
             "own-scan"
           ],
-          "notes": "Meaning and scale published by others. On the tested 2023 Mokka-e it reads 29 °C whenever the on-board charger is idle: in 51 of 53 snaps 2026-10-04 to 2026-10-11, at outside temperatures from +11 to -3 °C and through a DC charge, while the DC/DC converter 0xD8CE read 1-30 °C. It differed only around AC charging: 33 °C while AC charging (2026-10-09 18:37) and 39 °C just after one (2026-10-05 21:30). 29 is therefore a resting value, not a measurement, so the dashboard and the report do not show it; whether the AC charging values are right is not checked.",
+          "notes": "Meaning and scale published by others. On the tested 2023 Mokka-e it read 29 °C in 51 of 53 snaps 2026-10-04 to 2026-10-11, at outside temperatures from +11 to -3 °C and through a DC charge, while the DC/DC converter 0xD8CE read 1-30 °C. It read 33 °C while AC charging (2026-10-02 19:54, 2026-10-09 18:37), 39 °C on 2026-10-05 21:30 (cable out, before an overnight charge) and 30-31 °C in five snaps of 2026-10-03 (06:19, 06:47-06:57) after an overnight AC charge. 29 °C is probably a resting value rather than a measurement, so the dashboard and the report do not show it; whether the charging values are right is not checked.",
           "samples": [
             {
               "ts": "2026-09-26T13:52:29.0951825Z",
@@ -4726,6 +4704,28 @@
             {
               "ts": "2026-09-26T13:51:38.4649268Z",
               "hex": "05"
+            }
+          ]
+        },
+        {
+          "did": "0xD85B",
+          "name": {
+            "en": "Brake pedal state (candidate)",
+            "fi": "Jarrupolkimen tila (ehdokas)"
+          },
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "unverified",
+          "source": [
+            "own-scan",
+            "own-snaps",
+            "own-watch"
+          ],
+          "notes": "Snaps 2026-09-29 to 2026-10-15: 1 with the brake pedal pressed in P (2026-09-29 19:16 and 19:17, 2026-10-02 17:49, 2026-10-13 06:32); 2 once with the pedal pressed in P (2026-10-09 18:09); 0 released. With the pedal pressed (0xD403 = 1) it read 0 in nine snaps: in D on 2026-09-29 19:09 and 19:20, 2026-10-02 16:57, 2026-10-07 18:04, 18:06, 19:14 and 19:24; in N on 2026-10-07 19:25; in P on 2026-10-03 06:26 (switching to Ready). 2026-10-11 16:49-17:03 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 01 pressed and 00 released over six presses in P and D, in step with 0xD403, 0xD463 and 0xD4B7, except 02 for about 4 s during the last press (17:03:19-17:03:23).",
+          "samples": [
+            {
+              "ts": "2026-09-26T13:52:09.3745415Z",
+              "hex": "00"
             }
           ]
         },
@@ -8354,7 +8354,7 @@
       },
       "request": "0x6A6",
       "response": "0x686",
-      "notes": "Found by the ECU sweep of 0x680-0x6FF on 2026-09-26. Identified by name in the PSA AEE2010 diagnostic ID list (opendbc psa_aee2010_r3.dbc, for the ICE 208 on the same architecture). arduino-psa-diag ECU_LIST puts two families at 0x6A6/0x686: HCU2 (hybrid cars) and CMM_E with MCU_ECMP, the e-CMP motor control unit. On this electric car it is the MCU (inverter). Does not answer the fault code read 19 02 FF (no answer on 2026-10-03 and 2026-10-04) while answering 0x22.",
+      "notes": "Found by the ECU sweep of 0x680-0x6FF on 2026-09-26. The PSA AEE2010 diagnostic ID list (opendbc psa_aee2010_r3.dbc, for the ICE 208 on the same architecture) names 0x6A6 HCU2. arduino-psa-diag ECU_LIST puts two families at 0x6A6/0x686: HCU2 (hybrid cars) and CMM_E with MCU_ECMP, the e-CMP motor control unit. On this electric car it is the MCU (inverter). Does not answer the fault code read 19 02 FF (no answer on 2026-10-03, 2026-10-04, 2026-10-07, 2026-10-11 and 2026-10-12) while answering 0x22.",
       "scanned": [
         {
           "range": "0x0000-0xCFFF",
@@ -8417,7 +8417,7 @@
             "obdb-peugeot-208",
             "own-scan"
           ],
-          "notes": "The wican e-208 vehicle profile (vehicle_profiles/peugeot/e-208.json) reads it from 0x6A6 as [B6:B7]; the full four bytes here so it does not wrap at 65 536 km. Read 2026-09-29: 59203 km, the same as the VCU and the dashboard. OBDb Peugeot-208 gives it /10 km (208_ODO_6A6); on this car the unscaled value equals the VCU and dashboard odometer, so no /10."
+          "notes": "The wican e-208 vehicle profile (vehicle_profiles/peugeot/e-208.json) reads it from 0x6A6 as [B6:B7]; the full four bytes here so it does not wrap at 65 536 km. Read 2026-09-29: 59203 km, the same as the VCU and the dashboard. OBDb Peugeot-208 gives it /10 km (208_ODO_6A6); on this car the unscaled value equals the VCU and dashboard odometer, so no /10. On the drive of 2026-10-07 it read 1 km more than the VCU in 9 snaps (19:12-19:51); equal in all other snaps to 2026-10-15."
         },
         {
           "did": "0xD4CA",
@@ -8456,7 +8456,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "Motor speed in rpm, signed (OBDb Peugeot-208 208_MOTOR_SPD). 0 rpm in every standstill snap from 2026-09-29 to 2026-10-06, also in D with the brake held. 2026-10-11, 28 min drive (watch_vcu_bms_mcu_20261011_110424, 1202 reads): rpm / speed above 20 km/h averaged 66.98 against 67.02 for VCU 0xD8CF; -1 at standstill during the watch (the snaps read 0).",
+          "notes": "Motor speed in rpm, signed (OBDb Peugeot-208 208_MOTOR_SPD). 0 rpm in every standstill snap from 2026-09-29 to 2026-10-06, also in D with the brake held. 2026-10-11, 28 min drive (watch_vcu_bms_mcu_20261011_110424, 1202 reads): rpm / speed above 20 km/h averaged 66.98 against 67.02 for VCU 0xD8CF; -1 to 1 at standstill during the watch (the snaps read 0).",
           "samples": [
             {
               "ts": "2026-09-29T15:49:29.8449463Z",
@@ -8498,7 +8498,7 @@
           "source": [
             "own-snaps"
           ],
-          "notes": "2026-09-29: 0 in P, 1 in R, N and D. Agrees with the VCU gear selector 0xD4E7 (0 only in P) in all 38 snaps from 2026-09-29 to 2026-10-06. To 2026-10-13 it agrees in 55 of 56 snaps; the one other (snap_20261007_192822, at the end of a drive) read 0 while 0xD4E7 read N 24 seconds earlier, so the selector moved between the two reads.",
+          "notes": "2026-09-29: 0 in P, 1 in R, N and D. Agrees with the VCU gear selector 0xD4E7 (0 only in P) in 91 of 93 snaps from 2026-09-29 to 2026-10-15. In the other two it read 0 while 0xD4E7 read N 18-24 s earlier: snap_20261007_192822 (end of a drive) and snap_20261014_183456 (parked after a drive).",
           "samples": [
             {
               "ts": "2026-09-29T15:49:37.8152308Z",
@@ -8541,7 +8541,7 @@
             "obdb-peugeot-208",
             "own-snaps"
           ],
-          "notes": "Name from OBDb Peugeot-208, which gives it as percent; it reads 0 in every snap (all standing still, 2026-09-29 to 2026-10-06). The VCU 0xD407 is confirmed as B4/2 % (raw 199 with the pedal fully down), so the same scale is likely here; this one has only been read at 0.",
+          "notes": "Name from OBDb Peugeot-208, which gives it as percent. It read 0 in every snap from 2026-09-29 to 2026-10-15 (99 snaps), also in 8 snaps while driving on 2026-10-07 with the VCU pedal 0xD407 at 15.5-26 %; the name is not confirmed on this car.",
           "samples": [
             {
               "ts": "2026-09-29T15:44:28.5755528Z",
@@ -8586,7 +8586,7 @@
             "obdb-peugeot-208",
             "own-snaps"
           ],
-          "notes": "Meaning and scale published by others. 0 in P and in two snaps in D with the brake held (2026-09-29 19:09, 19:20); 35.7 Nm (0x023B) in three snaps in D with the brake held a few minutes later (2026-09-29 19:26-19:27). Not read while driving.",
+          "notes": "Meaning and scale published by others. 0 in P and in two snaps in D with the brake held (2026-09-29 19:09, 19:20); 35.6-35.7 Nm (0x023A-0x023B) in three snaps in D with the brake held a few minutes later (2026-09-29 19:26-19:27). While driving on 2026-10-07 (14 snaps, 19:10-19:51) it read -58 to 89.4 Nm; 0 in every snap in P or N.",
           "samples": [
             {
               "ts": "2026-09-29T15:49:45.2423711Z",
@@ -8609,7 +8609,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "Meaning and scale published by others; on the tested 2023 Mokka-e the scale gives 20.281 °C in the saved samples, which fits. In three snaps in D with the brake held (2026-09-29 19:26-19:27) it read 36.3-36.4 °C while 0xDC04 read 15.3-15.4 °C and the snaps before and after read 12.0-12.6 °C. In all other snaps 0xDC02 is within 0.25 °C of it; in those three 0xDC02 stayed at 12.7-12.8 °C.",
+          "notes": "Meaning and scale published by others; on the tested 2023 Mokka-e the scale gives 20.281 °C in the saved samples, which fits. In three snaps in D with the brake held (2026-09-29 19:26-19:27) it read 36.3-36.4 °C while 0xDC04 read 15.3-15.4 °C and the snaps before and after read 12.0-12.6 °C. 0xDC02 is within 0.25 °C of it in all 82 snaps (2026-09-29 to 2026-10-15) where 0xDC69 reads 0. In the 17 where 0xDC69 is not 0 it reads 1.7-23.6 °C above 0xDC02: 23.6 °C above in those three (0xDC02 12.7-12.8 °C), up to 21.7 °C above on the drive of 2026-10-07.",
           "samples": [
             {
               "ts": "2026-09-29T15:49:45.3864422Z",
@@ -8648,7 +8648,7 @@
           "source": [
             "own-snaps"
           ],
-          "notes": "2026-09-29: 30000009 in P, 30000003 in R, N and D; B on, off, on all read 30000003 (a single 30000005 in D with B on), so not the B mode. Later snaps do not keep the pattern: 30000003 in P on 2026-10-02 17:49 and 2026-10-03 06:31, 06:32, 06:44, 06:47 and 07:03; 30000005 in P on 2026-10-02 19:54 (charging) and 2026-10-03 06:42; 30000009 in D or N on 2026-09-29 19:44, 2026-10-02 16:57 and 17:29 and 2026-10-04 09:07. The low byte (09, 05, 03) follows neither the gear nor the B mode; meaning open. Own snaps 2026-10-06.",
+          "notes": "2026-09-29 18:56-19:32: 30000009 in P, 30000003 in R, N and D, a single 30000005 in D with B on (19:20); B on, off, on all read 30000003, so not the B mode. Later snaps (to 2026-10-15) do not keep the pattern: 03, 05 and 09 occur in P, N and D. The low byte follows neither the gear nor the B mode; meaning open.",
           "samples": [
             {
               "ts": "2026-09-29T15:49:50.4610538Z",
@@ -9205,7 +9205,7 @@
         },
         {
           "range": "0xD000-0xDFFF",
-          "notes": "charging and not charging"
+          "notes": "2026-10-05 in a charge session (cable in) and 2026-10-06 in Ready, cable out: 57 identifiers 0xD407-0xD8EB, the same set both times"
         },
         {
           "range": "0xE000-0xEFFF",
@@ -9238,7 +9238,7 @@
           "source": [
             "own-snaps"
           ],
-          "notes": "Equal to the VCU odometer (0xD49C) in every one of 38 snaps from 2026-09-29 to 2026-10-06, e.g. 59 203 km.",
+          "notes": "Equal to the VCU odometer (0xD49C) in every one of 38 snaps from 2026-09-29 to 2026-10-06, e.g. 59 203 km. On the drive of 2026-10-07 it read 1 km more than the VCU in 9 snaps (19:12-19:51); equal in all other snaps to 2026-10-15.",
           "samples": [
             {
               "ts": "2026-09-27T05:17:14.7254785Z",
@@ -9418,7 +9418,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "VCU and OBC read the same value in all 49 snaps where both were read (2026-09-29 to 2026-10-11). 0 during a charge session, AC (2026-10-02 19:54, 2026-10-09 18:28 and 18:37, 2026-10-11 07:48 at -4.5 A) and DC (2026-10-11 08:31-09:04, -87 to -67 A); also 0 at 2026-10-11 07:46 with the cable in but no charge current (+2.6 A, after an overnight charge that did not start), so 0 means a session is active or waiting, not that current flows. 2 with the cable in after a finished charge, at 99.9 % (2026-10-03 06:19, 2026-10-06 07:19). 3 with the cable out (0xD854 = 0), Ready or not, including after unplugging from the DC charger (2026-10-11 09:12).",
+          "notes": "VCU and OBC read the same value in all 92 snaps where both were read (2026-09-29 to 2026-10-15). 0 during a charge session, AC (2026-10-02 19:54, 2026-10-09 18:28 and 18:37, 2026-10-11 07:48 at -4.5 A) and DC (2026-10-11 08:31-09:04, -87 to -67 A); also 0 at 2026-10-11 07:46 with the cable in but no charge current (+2.6 A, after an overnight charge that did not start), so 0 means a session is active or waiting, not that current flows. 2 with the cable in after a finished charge, at 99.9 % (2026-10-03 06:19, 2026-10-06 07:19). 3 with the cable out (0xD854 = 0), Ready or not, including after unplugging from the DC charger (2026-10-11 09:12).",
           "samples": [
             {
               "ts": "2026-09-27T05:18:02.8633837Z",
@@ -9440,7 +9440,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "/10 gives the calibrated state of charge (BMS 0xD410) within 0.35 % in all 38 snaps from 2026-09-29 to 2026-10-06, e.g. 76.0 % against 76.08 %, 80.7 % against 80.79 %, 60.1 % against 60.24 %. Reads 100.0 when 0xD410 is 99.7-99.9 % (2026-10-03, 2026-10-04 with the dashboard at 100 %, 2026-10-06). 50.7 % while charging and 65.3 % after unplugging (2026-09-27); fell from 98.2 to 96.8 % in Ready with the heater on (watch 2026-10-06). The VCU 0xD8EB reads the same within 0.4 %.",
+          "notes": "/10 gives the calibrated state of charge (BMS 0xD410) within 0.35 % in all 38 snaps from 2026-09-29 to 2026-10-06, e.g. 76.0 % against 76.08 %, 80.7 % against 80.79 %, 60.1 % against 60.24 %. Reads 100.0 when 0xD410 is 99.7-99.9 % (2026-10-03, 2026-10-04 with the dashboard at 100 %, 2026-10-06). 50.7 % while charging and 65.3 % after unplugging (2026-09-27); fell from 98.2 to 96.8 % in Ready with the heater on (watch 2026-10-06). The VCU 0xD8EB reads the same within 0.4 % in 90 of 92 snaps to 2026-10-15; 0.8 and 0.5 % in the other two (2026-10-04 07:00, 2026-10-11 08:35), read 46 and 18 s apart while the SOC was moving.",
           "samples": [
             {
               "ts": "2026-09-27T05:18:12.2912797Z",
@@ -9538,7 +9538,7 @@
           "source": [
             "own-scan"
           ],
-          "notes": "Like 0xD5CF and within 1.5 V of it: 229.29 V while charging, 232.42 V at the end of the charge, 0 with the cable out in Ready. A second phase or a second measuring point. Own scan 2026-10-06. Plausible for a 230 V grid and the three readings agree with each other; not compared with a meter.",
+          "notes": "Like 0xD5CF and within 1.5 V of it: 229.29 V while charging, 232.42 V at the end of the charge, 0 with the cable out in Ready. Probably a second phase or a second measuring point. Own scans 2026-10-05 and 2026-10-06. Plausible for a 230 V grid and the three readings agree with each other; not compared with a meter.",
           "samples": [
             {
               "ts": "2026-10-05T18:36:59.7348031Z",
@@ -9567,7 +9567,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "Follows the 12 V loads (watch 2026-10-06, cable out): 0 at the start with the car on but not Ready and the charger's HV side off (0xD824 = 12); about 50 once Ready starts the DC/DC (12 V from 12.4 to 14.4 V), settling at 46; rear window heater on +44 (46 -> 90), off -27 (90 -> 63), the level then staying near 62; high beams on about +19 (44 -> 63); fan on full up to +49 (33 -> 82); no immediate rise when the HV cabin heater was turned to full. In snaps: 0 on 2026-09-29 18:56 and 2026-10-05 21:30, both with the HV side off; 15-22 in five not-Ready snaps with the HV side up (2026-10-03 06:19, 06:37, 06:52, 07:05; 2026-10-04 06:58); 21-55 in Ready. 0xD825 (about 1/6 of it) and 0xD83B (about 1/7) move with it in every snap. Snaps to 2026-10-11: 0 in all three with the HV side off (also 2026-10-11 09:12); 15-22 not Ready and while AC and DC charging (25 in the charging scan of 2026-09-27) (2026-10-09, 2026-10-11); 21-55 in Ready. 2026-10-11 17:04-17:09 in Ready (watch_vcu_ecu6b5_obc_bms_20261011_164848): the driver's seat heater off took it from 18 to 13 while the battery current fell 0.2 A (about 80 W, 5.5 A at 14.5 V); dipped headlights about +2 and the blower at full about +13, so about 1 A per count (which would make the rear window heater +27 to +44 A, high for that load). With the cabin heating working it rose to about 59, more than the 12 V loads explain, so the scale is not confirmed.",
+          "notes": "Follows the 12 V loads (watch 2026-10-06, cable out): 0 at the start with the car on but not Ready and the charger's HV side off (0xD824 = 12); about 50 once Ready starts the DC/DC (12 V from 12.4 to 14.4 V), settling at 46; rear window heater on +44 (46 -> 90), off -27 (90 -> 63), the level then staying near 62; high beams on about +19 (44 -> 63); fan on full up to +49 (33 -> 82); no immediate rise when the HV cabin heater was turned to full. In snaps: 0 on 2026-09-29 18:56 and 2026-10-05 21:30, both with the HV side off; 15-22 in five not-Ready snaps with the HV side up (2026-10-03 06:19, 06:37, 06:52, 07:05; 2026-10-04 06:58); 21-55 in Ready. 0xD825 (about 1/6 of it) and 0xD83B (about 1/7) move with it in every snap. Snaps to 2026-10-11: 0 in all four with the HV side off (also 2026-10-11 09:12 and 17:15); 15-23 not Ready and while AC and DC charging (25 in the charging scan of 2026-09-27) (2026-10-09, 2026-10-11), except 26 and 33 on 2026-10-11 07:46 (cable in, no charge current) and 07:48 (AC charge starting at -4.5 A); 21-55 in Ready. 2026-10-11 17:04-17:09 in Ready (watch_vcu_ecu6b5_obc_bms_20261011_164848): the driver's seat heater off took it from 18 to 13 while the battery current fell 0.2 A (about 80 W, 5.5 A at 14.5 V); dipped headlights about +2 and the blower at full about +13, so about 1 A per count (which would make the rear window heater +27 to +44 A, high for that load). With the cabin heating working it rose to about 59, more than the 12 V loads explain, so the scale is not confirmed.",
           "samples": [
             {
               "ts": "2026-09-27T05:17:43.8797748Z",
@@ -14919,7 +14919,7 @@
       },
       "request": "0x6AD",
       "response": "0x68D",
-      "notes": "Found by the ECU sweep of 0x680-0x6FF on 2026-09-26. Identified by name in the PSA AEE2010 diagnostic ID list (opendbc psa_aee2010_r3.dbc, for the ICE 208 on the same architecture). PyPSADiag: ESPMK100_UDS at 0x6AD/0x68D. Does not answer the fault code read 19 02 FF (no answer on 2026-10-03 and 2026-10-04) while answering 0x22.",
+      "notes": "Found by the ECU sweep of 0x680-0x6FF on 2026-09-26. Identified by name in the PSA AEE2010 diagnostic ID list (opendbc psa_aee2010_r3.dbc, for the ICE 208 on the same architecture). PyPSADiag: ESPMK100_UDS at 0x6AD/0x68D. Does not answer the fault code read 19 02 FF (no answer on 2026-10-03, 2026-10-04, 2026-10-07, 2026-10-11 and 2026-10-12) while answering 0x22.",
       "scanned": [
         {
           "range": "0x0000-0xCFFF",
@@ -14927,7 +14927,7 @@
         },
         {
           "range": "0x0100-0x01FF",
-          "notes": "2026-10-10 in Ready: 4 identifiers (0x0101, 0x0102, 0x0110, 0x0111)"
+          "notes": "2026-10-10 in Ready: 3 identifiers (0x0102, 0x0110, 0x0111); 0x0101 answers conditionsNotCorrect"
         },
         {
           "range": "0x0D00-0x0DFF",
@@ -14951,7 +14951,7 @@
         },
         {
           "range": "0xD000-0xDFFF",
-          "notes": "2026-10-07: 77 identifiers 0xD400-0xD642"
+          "notes": "2026-10-07: 76 identifiers 0xD400-0xD642; 0xD630 answers conditionsNotCorrect"
         },
         {
           "range": "0xE000-0xEFFF",
@@ -14959,11 +14959,11 @@
         },
         {
           "range": "0xF000-0xF0FF",
-          "notes": "2026-10-10 in Ready: 3 identifiers (0xF08F \"ESC 9.3 EV\")"
+          "notes": "2026-10-10 in Ready: 3 identifiers (0xF08F \"ESC  9.3 EV7140.01\")"
         },
         {
           "range": "0xF100-0xF1FF",
-          "notes": "2026-09-26 (date of the first stored values; the raw scan files are lost)"
+          "notes": "2026-09-26 (date of the first stored values; the raw scan files are lost): 3 identifiers (0xF186, 0xF18B, 0xF18C)"
         },
         {
           "range": "0xF200-0xFFFF",
@@ -14984,7 +14984,7 @@
             "own-scan",
             "own-snaps"
           ],
-          "notes": "2026-10-13: 01 applied, 00 released in four snaps (two releases, two applications), with and without the brake pedal pressed; VCU 0xD8C5 reads the same. Earlier snaps agree: 01 parked, 00 while driving (2026-10-07).",
+          "notes": "2026-10-13: 01 applied, 00 released in four snaps (applied, released, released, applied), released with and applied without the brake pedal pressed; VCU 0xD8C5 reads the same. Earlier snaps agree: 01 parked, 00 while driving (2026-10-07).",
           "samples": [
             {
               "ts": "2026-10-13T03:31:33.7501087Z",
@@ -16537,7 +16537,7 @@
         },
         {
           "range": "0xF100-0xF1FF",
-          "notes": "2026-09-26 (date of the first stored values; the raw scan files are lost)"
+          "notes": "2026-09-26 (date of the first stored values; the raw scan files are lost): 4 identifiers (0xF180, 0xF186, 0xF18B, 0xF18C)"
         },
         {
           "range": "0xF200-0xFFFF",
@@ -16588,7 +16588,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "Changed with 0xD419 at every press of the lane keeping button on 2026-10-07: 02 with the system on, 00 with it off. Not the same as 0xD419: the scan of 2026-10-07 18:45 read 00 while 0xD419 read 02. 2026-10-11 16:52-16:54 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 2 with lane keeping on and 0 off over three switchings, in step with 0xD419 (2 on, 1 off) during the watch; 00 in the 08:22 snap of the same day with 0xD419 at 01.",
+          "notes": "Changed with 0xD419 at every press of the lane keeping button on 2026-10-07: 02 with the system on, 00 with it off. 2026-10-11 16:51-16:54 (watch_vcu_ecu6b5_obc_bms_20261011_164848): 02/00 in step with 0xD419 02/01 over five off-on presses; 17:02:47-17:03:22 it read 00 alone while 0xD419 stayed 02. Snaps 2026-10-09 to 2026-10-15 with 0xD419 at 02: 02 in Ready, 00 when not Ready, and 00 in two snaps where the VCU had read Ready about a minute earlier (2026-10-13 06:57, 2026-10-14 18:34). The scan of 2026-10-07 18:45 read 00 while 0xD419 read 02.",
           "samples": [
             {
               "ts": "2026-10-07T15:45:41.6108231Z",
@@ -17111,7 +17111,7 @@
       },
       "request": "0x74A",
       "response": "0x64A",
-      "notes": "Found by the full ECU sweep on 2026-09-26. Response is request - 0x100, unlike the - 0x20 of the ECUs in 0x680-0x6FF, so probably another group or bus behind the gateway. Identified by name in the PSA AEE2010 diagnostic ID list (opendbc psa_aee2010_r3.dbc, for the ICE 208 on the same architecture) as CVM, the multifunction windscreen camera behind the mirror (traffic signs, lane keeping, emergency braking); its picture is not shown anywhere. The car shows the speed limit read from signs (2026-10-03), so it has a working camera. F18B 05 04 23 = 5.4.2023. Holds an ACTIVE fault U1208-29 (29 = invalid data received from another ECU) with the warning indicator bit set since at least 2026-09-26, while the dashboard shows no warning and the speed limit display works. PyPSADiag: CVM3 at 0x74A/0x64A. arduino-psa-diag ECU_LIST also lists the rain/light sensor family (CPL) at 0x74A.",
+      "notes": "Found by the full ECU sweep on 2026-09-26. Response is request - 0x100, unlike the - 0x20 of the ECUs in 0x680-0x6FF, so probably another group or bus behind the gateway. Identified by name in the PSA AEE2010 diagnostic ID list (opendbc psa_aee2010_r3.dbc, for the ICE 208 on the same architecture) as CVM_CPL: the multifunction windscreen camera behind the mirror (traffic signs, lane keeping, emergency braking); its picture is not shown anywhere. The car shows the speed limit read from signs (2026-10-03), so it has a working camera. F18B 05 04 23 = 5.4.2023. Holds an ACTIVE fault U1208-29 (29 = invalid data received from another ECU) with the warning indicator bit set in every fault code read from 2026-10-03 to 2026-10-12, while the dashboard shows no warning and the speed limit display works. PyPSADiag: CVM3 at 0x74A/0x64A. arduino-psa-diag ECU_LIST also lists the rain/light sensor family (CPL) at 0x74A.",
       "scanned": [
         {
           "range": "0x0000-0xCFFF",
@@ -17155,7 +17155,7 @@
         },
         {
           "range": "0xF100-0xF1FF",
-          "notes": "2026-09-26 (date of the first stored values; the raw scan files are lost)"
+          "notes": "2026-09-26 (date of the first stored values; the raw scan files are lost): 4 identifiers (0xF180, 0xF186, 0xF18B, 0xF18C)"
         },
         {
           "range": "0xF200-0xFFFF",
@@ -18818,7 +18818,7 @@
       "request": "0x752",
       "response": "0x652",
       "answered": false,
-      "notes": "Address from the PyPSADiag ECU definitions (json/BMF/BSI2010.json, bsi_2010). Not found by the ECU sweep on 2026-09-26; may answer only in another session or state. Likely holds locking, lights and body functions. A fault code read (19 02 FF) sent directly to this address with the car on got no answer on 2026-10-03 and 2026-10-04. The motor controller and the ABS also stay silent to that request while answering 0x22, so this does not rule the ECU out.",
+      "notes": "Address from the PyPSADiag ECU definitions (json/BMF/BSI2010.json, bsi_2010). Not found by the ECU sweep on 2026-09-26; may answer only in another session or state. Likely holds locking, lights and body functions. A fault code read (19 02 FF) sent directly to this address with the car on got no answer on 2026-10-03, 2026-10-04, 2026-10-07 and 2026-10-12. The motor controller and the ABS also stay silent to that request while answering 0x22, so this does not rule the ECU out.",
       "dids": [],
       "discovered": []
     },
@@ -18831,7 +18831,7 @@
       "request": "0x75F",
       "response": "0x65F",
       "answered": false,
-      "notes": "Address from the PyPSADiag ECU definitions (json/COMBINE/COMBINE_UDS_EV.json). Not found by the ECU sweep on 2026-09-26. Likely holds the range estimate and trip computers. A fault code read (19 02 FF) sent directly to this address with the car on got no answer on 2026-10-03 and 2026-10-04. The motor controller and the ABS also stay silent to that request while answering 0x22, so this does not rule the ECU out.",
+      "notes": "Address from the PyPSADiag ECU definitions (json/COMBINE/COMBINE_UDS_EV.json). Not found by the ECU sweep on 2026-09-26. Likely holds the range estimate and trip computers. A fault code read (19 02 FF) sent directly to this address with the car on got no answer on 2026-10-03, 2026-10-04, 2026-10-07 and 2026-10-12. The motor controller and the ABS also stay silent to that request while answering 0x22, so this does not rule the ECU out.",
       "dids": [],
       "discovered": []
     },
@@ -18844,7 +18844,7 @@
       "request": "0x770",
       "response": "0x670",
       "answered": false,
-      "notes": "Address from the PyPSADiag ECU definitions (VTH_2010). Not found by the ECU sweep on 2026-09-26. Likely holds heating, fan and set temperature. A fault code read (19 02 FF) sent directly to this address with the car on got no answer on 2026-10-03 and 2026-10-04. The motor controller and the ABS also stay silent to that request while answering 0x22, so this does not rule the ECU out.",
+      "notes": "Address from the PyPSADiag ECU definitions (VTH_2010). Not found by the ECU sweep on 2026-09-26. Likely holds heating, fan and set temperature. A fault code read (19 02 FF) sent directly to this address with the car on got no answer on 2026-10-03, 2026-10-04, 2026-10-07 and 2026-10-12. The motor controller and the ABS also stay silent to that request while answering 0x22, so this does not rule the ECU out.",
       "dids": [],
       "discovered": []
     },
@@ -18857,12 +18857,12 @@
       "request": "0x5B0",
       "response": "0x5AF",
       "answered": false,
-      "notes": "Address from the PyPSADiag ECU definitions (AVAS). Below 0x600: probe only this address directly, never by sweeping the range. A fault code read (19 02 FF) sent directly to this address with the car on got no answer on 2026-10-03 and 2026-10-04. The motor controller and the ABS also stay silent to that request while answering 0x22, so this does not rule the ECU out.",
+      "notes": "Address from the PyPSADiag ECU definitions (AVAS). Below 0x600: probe only this address directly, never by sweeping the range. A fault code read (19 02 FF) sent directly to this address with the car on got no answer on 2026-10-03, 2026-10-04, 2026-10-07 and 2026-10-12. The motor controller and the ABS also stay silent to that request while answering 0x22, so this does not rule the ECU out.",
       "dids": [],
       "discovered": []
     }
   ],
-  "scanned_notes": "Identifier ranges read with 0x22 from each ECU (the scanned list of each ECU) and request addresses searched for ECUs (ecu_search). A range noted as a sample was read only at every 16th identifier. Ranges not listed are not scanned. Each scan lists only the identifiers that answered; the dates are in the notes. Times in the notes are Finnish local time (EEST, UTC+3) unless marked UTC; the timestamps of the samples are UTC.",
+  "scanned_notes": "Identifier ranges read with 0x22 from each ECU (the scanned list of each ECU) and request addresses searched for ECUs (ecu_search). Ranges not listed are not scanned. Each scan lists only the identifiers that answered; the dates are in the notes. Times in the notes are Finnish local time (EEST, UTC+3) unless marked UTC; the timestamps of the samples are UTC.",
   "ecu_search": [
     {
       "range": "0x500-0x5FF"
@@ -18876,7 +18876,7 @@
     },
     {
       "range": "0x700-0x7DF",
-      "notes": "2026-10-10 in Ready: only the camera 0x74A; none of the ECUs that arduino-psa-diag and OBDb list in this range (e.g. 0x72A DC/DC, 0x731, 0x736, 0x744 airbag, 0x764 telematics, 0x76D climate, 0x740/0x742 tyre pressure) answered"
+      "notes": "2026-10-10 in Ready: only the camera 0x74A; none of the ECUs that arduino-psa-diag lists in this range (e.g. 0x72A DC/DC, 0x731, 0x736, 0x740 IDB, 0x742 HDC, 0x744 airbag, 0x764 telematics, 0x76D climate) answered"
     },
     {
       "range": "0x7E0-0x7EF"
@@ -18978,7 +18978,7 @@
         "mcu",
         "obc"
       ],
-      "why": "The whole manufacturer D block. On the tested car it found groups not documented in the listed sources: D5xx-D7xx on the VCU, DCxx and DFxx on the BMS, DCxx on the motor controller and 0xD5BD/0xD5CF-0xD5D2 on the charger.",
+      "why": "The whole manufacturer D block. On the tested car it found groups not documented in the listed sources: D5xx-D7xx on the VCU, DCxx and DFxx on the BMS, most of DCxx on the motor controller (OBDb Peugeot-208 lists 0xDC00, 0xDC04, 0xDC69, 0xDC6A and 0xDCB6 there) and 0xD5BD/0xD5CF-0xD5D2 on the charger.",
       "runtime": "about 10 minutes per ECU (measured 9 min 50 s)",
       "expected_new": "medium"
     },
@@ -19077,13 +19077,13 @@
     "On some cars, actively querying with the ignition off triggers the alarm system. Reported on forums for other platforms, not for e-CMP itself.",
     "Long scans keep the car awake. In an EV the 12 V battery is what drains, and a flat 12 V means the car will not start at all. Keep it in Ready or on charge.",
     "Broadcast sniffing worked on a 2020 Corsa-e even with ignition off, but newer models broadcast much less.",
-    "Do not sweep CAN IDs below 0x600 on e-CMP. A TesterPresent sweep of 0x500-0x5FF on 2026-09-27 stored P17CC-62 on the VCU and U1313-83 on the power steering (stored, not active), stamped with the minute of the sweep: some IDs there are ordinary application messages. The 0x5CA \"ECU\" it seemed to find was one of those messages. Known diagnostic IDs below 0x600, like the charger 0x590, are safe to address directly. P17CC-62 was not stored on the VCU on 2026-10-03 and 2026-10-04; U1313-83 was still stored on the power steering."
+    "Do not sweep CAN IDs below 0x600 on e-CMP. A TesterPresent sweep of 0x500-0x5FF on 2026-09-27 stored P17CC-62 on the VCU and U1313-83 on the power steering (stored, not active), stamped with the minute of the sweep: some IDs there are ordinary application messages. The 0x5CA \"ECU\" it seemed to find was one of those messages. Known diagnostic IDs below 0x600, like the charger 0x590, are safe to address directly. P17CC-62 was not stored on the VCU in any later fault code read (2026-10-03 to 2026-10-12); U1313-83 was still stored on the power steering on 2026-10-12."
   ],
   "sources": [
     {
       "id": "wican-fw#278",
       "url": "https://github.com/meatpiHQ/wican-fw/discussions/278",
-      "notes": "Primary source of the first e-CMP identifiers (SOC, pack voltage and current, cells, SOH, energy). Ready-made profile in the repo's vehicle_profiles/peugeot/e-208.json."
+      "notes": "Primary source of the first e-CMP identifiers (SOC, pack voltage and current, min/max cell voltage, SOH, energy). Ready-made profile in the repo's vehicle_profiles/peugeot/e-208.json."
     },
     {
       "id": "evdash",
@@ -19098,7 +19098,7 @@
     {
       "id": "opendbc-psa",
       "url": "https://github.com/commaai/opendbc/blob/master/opendbc/dbc/psa_aee2010_r3.dbc",
-      "notes": "CAN database for the ICE Peugeot 208 on the same AEE2010 architecture. Its diagnostic ID names identified the ECUs at 0x6A6, 0x6AD, 0x6B5 and 0x74A."
+      "notes": "CAN database for the ICE Peugeot 208 on the same AEE2010 architecture. Its diagnostic request names cover 0x6A6 (HCU2), 0x6AD (ABRASR), 0x6B5 (DIRECTN) and 0x74A (CVM_CPL)."
     },
     {
       "id": "pypsadiag",

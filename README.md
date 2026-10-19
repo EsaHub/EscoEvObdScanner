@@ -453,7 +453,7 @@ wican e-208 profile already reads the odometer from it.
 | VCU 0x6A2 | D4E7 (copies D85D, D8C2) | gear selector: 0 P, 1 R, 2 N, 3 D |
 | VCU 0x6A2 | D8E6 | HV bus voltage in whole volts (the pack voltage in Ready, about 12 V with the contactors open) |
 | VCU 0x6A2 | D414 | outside temperature, the same as D434 |
-| VCU 0x6A2 | D403, D463, D4B7, D85B | brake pedal: 1 pressed, 0 released |
+| VCU 0x6A2 | D403, D463, D4B7 | brake pedal: 1 pressed, 0 released |
 | VCU 0x6A2 | D4C0 | Ready: 3 in Ready, 0 otherwise |
 | VCU 0x6A2 | D818 | power state: 3 Ready, 4 HV on but not Ready (also while charging), 0 contactors open |
 | VCU, charger | D8AA | charging state: 0 charge session (charging or waiting), 2 charge finished with the cable in, 3 no cable |
@@ -507,6 +507,7 @@ them (114 kW out, 68 kW regeneration).
 | BMS 0x6B4 | D413, D862, D863 | further SOC variants |
 | BMS 0x6B4 | D416 | contactor close counter (name from Battery-Emulator; grows with each HV contactor closing, also at the end of a DC charge) |
 | MCU 0x6A6 | DC71 | motor temperature, /100 °C (rises while driving, falls when parked) |
+| VCU 0x6A2 | D85B | brake pedal state: 1 or 2 with the pedal pressed in P, but 0 with it pressed in D or N in most snaps |
 | VCU 0x6A2 | D880 | requested motor torque (name from OBDb), /10 Nm: tracks the actual torque D8D0 about 0.2 s ahead (peak 261 against 259 Nm); the data cannot tell requested from actual |
 
 **Published by others, not checked yet** (the app's *not checked* level; on this car the published scale gives plausible values)

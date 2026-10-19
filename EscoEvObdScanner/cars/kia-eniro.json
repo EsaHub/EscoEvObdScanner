@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "version": 1,
+  "version": 2,
   "license": "CC-BY-4.0",
   "attribution": "Esco EV OBD Scanner car files by Esa Pelttari, CC BY 4.0, https://github.com/EsaHub/EscoEvObdScanner",
   "platform": {
@@ -224,9 +224,10 @@
           "confidence": "reported",
           "source": [
             "evdash",
-            "jejusoul"
+            "jejusoul",
+            "obdb"
           ],
-          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Holds: available charge power [B9:B10]/100 kW, discharge power [B11:B12]/100 kW, current S[B14:B15]/10 A (positive = discharge), voltage [B16:B17]/10 V, max/min pack temperature SB18/SB19 °C, module temperatures SB20..SB23 °C, inlet temperature SB26 °C, highest cell B27/50 V (number B28), lowest cell B29/50 V (number B30), fan B31, 12 V B33/10 V, motor rpm S[B57:B58]. evDash also reads cumulative charged and discharged energy [B42:B45]/10 and [B46:B49]/10 kWh and operating time [B50:B53] s, but in its sample replies the energy (543 / 498 kWh) does not fit its sample odometer (13 067 km), so their meaning is open. The max/min pack temperatures SB18/SB19 are not from evDash (it takes them from the module temperatures SB20..SB23) but from JejuSoul's Kona/Niro list (Battery Max/Min Temperature, Signed(O)/Signed(P)), so they are less certain than the module temperatures. Shown here: voltage."
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Holds: available charge power [B9:B10]/100 kW, discharge power [B11:B12]/100 kW, current S[B14:B15]/10 A (positive = discharge), voltage [B16:B17]/10 V, max/min pack temperature SB18/SB19 °C, module temperatures SB20..SB23 °C, inlet temperature SB26 °C, highest cell B27/50 V (number B28), lowest cell B29/50 V (number B30), fan B31, 12 V B33/10 V, motor rpm S[B57:B58] (evDash reads it unsigned; OBDb captures of a 2019 car show -149). evDash also reads cumulative charged and discharged energy [B42:B45]/10 and [B46:B49]/10 kWh and operating time [B50:B53] s; in its sample replies the energy (543 / 498 kWh) does not fit its sample odometer (13 067 km), but the OBDb captures of 2019-2022 cars fit lifetime energy (2019: 12 558-13 277 kWh charged at 36 908-39 070 miles; 2021: 58 147 / 56 275 kWh at 191 251 miles). The max/min pack temperatures SB18/SB19 are not from evDash (it takes them from the module temperatures SB20..SB23) but from JejuSoul's Kona/Niro list (Battery Max/Min Temperature, Signed(O)/Signed(P)), so they are less certain than the module temperatures. Shown here: voltage."
         },
         {
           "did": "0x0102",
@@ -349,9 +350,10 @@
           "expression": "[B10:B12]",
           "confidence": "reported",
           "source": [
-            "evdash"
+            "evdash",
+            "obdb"
           ],
-          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here."
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. km in B10..B12; OBDb captures of cars set to miles read 0 there and keep miles in B13..B15, so the dashboard does not show 0."
         }
       ],
       "discovered": []
@@ -401,9 +403,10 @@
           "expression": "B8/72.519",
           "confidence": "reported",
           "source": [
-            "evdash"
+            "evdash",
+            "obdb"
           ],
-          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Pressure / temperature pairs: front left B8 / B9, front right B12 / B13, rear right B16 / B17, rear left B20 / B21; pressure /72.519 bar, temperature -50 °C. Shown here: front left pressure."
+          "notes": "Byte positions converted from evDash (CarKiaEniro.cpp), whose merged reply string starts at 0x62: its character c is byte B(c/2+1) here. Pressure / temperature pairs: front left B8 / B9, front right B12 / B13, rear right B16 / B17, rear left B20 / B21 (evDash; OBDb has the rear wheels the other way round); pressure /72.519 bar, temperature -50 °C. Shown here: front left pressure."
         }
       ],
       "discovered": []
@@ -423,7 +426,7 @@
   ],
   "confidence_levels": {
     "confirmed": "Checked against the dashboard or another known value on a real car: the car this file was tested on, or recordings of real cars published by others",
-    "reported": "Name or formula from one source (a publication or a single own observation), not checked against a known value",
+    "reported": "Name or formula from published sources or a single own observation, not checked against a known value",
     "unverified": "Identifier responds; the formula is an educated guess",
     "unknown": "Identifier responds; the meaning of the bytes is not worked out"
   },
