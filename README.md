@@ -25,7 +25,7 @@ battery has - comes from a car file in the `cars` folder, and the app lets you
 pick the car. `cars/stellantis-ecmp.json` covers the
 Stellantis e-CMP platform (Opel Mokka-e/Corsa-e, Peugeot e-208/e-2008, Citroën
 e-C4, DS 3 E-Tense), tested on a 2023 Mokka-e and a 2023 Citroën e-C4. It is the main car
-file: seven of its ECUs have been scanned through every identifier on the Mokka-e, and about 150
+file: seven of its ECUs have been scanned through every identifier on the Mokka-e, and about 120
 identifiers have been worked out or checked on the author's own drives, charges and
 snaps, cell health included. About 1,000 more answer, but what they mean is not
 known yet; the file lists them for anyone who wants to work them out.
@@ -267,14 +267,14 @@ with `--car <name>`.
   { "id": "bms", "name": { "fi": "Akunhallinta (BMS)", "en": "Battery management (BMS)" },
     "request": "0x6B4", "response": "0x694",
     "dids":       [ { "did": "0xD410", "name": { "fi": "Varaustila, kalibroitu", "en": "State of charge, calibrated" },
-                      "unit": "%", "expression": "(B4*256+B5)/512", "confidence": "confirmed", ... } ],
-    "discovered": [ { "did": "0xD802", "confidence": "unknown", "source": ["own-scan"], "bytes": 4, "samples": [ ... ] } ] }
+                      "unit": "%", "expression": "[B4:B5]/512", "confidence": "confirmed", ... } ],
+    "discovered": [ { "did": "0xD861", "confidence": "unknown", "source": ["own-scan"], "bytes": 2, "samples": [ ... ] } ] }
 ]
 ```
 
 Every entry says how sure it is (`confidence`) and why (`source`, `notes`). `source` is a list of ids
 from the file's `sources` (`own-scan`, `own-snaps` and `own-watch` are this program's own
-measurements); the dates and details are in `notes`. `bytes` is the reply length. A field
+measurements); the dates and details are in `notes`. `bytes` is the length of the value (the reply without 0x62 and the identifier). A field
 without a value is left out rather than written as `null`. Within an ECU the entries
 are sorted by confidence (confirmed first), then by identifier.
 `merge` adds scan results to the right ECU's `discovered` list.
@@ -523,23 +523,26 @@ charger is idle and moves only around AC charging, so the app does not show it.
 
 | ECU | Ranges | DIDs |
 |---|---|---|
-| VCU 0x6A2 | D4xx, D8xx | about 130 |
-| VCU 0x6A2 | **D5xx, D6xx, D7xx**: groups not mentioned anywhere | 31 |
-| VCU 0x6A2 | E031-E0A9 (E031-E03A: a log of the last ten charges, fields not worked out) | 16 |
-| BMS 0x6B4 | D4xx, D8xx (many named by Battery-Emulator, without scale) | about 80 |
+| VCU 0x6A2 | D4xx, D8xx | 119 |
+| VCU 0x6A2 | **D5xx, D6xx, D7xx**: groups not mentioned anywhere | 29 |
+| VCU 0x6A2 | E031-E0A9 (E031-E03A: ten records that move down a place as new ones arrive, four after an overnight charge and a drive on 2026-10-14/15; fields not worked out) | 16 |
+| BMS 0x6B4 | D4xx, D8xx (many named by Battery-Emulator, without scale) | 79 |
 | BMS 0x6B4 | **DC0F, DC63-DC65, DF63-DF64**: groups not mentioned anywhere (D900 and E082 nearby are named by Battery-Emulator) | 6 |
-| MCU 0x6A6 | D4xx, DCxx | about 20 |
-| Charger 0x590 | D4xx, D8xx, F1xx | about 45 |
+| MCU 0x6A6 | D4xx, DCxx | 20 |
+| Charger 0x590 | D4xx, D8xx, F1xx | 43 |
 | Charger 0x590 | **D5BD, D5D0, D5D2**: the rest of a group not mentioned anywhere, with D5CF and D5D1 above (answers with and without the charge cable) | 3 |
 | Charger 0x590 | E000-E707 | 131 |
-| ABS/ESP 0x6AD | D4xx, D6xx | 77 |
+| Charger 0x590 | 0D1F-0DFE and 3788-3B02: they exist, but answered conditionsNotCorrect and gave no value when scanned | 268 |
+| ABS/ESP 0x6AD | D4xx, D6xx | 76 |
 | Power steering 0x6B5 | D4xx | 20 |
 | Windscreen camera 0x74A | D4xx, D5xx | 18 |
 | Windscreen camera 0x74A | FD00-FD79 (supplier area) | 70 |
+| All seven | the rest: small groups elsewhere, among them F0xx-F1xx on every ECU and F4xx, F6xx, F8xx on the VCU | 120 |
+| **In all** | | **1,018** |
 
 Not found on the ECUs that answer: the VIN, the dashboard's range estimate, the
-trip computers and the seat heaters. They seem to live
-in ECUs that are not reachable from the OBD port (the BSI, the climate unit).
+trip computers and the seat heaters. The body computer (BSI), the instrument cluster and the
+climate unit, whose addresses PyPSADiag lists, did not answer on the OBD port.
 
 ## Languages
 
