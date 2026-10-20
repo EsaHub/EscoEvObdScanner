@@ -44,7 +44,7 @@ Ohjelmasta on kaksi versiota:
 
 ### Asentaminen
 
-Aja `EscoEvObdScanner-0.1.0.msi` ja hyväksy asennus. Sovellus tulee
+Aja `EscoEvObdScanner-<versio>.msi` ja hyväksy asennus. Sovellus tulee
 Käynnistä-valikkoon ja työpöydälle nimellä **Esco EV OBD Scanner**. *Custom Setup* -sivulla
 voi jättää työpöydän pikakuvakkeen pois ja vaihtaa asennuskansion (*Browse*). Asennus ei
 tarvitse erillistä .NET-asennusta.
