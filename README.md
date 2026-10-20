@@ -34,7 +34,11 @@ The Kia files are smaller and rest mostly on what other projects have published.
 96 cells) from replies other people captured on US cars (OBDb), tested on a 2024
 EU Niro EV. `cars/kia-eniro.json` covers the Kia e-Niro and Hyundai Kona Electric
 2018–2022 from the positions evDash publishes, checked against its sample replies
-but not tested on a car. Another make needs a new car file, not new code: see
+but not tested on a car. `cars/volvo-v70-2008.json` is an example of a car that is not
+electric: on a 2008 Volvo V70 diesel it reads the fault codes of four ECUs (engine, central
+electronic module, ABS, electric parking brake) and engine, brake and body values, with
+names and scales from OBDb's Volvo S80, V60 and XC60 sets where they answered on that car.
+Another make needs a new car file, not new code: see
 [Adding a car](#adding-a-car).
 
 > **Status:** early. Developed and tested with an OBDLink EX USB adapter
@@ -209,7 +213,7 @@ Options:  --car <name>   --catalog <path>   --out <folder>   --baud <rate>   --t
 Port "demo" runs against the simulated car; its results go to <car>-demo.
 ```
 
-With several car files (three are shipped), add `--car <name>` to every command,
+With several car files (four are shipped), add `--car <name>` to every command,
 e.g. `EscoEvObdScanner COM4 known --car stellantis-ecmp`.
 
 `scan` exits with 2 when it stopped early (the ECU went silent or answered only
@@ -336,46 +340,46 @@ the app reads only these names, and each car file says where its car keeps the
 value. A test requires every `live` name to be one the app knows. Where each
 car file reads them (`-`: not known for that car):
 
-| Value | Stellantis e-CMP | Kia Niro EV (2022–) | Kia e-Niro / Hyundai Kona Electric (2018–2022) |
-|---|---|---|---|
-| `soc` | BMS D410 | BMS 0105 `B35/2` | BMS 0105 `B35/2` |
-| `soc_raw` | BMS D810 | BMS 0101 `B8/2` | - |
-| `voltage` | BMS D815 | BMS 0101 `[B16:B17]/10` | BMS 0101 `[B16:B17]/10` |
-| `current` | BMS D816 | BMS 0101 `S[B14:B15]/10` | BMS 0101 `S[B14:B15]/10` |
-| `energy` | BMS D865 | - (0105 `[B32:B33]*2/1000` is a candidate; its meaning is open) | - |
-| `soh` | BMS D860 | BMS 0105 `[B29:B30]/10` | BMS 0105 `[B29:B30]/10` |
-| `aux_voltage` | BMS D822 | BMS 0101 `B33/10` | BMS 0101 `B33/10` |
-| `temp_min` | BMS D87D | BMS 0101 `SB19` | BMS 0101 `SB19` |
-| `temp_avg` | BMS D877 | - | - |
-| `temp_max` | BMS D817 | BMS 0101 `SB18` | BMS 0101 `SB18` |
-| `temp_delta` | BMS D878 | - | - |
-| `max_charge_power` | BMS D871 `500-[B4:B7]/128` | BMS 0105 `[B20:B21]/100` | - |
-| `max_discharge_power` | BMS D873 `[B4:B7]/128-500` | BMS 0105 `[B22:B23]/100` | - |
-| `isolation_pos` | BMS D87B | BMS 0101 `[B61:B62]` | - |
-| `isolation_neg` | BMS D87C | - | - |
-| `cell_min` | BMS D86F | BMS 0101 `B29/50` | BMS 0101 `B29/50` |
-| `cell_max` | BMS D870 | BMS 0101 `B27/50` | BMS 0101 `B27/50` |
-| `lowest_cell` | BMS D43C | BMS 0101 `B30` | BMS 0101 `B30` |
-| `cells` | BMS D440 | BMS 0102, 0103, 0104 | BMS 0102, 0103, 0104, 0105 |
-| `probes` | BMS D442 | BMS 0101, 0105 | BMS 0101 |
-| `cell_soh` | BMS D4B5 | - | - |
-| `speed` | VCU D402 | AIRCON 0100 `B33` | ABS C101 `B10` |
-| `motor_rpm` | VCU D8CF | BMS 0101 `S[B57:B58]` | BMS 0101 `S[B57:B58]` |
-| `ambient` | VCU D434 | AIRCON 0100 `B10/2-40` | AIRCON 0100 `B10/2-40` |
-| `odometer` | VCU D49C | CLUSTER B002 `[B10:B12]` | CLUSTER B002 `[B10:B12]` |
-| `gear` | VCU D4E7 | VCU E004 `B18` | ABS C101 `B12` |
-| `drive_mode` | VCU D819 | - | - |
-| `charging` | OBC D854 | - | - |
-| `grid_voltage` | OBC D82B | - | - |
-| `motor_temp`, `dcdc_temp` | VCU D8CD, D8CE | - | - |
-| `inverter_temp` | MCU DC6A | - | - |
-| `coolant_temp`, `aux_battery_temp` | VCU D8F9, D496 | - | - |
-| `battery_made`, `bms_software`, `bms_hardware` | BMS F18B, F195, F193 | - | - |
-| `contactor_closes`, `time_above_55c` | BMS D416, E082 | - | - |
-| `lifetime_charged_kwh` | BMS D42E `[B4:B7]/16` | BMS 0101 `[B42:B45]/10` | - |
-| `lifetime_discharged_kwh` | BMS D42E `[B8:B11]/16` | BMS 0101 `[B46:B49]/10` | - |
-| `ac_charges`, `dc_charges` | - | BMS 0111 `[B8:B11]`, `[B12:B15]` | - |
-| `ac_charged_kwh`, `dc_charged_kwh` | - | BMS 0111 `[B16:B19]`, `[B20:B23]` | - |
+| Value | Stellantis e-CMP | Kia Niro EV (2022–) | Kia e-Niro / Hyundai Kona Electric (2018–2022) | Volvo V70 (2008) |
+|---|---|---|---|---|
+| `soc` | BMS D410 | BMS 0105 `B35/2` | BMS 0105 `B35/2` | - |
+| `soc_raw` | BMS D810 | BMS 0101 `B8/2` | - | - |
+| `voltage` | BMS D815 | BMS 0101 `[B16:B17]/10` | BMS 0101 `[B16:B17]/10` | - |
+| `current` | BMS D816 | BMS 0101 `S[B14:B15]/10` | BMS 0101 `S[B14:B15]/10` | - |
+| `energy` | BMS D865 | - (0105 `[B32:B33]*2/1000` is a candidate; its meaning is open) | - | - |
+| `soh` | BMS D860 | BMS 0105 `[B29:B30]/10` | BMS 0105 `[B29:B30]/10` | - |
+| `aux_voltage` | BMS D822 | BMS 0101 `B33/10` | BMS 0101 `B33/10` | ECM F442 `[B4:B5]/1000` |
+| `temp_min` | BMS D87D | BMS 0101 `SB19` | BMS 0101 `SB19` | - |
+| `temp_avg` | BMS D877 | - | - | - |
+| `temp_max` | BMS D817 | BMS 0101 `SB18` | BMS 0101 `SB18` | - |
+| `temp_delta` | BMS D878 | - | - | - |
+| `max_charge_power` | BMS D871 `500-[B4:B7]/128` | BMS 0105 `[B20:B21]/100` | - | - |
+| `max_discharge_power` | BMS D873 `[B4:B7]/128-500` | BMS 0105 `[B22:B23]/100` | - | - |
+| `isolation_pos` | BMS D87B | BMS 0101 `[B61:B62]` | - | - |
+| `isolation_neg` | BMS D87C | - | - | - |
+| `cell_min` | BMS D86F | BMS 0101 `B29/50` | BMS 0101 `B29/50` | - |
+| `cell_max` | BMS D870 | BMS 0101 `B27/50` | BMS 0101 `B27/50` | - |
+| `lowest_cell` | BMS D43C | BMS 0101 `B30` | BMS 0101 `B30` | - |
+| `cells` | BMS D440 | BMS 0102, 0103, 0104 | BMS 0102, 0103, 0104, 0105 | - |
+| `probes` | BMS D442 | BMS 0101, 0105 | BMS 0101 | - |
+| `cell_soh` | BMS D4B5 | - | - | - |
+| `speed` | VCU D402 | AIRCON 0100 `B33` | ABS C101 `B10` | ECM F40D `B4` |
+| `motor_rpm` | VCU D8CF | BMS 0101 `S[B57:B58]` | BMS 0101 `S[B57:B58]` | ECM F40C `[B4:B5]/4` |
+| `ambient` | VCU D434 | AIRCON 0100 `B10/2-40` | AIRCON 0100 `B10/2-40` | ECM F446 `B4-40` |
+| `odometer` | VCU D49C | CLUSTER B002 `[B10:B12]` | CLUSTER B002 `[B10:B12]` | CEM DD01 `[B4:B6]` |
+| `gear` | VCU D4E7 | VCU E004 `B18` | ABS C101 `B12` | - |
+| `drive_mode` | VCU D819 | - | - | - |
+| `charging` | OBC D854 | - | - | - |
+| `grid_voltage` | OBC D82B | - | - | - |
+| `motor_temp`, `dcdc_temp` | VCU D8CD, D8CE | - | - | - |
+| `inverter_temp` | MCU DC6A | - | - | - |
+| `coolant_temp`, `aux_battery_temp` | VCU D8F9, D496 | - | - | ECM F405 `B4-40`, - |
+| `battery_made`, `bms_software`, `bms_hardware` | BMS F18B, F195, F193 | - | - | - |
+| `contactor_closes`, `time_above_55c` | BMS D416, E082 | - | - | - |
+| `lifetime_charged_kwh` | BMS D42E `[B4:B7]/16` | BMS 0101 `[B42:B45]/10` | - | - |
+| `lifetime_discharged_kwh` | BMS D42E `[B8:B11]/16` | BMS 0101 `[B46:B49]/10` | - | - |
+| `ac_charges`, `dc_charges` | - | BMS 0111 `[B8:B11]`, `[B12:B15]` | - | - |
+| `ac_charged_kwh`, `dc_charged_kwh` | - | BMS 0111 `[B16:B19]`, `[B20:B23]` | - | - |
 
 | Field | Meaning |
 |---|---|

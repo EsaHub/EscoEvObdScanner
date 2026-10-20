@@ -1,0 +1,1698 @@
+{
+  "schema": 2,
+  "version": 1,
+  "license": "CC-BY-4.0",
+  "attribution": "Esco EV OBD Scanner car files by Esa Pelttari, CC BY 4.0, https://github.com/EsaHub/EscoEvObdScanner",
+  "platform": {
+    "name": "Volvo V70 (2008, P3)",
+    "cars": "Volvo V70 2008 diesel (tested), an example of a car that is not electric. The engine control module (Bosch EDC16) on the standard OBD address 0x7E0 with its fault codes, identification and the SAE J1979 values it answers as 0xF4xx; the central electronic module 0x726, ABS 0x760 and electric parking brake 0x756 with values named after OBDb's V60, XC60 and S80 sets. Engine speed, speed, coolant, outside temperature, voltage and odometer on the dashboard. Volvo ECUs on 29-bit addresses are not read.",
+    "elm_protocol": "6",
+    "probe_from": "0x7E0",
+    "main_range": [
+      "0x7E0",
+      "0x7E7"
+    ],
+    "identifying": [
+      "0xF18C",
+      "0xF190"
+    ],
+    "gauges": {
+      "speed_kmh": [
+        0,
+        220
+      ]
+    }
+  },
+  "live": {
+    "motor_rpm": {
+      "ecu": "ecm",
+      "did": "0xF40C",
+      "poll": "fast",
+      "expression": "[B4:B5]/4",
+      "min": 0,
+      "max": 6000
+    },
+    "speed": {
+      "ecu": "ecm",
+      "did": "0xF40D",
+      "poll": "fast",
+      "expression": "B4",
+      "min": 0,
+      "max": 250
+    },
+    "coolant_temp": {
+      "ecu": "ecm",
+      "did": "0xF405",
+      "poll": "slow",
+      "expression": "B4-40",
+      "min": -40,
+      "max": 150
+    },
+    "ambient": {
+      "ecu": "ecm",
+      "did": "0xF446",
+      "poll": "slow",
+      "expression": "B4-40",
+      "min": -40,
+      "max": 60
+    },
+    "aux_voltage": {
+      "ecu": "ecm",
+      "did": "0xF442",
+      "poll": "slow",
+      "expression": "[B4:B5]/1000",
+      "min": 6,
+      "max": 18
+    },
+    "odometer": {
+      "ecu": "cem",
+      "did": "0xDD01",
+      "poll": "rare",
+      "expression": "[B4:B6]",
+      "min": 1,
+      "max": 2000000
+    }
+  },
+  "ecus": [
+    {
+      "id": "ecm",
+      "name": {
+        "fi": "Moottorinohjain (ECM)",
+        "en": "Engine control module (ECM)"
+      },
+      "request": "0x7E0",
+      "response": "0x7E8",
+      "notes": "Answered the ECU search of 0x7E0-0x7E7 on 2026-10-20 (the only one) and UDS fault code reads (19 02): the program and the command line read the same four failing codes. Software identification names a Bosch EDC16 (0xF180). Answers the SAE J1979 PIDs as identifiers 0xF4xx.",
+      "scanned": [
+        {
+          "range": "0xF100-0xF1FF",
+          "notes": "2026-10-20, ignition on: 17 identifiers"
+        },
+        {
+          "range": "0xF400-0xF4FF",
+          "notes": "2026-10-20, engine idling: 32 identifiers, the SAE J1979 PIDs 0x00-0x4C the engine supports"
+        }
+      ],
+      "dids": [
+        {
+          "did": "0xDD01",
+          "name": {
+            "fi": "Matkamittari",
+            "en": "Odometer"
+          },
+          "unit": "km",
+          "bytes": 4,
+          "expression": "[B4:B7]",
+          "confidence": "confirmed",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Read on the tested car 2026-10-20: 485 939 km, the same as the instrument cluster. OBDb (V60, XC60) lists it here with another layout, which gives 1898 km on this car; the four bytes as such give the odometer."
+        },
+        {
+          "did": "0xF190",
+          "name": {
+            "fi": "Valmistenumero (VIN)",
+            "en": "VIN"
+          },
+          "encoding": "ascii",
+          "confidence": "confirmed",
+          "changes": "rarely",
+          "source": [
+            "iso-14229",
+            "own-scan"
+          ],
+          "notes": "Read on the tested car as its VIN (2026-10-20); the program uses it to recognise the car and does not keep the value here."
+        },
+        {
+          "did": "0xD900",
+          "name": {
+            "fi": "Ilmastoinnin paine",
+            "en": "Air conditioning pressure"
+          },
+          "unit": "kPa",
+          "bytes": 2,
+          "expression": "[B4:B5]/5",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 224.6 kPa."
+        },
+        {
+          "did": "0xD924",
+          "name": {
+            "fi": "Laturin virta",
+            "en": "Alternator current"
+          },
+          "unit": "A",
+          "bytes": 2,
+          "expression": "[B4:B5]/100",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 24.2 A."
+        },
+        {
+          "did": "0xD941",
+          "name": {
+            "fi": "Ahtopaine",
+            "en": "Boost pressure"
+          },
+          "unit": "kPa",
+          "bytes": 2,
+          "expression": "[B4:B5]/10",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 103.3 kPa, as the barometric pressure 0xF433 at idle. On a drive of 2026-10-20 13:14-13:27 (watch): 103-237 kPa, following the desired value 0xD9E4 (median difference 0.4 kPa)."
+        },
+        {
+          "did": "0xD96D",
+          "name": {
+            "fi": "EGR-venttiilin ohjattu asento",
+            "en": "EGR valve, commanded position"
+          },
+          "unit": "%",
+          "bytes": 2,
+          "expression": "[B4:B5]/100",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0.86 %."
+        },
+        {
+          "did": "0xD9AB",
+          "name": {
+            "fi": "Imusarjan ilman lämpötila",
+            "en": "Intake manifold air temperature"
+          },
+          "unit": "°C",
+          "bytes": 2,
+          "expression": "S[B4:B5]/10-273.14",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 24.0 °C."
+        },
+        {
+          "did": "0xD9DC",
+          "name": {
+            "fi": "Moottoriöljyn lämpötila",
+            "en": "Engine oil temperature"
+          },
+          "unit": "°C",
+          "bytes": 2,
+          "expression": "[B4:B5]/10-273.14",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 70.3 °C after a short drive. On a drive of 2026-10-20 13:14-13:27 (watch): rose 72 -> 99 °C while the coolant 0xF405 rose 68 -> 90 °C."
+        },
+        {
+          "did": "0xD9E4",
+          "name": {
+            "fi": "Ahtopaineen tavoite",
+            "en": "Boost pressure, desired"
+          },
+          "unit": "kPa",
+          "bytes": 2,
+          "expression": "[B4:B5]/10",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 102.4 kPa. On a drive of 2026-10-20 13:14-13:27 (watch): 102-237 kPa."
+        },
+        {
+          "did": "0xD9EE",
+          "name": {
+            "fi": "Polttoainepaineen säätöventtiilin virta",
+            "en": "Fuel pressure regulator valve current"
+          },
+          "unit": "mA",
+          "bytes": 2,
+          "expression": "[B4:B5]",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 713 mA."
+        },
+        {
+          "did": "0xD9F2",
+          "name": {
+            "fi": "Hiukkassuodattimen nokimäärä",
+            "en": "Diesel particulate filter soot"
+          },
+          "bytes": 2,
+          "expression": "[B4:B5]/100",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 4.74; OBDb gives no unit."
+        },
+        {
+          "did": "0xD9F9",
+          "name": {
+            "fi": "Hiukkassuodattimen lämpötila",
+            "en": "Diesel particulate filter temperature"
+          },
+          "unit": "°C",
+          "bytes": 2,
+          "expression": "[B4:B5]/10-273.14",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 135.6 °C."
+        },
+        {
+          "did": "0xD9FF",
+          "name": {
+            "fi": "Polttoaineen yhteispaineen tavoite",
+            "en": "Fuel rail pressure, desired"
+          },
+          "unit": "bar",
+          "bytes": 2,
+          "expression": "[B4:B5]/10",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 325 bar (OBDb: raw x 100, no unit) against the actual 0xF423 of 345-352 bar."
+        },
+        {
+          "did": "0xF180",
+          "name": {
+            "fi": "Käynnistysohjelmiston tunniste",
+            "en": "Boot software identification"
+          },
+          "encoding": "ascii",
+          "confidence": "reported",
+          "changes": "rarely",
+          "source": [
+            "iso-14229",
+            "own-scan"
+          ],
+          "notes": "ISO 14229 identifier; on the tested car a text naming a Bosch EDC16 (2026-10-20)."
+        },
+        {
+          "did": "0xF188",
+          "name": {
+            "fi": "Ohjelmiston numero",
+            "en": "ECU software number"
+          },
+          "encoding": "ascii",
+          "confidence": "reported",
+          "changes": "rarely",
+          "source": [
+            "iso-14229",
+            "own-scan"
+          ],
+          "notes": "ISO 14229 identifier (vehicle manufacturer ECU software number); read as text on the tested car (2026-10-20)."
+        },
+        {
+          "did": "0xF18C",
+          "name": {
+            "fi": "Ohjainlaitteen sarjanumero",
+            "en": "ECU serial number"
+          },
+          "encoding": "ascii",
+          "confidence": "reported",
+          "changes": "rarely",
+          "source": [
+            "iso-14229",
+            "own-scan"
+          ],
+          "notes": "ISO 14229 identifier; read as text on the tested car (2026-10-20); the program uses it to recognise the car and does not keep the value here."
+        },
+        {
+          "did": "0xF191",
+          "name": {
+            "fi": "Laitteiston numero",
+            "en": "ECU hardware number"
+          },
+          "encoding": "ascii",
+          "confidence": "reported",
+          "changes": "rarely",
+          "source": [
+            "iso-14229",
+            "own-scan"
+          ],
+          "notes": "ISO 14229 identifier (vehicle manufacturer ECU hardware number); read as text on the tested car (2026-10-20)."
+        },
+        {
+          "did": "0xF404",
+          "name": {
+            "fi": "Moottorin kuormitus (laskettu)",
+            "en": "Calculated engine load"
+          },
+          "unit": "%",
+          "bytes": 1,
+          "expression": "B4*100/255",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x04 read with service 0x22 as identifier 0xF404 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 28.2 % at idle.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:19.6162591Z",
+              "hex": "48"
+            }
+          ]
+        },
+        {
+          "did": "0xF405",
+          "name": {
+            "fi": "Jäähdytysnesteen lämpötila",
+            "en": "Engine coolant temperature"
+          },
+          "unit": "°C",
+          "bytes": 1,
+          "expression": "B4-40",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x05 read with service 0x22 as identifier 0xF405 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 27 °C. Rose 42 -> 58 °C on the drive of 2026-10-20 12:10-12:16.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:19.7761911Z",
+              "hex": "43"
+            }
+          ]
+        },
+        {
+          "did": "0xF40B",
+          "name": {
+            "fi": "Imusarjan paine (absoluuttinen)",
+            "en": "Intake manifold absolute pressure"
+          },
+          "unit": "kPa",
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x0B read with service 0x22 as identifier 0xF40B (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 102 kPa at idle, the same as the barometric pressure 0xF433.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:20.6939173Z",
+              "hex": "66"
+            }
+          ]
+        },
+        {
+          "did": "0xF40C",
+          "name": {
+            "fi": "Moottorin kierrosluku",
+            "en": "Engine speed"
+          },
+          "unit": "rpm",
+          "bytes": 2,
+          "expression": "[B4:B5]/4",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x0C read with service 0x22 as identifier 0xF40C (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 740 rpm at idle. On the drive of 2026-10-20 12:10-12:16: 681-2517 rpm, in a steady ratio to the vehicle speed 0xF40D in each gear.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:20.8487385Z",
+              "hex": "0B90"
+            }
+          ]
+        },
+        {
+          "did": "0xF40D",
+          "name": {
+            "fi": "Ajonopeus",
+            "en": "Vehicle speed"
+          },
+          "unit": "km/h",
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x0D read with service 0x22 as identifier 0xF40D (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 0 standing. On a drive of 2026-10-20 12:10-12:16 (live recording): up to 70 km/h, the engine speed 0xF40C in a steady ratio to it (63-66 and 31-34 rpm per km/h, two gears). On a drive of 2026-10-20 13:14-13:27 (watch): 0-102 km/h, the same as the ABS wheel speeds; 86 km/h at a steady 90 km/h on the dashboard speedometer, which reads high.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:20.9928342Z",
+              "hex": "00"
+            }
+          ]
+        },
+        {
+          "did": "0xF40F",
+          "name": {
+            "fi": "Imuilman lämpötila",
+            "en": "Intake air temperature"
+          },
+          "unit": "°C",
+          "bytes": 1,
+          "expression": "B4-40",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x0F read with service 0x22 as identifier 0xF40F (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 9 °C.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:21.2808041Z",
+              "hex": "31"
+            }
+          ]
+        },
+        {
+          "did": "0xF410",
+          "name": {
+            "fi": "Imuilman massavirta",
+            "en": "Mass air flow"
+          },
+          "unit": "g/s",
+          "bytes": 2,
+          "expression": "[B4:B5]/100",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x10 read with service 0x22 as identifier 0xF410 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 15.6 g/s at idle.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:21.4248373Z",
+              "hex": "0619"
+            }
+          ]
+        },
+        {
+          "did": "0xF411",
+          "name": {
+            "fi": "Kaasuläpän asento",
+            "en": "Throttle position"
+          },
+          "unit": "%",
+          "bytes": 1,
+          "expression": "B4*100/255",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x11 read with service 0x22 as identifier 0xF411 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 88 % at idle.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:21.5849211Z",
+              "hex": "E1"
+            }
+          ]
+        },
+        {
+          "did": "0xF421",
+          "name": {
+            "fi": "Ajomatka moottorin vikavalon palaessa",
+            "en": "Distance with the engine warning lamp on"
+          },
+          "unit": "km",
+          "bytes": 2,
+          "expression": "[B4:B5]",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x21 read with service 0x22 as identifier 0xF421 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 0.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:24.0337379Z",
+              "hex": "0000"
+            }
+          ]
+        },
+        {
+          "did": "0xF423",
+          "name": {
+            "fi": "Polttoaineen yhteispaine (common rail)",
+            "en": "Fuel rail pressure"
+          },
+          "unit": "kPa",
+          "bytes": 2,
+          "expression": "[B4:B5]*10",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x23 read with service 0x22 as identifier 0xF423 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 34500 kPa (345 bar) at idle.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:24.3381732Z",
+              "hex": "0D7A"
+            }
+          ]
+        },
+        {
+          "did": "0xF430",
+          "name": {
+            "fi": "Lämpenemiskerrat vikakoodien tyhjennyksen jälkeen",
+            "en": "Warm-ups since fault codes were cleared"
+          },
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x30 read with service 0x22 as identifier 0xF430 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 128.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:26.2426638Z",
+              "hex": "80"
+            }
+          ]
+        },
+        {
+          "did": "0xF431",
+          "name": {
+            "fi": "Ajomatka vikakoodien tyhjennyksen jälkeen",
+            "en": "Distance since fault codes were cleared"
+          },
+          "unit": "km",
+          "bytes": 2,
+          "expression": "[B4:B5]",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x31 read with service 0x22 as identifier 0xF431 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 7334 km.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:26.3866458Z",
+              "hex": "1CA6"
+            }
+          ]
+        },
+        {
+          "did": "0xF433",
+          "name": {
+            "fi": "Ilmanpaine",
+            "en": "Barometric pressure"
+          },
+          "unit": "kPa",
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x33 read with service 0x22 as identifier 0xF433 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 102 kPa.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:26.6748373Z",
+              "hex": "66"
+            }
+          ]
+        },
+        {
+          "did": "0xF43C",
+          "name": {
+            "fi": "Katalysaattorin lämpötila, anturi 1",
+            "en": "Catalyst temperature, sensor 1"
+          },
+          "unit": "°C",
+          "bytes": 2,
+          "expression": "[B4:B5]/10-40",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x3C read with service 0x22 as identifier 0xF43C (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 90.0 °C.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:28.0043721Z",
+              "hex": "0514"
+            }
+          ]
+        },
+        {
+          "did": "0xF43E",
+          "name": {
+            "fi": "Katalysaattorin lämpötila, anturi 2",
+            "en": "Catalyst temperature, sensor 2"
+          },
+          "unit": "°C",
+          "bytes": 2,
+          "expression": "[B4:B5]/10-40",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x3E read with service 0x22 as identifier 0xF43E (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 83.8 °C.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:28.2914882Z",
+              "hex": "04D6"
+            }
+          ]
+        },
+        {
+          "did": "0xF442",
+          "name": {
+            "fi": "Ohjainlaitteen syöttöjännite",
+            "en": "Control module supply voltage"
+          },
+          "unit": "V",
+          "bytes": 2,
+          "expression": "[B4:B5]/1000",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x42 read with service 0x22 as identifier 0xF442 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 14.58 V with the engine running. 14.45-14.72 V on the drive of 2026-10-20 12:10-12:16.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:28.9001514Z",
+              "hex": "38F8"
+            }
+          ]
+        },
+        {
+          "did": "0xF445",
+          "name": {
+            "fi": "Kaasuläpän suhteellinen asento",
+            "en": "Relative throttle position"
+          },
+          "unit": "%",
+          "bytes": 1,
+          "expression": "B4*100/255",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x45 read with service 0x22 as identifier 0xF445 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 4.3 %.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:29.3538621Z",
+              "hex": "0B"
+            }
+          ]
+        },
+        {
+          "did": "0xF446",
+          "name": {
+            "fi": "Ulkoilman lämpötila",
+            "en": "Outside air temperature"
+          },
+          "unit": "°C",
+          "bytes": 1,
+          "expression": "B4-40",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x46 read with service 0x22 as identifier 0xF446 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 7 °C.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:29.5093993Z",
+              "hex": "2F"
+            }
+          ]
+        },
+        {
+          "did": "0xF449",
+          "name": {
+            "fi": "Kaasupolkimen asento, anturi D",
+            "en": "Accelerator pedal position, sensor D"
+          },
+          "unit": "%",
+          "bytes": 1,
+          "expression": "B4*100/255",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x49 read with service 0x22 as identifier 0xF449 (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 8.2 % with the pedal up.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:29.9405389Z",
+              "hex": "15"
+            }
+          ]
+        },
+        {
+          "did": "0xF44A",
+          "name": {
+            "fi": "Kaasupolkimen asento, anturi E",
+            "en": "Accelerator pedal position, sensor E"
+          },
+          "unit": "%",
+          "bytes": 1,
+          "expression": "B4*100/255",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x4A read with service 0x22 as identifier 0xF44A (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 8.2 % with the pedal up.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:30.1016960Z",
+              "hex": "15"
+            }
+          ]
+        },
+        {
+          "did": "0xF44C",
+          "name": {
+            "fi": "Kaasuläpän ohjausarvo",
+            "en": "Commanded throttle position"
+          },
+          "unit": "%",
+          "bytes": 1,
+          "expression": "B4*100/255",
+          "confidence": "reported",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x4C read with service 0x22 as identifier 0xF44C (ISO 27145 mapping). On the tested car 2026-10-20, engine idling: 95.3 %.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:30.3884076Z",
+              "hex": "F3"
+            }
+          ]
+        },
+        {
+          "did": "0xD99C",
+          "name": {
+            "fi": "Polttoaineen lämpötila (ehdokas)",
+            "en": "Fuel temperature (candidate)"
+          },
+          "unit": "°C",
+          "bytes": 2,
+          "expression": "S[B4:B5]/10-273",
+          "confidence": "unverified",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (S80, V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0.1 °C while fault P0183 (fuel temperature sensor A circuit high) was failing, so the reading may be wrong on this car."
+        },
+        {
+          "did": "0xF41F",
+          "name": {
+            "fi": "Moottorin käyntiaika (merkitys auki)",
+            "en": "Run time since engine start (meaning open)"
+          },
+          "unit": "s",
+          "bytes": 2,
+          "expression": "[B4:B5]",
+          "confidence": "unverified",
+          "source": [
+            "sae-j1979",
+            "own-scan"
+          ],
+          "notes": "SAE J1979 PID 0x1F read with service 0x22 as identifier 0xF41F (ISO 27145 mapping). On the tested car 2026-10-20 it rose 36938 -> 46982 in about 4 minutes of idling, so not seconds since the start; meaning open.",
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:23.7458983Z",
+              "hex": "904A"
+            }
+          ]
+        }
+      ],
+      "discovered": [
+        {
+          "did": "0xF110",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:25.1179160Z",
+              "hex": "333037383535333020414200000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF113",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:25.6267606Z",
+              "hex": "3647394E2D3132413635302D534300000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF120",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:27.6113016Z",
+              "hex": "000000002D0000000000002D000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF162",
+          "bytes": 1,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:37.5030917Z",
+              "hex": "03"
+            }
+          ]
+        },
+        {
+          "did": "0xF163",
+          "bytes": 1,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:37.6473112Z",
+              "hex": "02"
+            }
+          ]
+        },
+        {
+          "did": "0xF196",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:45.4422784Z",
+              "hex": "4142434445464748494A4B4C4D4E4F505152535455565758"
+            }
+          ]
+        },
+        {
+          "did": "0xF1A2",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:47.2833504Z",
+              "hex": "333037383535333020414200000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF1A4",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:47.6193294Z",
+              "hex": "333037383531303020414200000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF1A5",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:47.7959264Z",
+              "hex": "333133323137363320414100000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF1A6",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:47.9717280Z",
+              "hex": "333037383533333220414100000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF1AF",
+          "bytes": 25,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:49.3638714Z",
+              "hex": "01333037383535333720202000000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF1B0",
+          "bytes": 24,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T08:59:49.5405923Z",
+              "hex": "333037383531303020414200000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "did": "0xF400",
+          "bytes": 4,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:18.9887397Z",
+              "hex": "983BA013"
+            }
+          ]
+        },
+        {
+          "did": "0xF401",
+          "bytes": 4,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:19.1542554Z",
+              "hex": "0006E000"
+            }
+          ]
+        },
+        {
+          "did": "0xF413",
+          "bytes": 1,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:21.8729993Z",
+              "hex": "01"
+            }
+          ]
+        },
+        {
+          "did": "0xF41C",
+          "bytes": 1,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:23.3136762Z",
+              "hex": "06"
+            }
+          ]
+        },
+        {
+          "did": "0xF420",
+          "bytes": 4,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:23.8899921Z",
+              "hex": "B019A015"
+            }
+          ]
+        },
+        {
+          "did": "0xF424",
+          "bytes": 4,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:24.4819995Z",
+              "hex": "15B300D1"
+            }
+          ]
+        },
+        {
+          "did": "0xF42C",
+          "bytes": 1,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:25.6506813Z",
+              "hex": "FF"
+            }
+          ]
+        },
+        {
+          "did": "0xF42D",
+          "bytes": 1,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:25.8013706Z",
+              "hex": "FF"
+            }
+          ]
+        },
+        {
+          "did": "0xF440",
+          "bytes": 4,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:28.6116972Z",
+              "hex": "CCD00000"
+            }
+          ]
+        },
+        {
+          "did": "0xF441",
+          "bytes": 4,
+          "confidence": "unknown",
+          "kind": "positive",
+          "source": [
+            "own-scan"
+          ],
+          "samples": [
+            {
+              "ts": "2026-10-20T09:01:28.7568381Z",
+              "hex": "0046E000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cem",
+      "name": {
+        "fi": "Keskussähkölaite (CEM)",
+        "en": "Central electronic module (CEM)"
+      },
+      "request": "0x726",
+      "response": "0x72E",
+      "notes": "Answered a probe of 0x726 on 2026-10-20. OBDb (V60, XC60) lists it at this address. Fault code read (19 02) answered on 2026-10-20: one stored code.",
+      "dids": [
+        {
+          "did": "0xDD01",
+          "name": {
+            "fi": "Matkamittari",
+            "en": "Odometer"
+          },
+          "unit": "km",
+          "bytes": 3,
+          "expression": "[B4:B6]",
+          "confidence": "confirmed",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Read on the tested car 2026-10-20: 485 939 km, the same as the instrument cluster."
+        },
+        {
+          "did": "0x4117",
+          "name": {
+            "fi": "Polttoainemäärän anturi",
+            "en": "Fuel level sensor"
+          },
+          "unit": "V",
+          "bytes": 2,
+          "expression": "[B4:B5]/204.59",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 2.55 V; a voltage, not litres."
+        },
+        {
+          "did": "0x4118",
+          "name": {
+            "fi": "Polttoainemäärän anturi, säiliön toinen puoli",
+            "en": "Fuel level sensor, second tank half"
+          },
+          "unit": "V",
+          "bytes": 2,
+          "expression": "[B4:B5]/204.59",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 4.98 V."
+        },
+        {
+          "did": "0x411D",
+          "name": {
+            "fi": "Laturin jännitepyyntö",
+            "en": "Alternator charge voltage request"
+          },
+          "unit": "V",
+          "bytes": 1,
+          "expression": "B4/10",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 14.7 V."
+        },
+        {
+          "did": "0x7151",
+          "name": {
+            "fi": "Valot: lähivalot, kaukovalot, seisontavalot",
+            "en": "Lights: dipped beam, high beam, parking lights"
+          },
+          "bytes": 4,
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: one byte each: B4 dipped beam 192, B5 high beam 4, B6 parking lights 60."
+        },
+        {
+          "did": "0xC154",
+          "name": {
+            "fi": "Konepelti kiinni",
+            "en": "Bonnet closed"
+          },
+          "bytes": 4,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 1 with the bonnet closed."
+        },
+        {
+          "did": "0xC259",
+          "name": {
+            "fi": "Keskuslukitus",
+            "en": "Central locking"
+          },
+          "bytes": 1,
+          "expression": "B4/2",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0 with the doors unlocked."
+        },
+        {
+          "did": "0xDD04",
+          "name": {
+            "fi": "Sisälämpötila",
+            "en": "Cabin temperature"
+          },
+          "unit": "°C",
+          "bytes": 1,
+          "expression": "B4-40",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 20 °C."
+        },
+        {
+          "did": "0xDD06",
+          "name": {
+            "fi": "Virtatila",
+            "en": "Power mode"
+          },
+          "bytes": 1,
+          "expression": "B4-192",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 7 with the engine running."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "abs",
+      "name": {
+        "fi": "ABS / ESP",
+        "en": "ABS / ESP"
+      },
+      "request": "0x760",
+      "response": "0x768",
+      "notes": "Answered a probe of 0x760 on 2026-10-20. OBDb (V60, XC60) lists it at this address. Fault code read (19 02) answered on 2026-10-20: no stored codes.",
+      "dids": [
+        {
+          "did": "0xDD01",
+          "name": {
+            "fi": "Matkamittari",
+            "en": "Odometer"
+          },
+          "unit": "km",
+          "bytes": 3,
+          "expression": "[B4:B6]",
+          "confidence": "confirmed",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Read on the tested car 2026-10-20: 485 939 km, the same as the instrument cluster."
+        },
+        {
+          "did": "0x2B00",
+          "name": {
+            "fi": "Jarruvalokytkin",
+            "en": "Brake light switch"
+          },
+          "bytes": 1,
+          "expression": "B4/128",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name from OBDb (V60, XC60): bit 7 of the first byte. On a drive of 2026-10-20 13:14-13:27 (watch): 1 (raw 0x80) while braking, with the brake pressure 0x2B0D up to 33 bar; 0 otherwise."
+        },
+        {
+          "did": "0x2B06",
+          "name": {
+            "fi": "Pyörän nopeus, vasen etu",
+            "en": "Wheel speed, front left"
+          },
+          "unit": "km/h",
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0 standing. On a drive of 2026-10-20 13:14-13:27 (watch): 0-102 km/h, the same as the engine's vehicle speed 0xF40D (median difference 0) and as the other wheels; 86 km/h at a steady 90 km/h on the dashboard speedometer."
+        },
+        {
+          "did": "0x2B07",
+          "name": {
+            "fi": "Pyörän nopeus, oikea etu",
+            "en": "Wheel speed, front right"
+          },
+          "unit": "km/h",
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0 standing. On a drive of 2026-10-20 13:14-13:27 (watch): 0-102 km/h, the same as the engine's vehicle speed 0xF40D (median difference 0) and as the other wheels; 86 km/h at a steady 90 km/h on the dashboard speedometer."
+        },
+        {
+          "did": "0x2B08",
+          "name": {
+            "fi": "Pyörän nopeus, vasen taka",
+            "en": "Wheel speed, rear left"
+          },
+          "unit": "km/h",
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0 standing. On a drive of 2026-10-20 13:14-13:27 (watch): 0-102 km/h, the same as the engine's vehicle speed 0xF40D (median difference 0) and as the other wheels; 86 km/h at a steady 90 km/h on the dashboard speedometer."
+        },
+        {
+          "did": "0x2B09",
+          "name": {
+            "fi": "Pyörän nopeus, oikea taka",
+            "en": "Wheel speed, rear right"
+          },
+          "unit": "km/h",
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0 standing. On a drive of 2026-10-20 13:14-13:27 (watch): 0-102 km/h, the same as the engine's vehicle speed 0xF40D (median difference 0) and as the other wheels; 86 km/h at a steady 90 km/h on the dashboard speedometer."
+        },
+        {
+          "did": "0x2B0D",
+          "name": {
+            "fi": "Jarrupaine",
+            "en": "Brake pressure"
+          },
+          "unit": "bar",
+          "bytes": 2,
+          "expression": "[B4:B5]/3",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0.3 bar with the pedal up. On a drive of 2026-10-20 13:14-13:27 (watch): 0-33 bar, rising with the brake light switch 0x2B00 on."
+        },
+        {
+          "did": "0x3302",
+          "name": {
+            "fi": "Ohjauskulma",
+            "en": "Steering angle"
+          },
+          "bytes": 2,
+          "expression": "S[B4:B5]/10",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 16.8; OBDb gives no unit."
+        },
+        {
+          "did": "0xDD05",
+          "name": {
+            "fi": "Ulkolämpötila",
+            "en": "Outside temperature"
+          },
+          "unit": "°C",
+          "bytes": 1,
+          "expression": "B4-40",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 8 °C, the engine 0xF446 7 °C."
+        },
+        {
+          "did": "0xEE07",
+          "name": {
+            "fi": "Jarrulevyn laskettu lämpötila, vasen etu",
+            "en": "Brake disc temperature, calculated, front left"
+          },
+          "unit": "°C",
+          "bytes": 4,
+          "expression": "B4*18/5",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 39.6 °C on all four; B5 front right, B6 rear left, B7 rear right, the same scale."
+        }
+      ],
+      "discovered": []
+    },
+    {
+      "id": "epb",
+      "name": {
+        "fi": "Sähköinen seisontajarru",
+        "en": "Electric parking brake"
+      },
+      "request": "0x756",
+      "response": "0x75E",
+      "notes": "Answered a probe of 0x756 on 2026-10-20. OBDb (V60, XC60) lists it at this address. Fault code read (19 02) answered on 2026-10-20: no failing or stored codes.",
+      "dids": [
+        {
+          "did": "0xDD01",
+          "name": {
+            "fi": "Matkamittari",
+            "en": "Odometer"
+          },
+          "unit": "km",
+          "bytes": 3,
+          "expression": "[B4:B6]",
+          "confidence": "confirmed",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Read on the tested car 2026-10-20: 485 939 km, the same as the instrument cluster."
+        },
+        {
+          "did": "0x2B14",
+          "name": {
+            "fi": "Seisontajarrun kytkin",
+            "en": "Parking brake switch"
+          },
+          "bytes": 1,
+          "expression": "B4",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 0."
+        },
+        {
+          "did": "0x2B1A",
+          "name": {
+            "fi": "Seisontajarrun palat, vasen ja oikea",
+            "en": "Parking brake pads, left and right"
+          },
+          "bytes": 4,
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: B5 left 1, B6 right 1."
+        },
+        {
+          "did": "0x2B20",
+          "name": {
+            "fi": "Seisontajarrun käyttökerrat paikallaan",
+            "en": "Parking brake uses, standing"
+          },
+          "bytes": 4,
+          "expression": "[B6:B7]",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 39 066."
+        },
+        {
+          "did": "0x2B21",
+          "name": {
+            "fi": "Seisontajarrun käyttökerrat liikkeessä",
+            "en": "Parking brake uses, moving"
+          },
+          "bytes": 4,
+          "expression": "[B6:B7]",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 28."
+        },
+        {
+          "did": "0x2B24",
+          "name": {
+            "fi": "Seisontajarrun tila (OBDb: 0 normaali, 32 huolto)",
+            "en": "Parking brake mode (OBDb: 0 normal, 32 maintenance)"
+          },
+          "bytes": 4,
+          "expression": "B5",
+          "confidence": "reported",
+          "source": [
+            "obdb-volvo",
+            "own-scan"
+          ],
+          "notes": "Name and scale from OBDb (V60, XC60, the same P3 generation). Read on the tested car 2026-10-20 13:08, engine idling, standing: 1, which OBDb does not list."
+        }
+      ],
+      "discovered": []
+    }
+  ],
+  "confidence_levels": {
+    "confirmed": "Checked against the dashboard or another known value on a real car: the car this file was tested on, or recordings of real cars published by others",
+    "reported": "Name or formula from one source (a publication or a single own observation), not checked against a known value",
+    "unverified": "Identifier responds; the formula is an educated guess",
+    "unknown": "Identifier responds; the meaning of the bytes is not worked out"
+  },
+  "blocks": [
+    {
+      "id": "known",
+      "name": {
+        "fi": "Tunnetut - ei skannausta",
+        "en": "Known - no scan"
+      },
+      "order": 0,
+      "why": "Run these first: readable software and hardware numbers mean the link to the engine control module works.",
+      "runtime": "seconds"
+    },
+    {
+      "id": "f4xx",
+      "name": {
+        "fi": "OBD-perusarvot (SAE J1979)",
+        "en": "OBD values (SAE J1979)"
+      },
+      "range": [
+        "0xF400",
+        "0xF4FF"
+      ],
+      "count": 256,
+      "order": 1,
+      "ecus": [
+        "ecm"
+      ],
+      "why": "The SAE J1979 PIDs read with service 0x22 as identifiers 0xF4xx (ISO 27145 mapping); this engine control module answers them.",
+      "runtime": "under a minute"
+    },
+    {
+      "id": "f1xx",
+      "name": {
+        "fi": "ISO-tunnistelohko",
+        "en": "ISO identification block"
+      },
+      "range": [
+        "0xF100",
+        "0xF1FF"
+      ],
+      "count": 256,
+      "order": 2,
+      "ecus": [
+        "ecm"
+      ],
+      "why": "Standardised by ISO 14229: part numbers and software versions, mostly ASCII.",
+      "runtime": "under a minute"
+    }
+  ],
+  "sources": [
+    {
+      "id": "iso-14229",
+      "url": "https://www.iso.org/standard/72439.html",
+      "notes": "ISO 14229 (UDS), the diagnostic standard; defines the F1xx identification identifiers."
+    },
+    {
+      "id": "own-scan",
+      "notes": "A scan of an identifier range by this program on the tested 2008 Volvo V70; the notes give the dates. Times are Finnish local time."
+    },
+    {
+      "id": "sae-j1979",
+      "url": "https://www.sae.org/standards/content/j1979_202104/",
+      "notes": "SAE J1979 (OBD-II PIDs); ISO 27145 maps PID xx to identifier 0xF4xx, which this engine control module answers with service 0x22."
+    },
+    {
+      "id": "obdb-volvo",
+      "url": "https://github.com/OBDb",
+      "notes": "OBDb signal sets for the Volvo S80, V60 and XC60 (the same P3 generation): ECU addresses, identifiers, names and scales. Only the identifiers that answered on the tested V70 are used."
+    }
+  ]
+}
