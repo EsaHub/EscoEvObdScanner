@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <None Include="..\EscoEvObdScanner\cars\*.json" Link="cars\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\EscoEvObdScanner.App\ble-adapters.json" Link="ble-adapters.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

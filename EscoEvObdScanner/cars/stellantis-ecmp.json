@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "version": 2,
+  "version": 3,
   "license": "CC-BY-4.0",
   "attribution": "Esco EV OBD Scanner car files by Esa Pelttari, CC BY 4.0, https://github.com/EsaHub/EscoEvObdScanner",
   "platform": {
@@ -47,7 +47,7 @@
     },
     "demo": "stellantis-ecmp",
     "demo_drive": {
-      "rpm_per_kmh": 67,
+      "rpm_per_kmh": 68,
       "ignore_tester_present": [
         "vcu"
       ]
@@ -3853,14 +3853,14 @@
           },
           "unit": "km/h",
           "bytes": 2,
-          "expression": "[B4:B5]*0.00794",
+          "expression": "[B4:B5]/128",
           "confidence": "confirmed",
           "source": [
             "evdash",
             "obdb-peugeot-208",
             "own-watch"
           ],
-          "notes": "Scale from evDash. Speed integrated over drives against the odometer (whole km only): 7.6 km vs 7 km (2026-09-26); 28.8 and 28.4 km vs 28 km on two drives (2026-10-02). OBDb Peugeot-208 gives /100 (208_VSS), which would mean 141 km/h at the 2026-10-11 maximum raw 14138 and 36.2 and 35.7 km over the two 28 km drives; evDash ×0.00794 gives 112 km/h. The meaning is confirmed; the odometer check (whole km, ±1 km over 28 km) cannot tell the factor ×0.00794 from /128 (1.6 % apart)."
+          "notes": "Vehicle speed from the wheels: the same raw value as the ESP speed 0xD802 throughout a drive on 2026-10-21 (watch_vcu_20261021_092537, ratio 1.0000 over 271 pairs). At a steady 100 km/h on GPS it read about 13050 = 102.0 km/h while the dashboard showed 104 km/h: the wheels read 2 % high, the speedometer 4 %. evDash's ×0.00794 (103.6 km/h at that point) matches the speedometer, not the true speed; OBDb Peugeot-208 gives /128 (208_VSS). Speed integrated over drives against the odometer (whole km only): 7.5 km vs 7 km (2026-09-26); 28.3 and 27.9 km vs 28 km on two drives (2026-10-02)."
         },
         {
           "did": "0xD403",
@@ -4107,6 +4107,28 @@
           "notes": "Snaps on 2026-09-29 in Eco with only the selector moved: P 0, R 1, N 2, D 3. 0xD85D and 0xD8C2 carry the same value. Followed every change live on the dashboard (2026-09-29)."
         },
         {
+          "did": "0xD802",
+          "name": {
+            "fi": "Nopeus (ESP)",
+            "en": "Speed (ESP)"
+          },
+          "unit": "km/h",
+          "bytes": 2,
+          "expression": "[B4:B5]/128",
+          "confidence": "confirmed",
+          "source": [
+            "obdb-peugeot-208",
+            "own-watch"
+          ],
+          "notes": "Meaning and scale published by others (OBDb ×1953/250000 = /128). 0 at rest; on a drive on 2026-10-09 (watch_vcu_20261009_181107, 252 reads) up to 0x2262 = 68.8 km/h. On a drive on 2026-10-21 (watch_vcu_20261021_092537) the same raw value as 0xD402 throughout (ratio 1.0000 over 271 pairs): 101.9 km/h at a steady 100 km/h on GPS, the dashboard at 104 km/h.",
+          "samples": [
+            {
+              "ts": "2026-09-26T13:51:56.2545986Z",
+              "hex": "0000"
+            }
+          ]
+        },
+        {
           "did": "0xD818",
           "name": {
             "fi": "Virtatila (0 HV pois, 3 Ready, 4 HV päällä, ei Ready)",
@@ -4313,7 +4335,7 @@
             "evdash",
             "own-watch"
           ],
-          "notes": "Motor speed in rpm, signed. 2026-09-26 standing still: FFFF in one reading, 0000 in another. In seven drive recordings (2026-09-29, 2026-10-02 twice, 2026-10-04 four times) rpm / speed above 20 km/h had a median of 67.0 in each, 10-90 % range within 66.1-67.9. On 2026-10-11 (watch_vcu_bms_mcu_20261011_110424) it averaged 67.02 against 66.98 for MCU 0xDC00, and read FFD4/FFFC/FFFF (-44/-4/-1) at walking pace and standstill, so FFFF is -1 rpm. evDash reads it unsigned (0-18000)."
+          "notes": "Motor speed in rpm, signed. 2026-09-26 standing still: FFFF in one reading, 0000 in another. In seven drive recordings (2026-09-29, 2026-10-02 twice, 2026-10-04 four times) rpm / speed above 20 km/h had a median of 68.1 in each, 10-90 % range within 67.2-69.0. On 2026-10-11 (watch_vcu_bms_mcu_20261011_110424) it averaged 68.11 against 68.07 for MCU 0xDC00, and read FFD4/FFFC/FFFF (-44/-4/-1) at walking pace and standstill, so FFFF is -1 rpm. evDash reads it unsigned (0-18000). 68.1 on the drive of 2026-10-21 (watch_vcu_20261021_092537). The speed is 0xD402 at /128."
         },
         {
           "did": "0xD8D0",
@@ -4477,28 +4499,6 @@
             {
               "ts": "2026-09-27T05:44:11.0596172Z",
               "hex": "001A"
-            }
-          ]
-        },
-        {
-          "did": "0xD802",
-          "name": {
-            "fi": "Nopeus (ESP)",
-            "en": "Speed (ESP)"
-          },
-          "unit": "km/h",
-          "bytes": 2,
-          "expression": "[B4:B5]/128",
-          "confidence": "reported",
-          "source": [
-            "obdb-peugeot-208",
-            "own-watch"
-          ],
-          "notes": "Meaning and scale published by others (OBDb ×1953/250000 = /128). 0 at rest; on a drive on 2026-10-09 (watch_vcu_20261009_181107, 252 reads) up to 0x2262 = 68.8 km/h. No watch holds 0xD802 and 0xD402 together; snaps read both about 16 s apart (both 0 in 85 of 97, the other 12 while driving on 2026-10-07).",
-          "samples": [
-            {
-              "ts": "2026-09-26T13:51:56.2545986Z",
-              "hex": "0000"
             }
           ]
         },
@@ -8456,7 +8456,7 @@
             "own-snaps",
             "own-watch"
           ],
-          "notes": "Motor speed in rpm, signed (OBDb Peugeot-208 208_MOTOR_SPD). 0 rpm in every standstill snap from 2026-09-29 to 2026-10-06, also in D with the brake held. 2026-10-11, 28 min drive (watch_vcu_bms_mcu_20261011_110424, 1202 reads): rpm / speed above 20 km/h averaged 66.98 against 67.02 for VCU 0xD8CF; -1 to 1 at standstill during the watch (the snaps read 0).",
+          "notes": "Motor speed in rpm, signed (OBDb Peugeot-208 208_MOTOR_SPD). 0 rpm in every standstill snap from 2026-09-29 to 2026-10-06, also in D with the brake held. 2026-10-11, 28 min drive (watch_vcu_bms_mcu_20261011_110424, 1202 reads): rpm / speed above 20 km/h averaged 68.07 against 68.11 for VCU 0xD8CF (speed 0xD402 at /128); -1 to 1 at standstill during the watch (the snaps read 0).",
           "samples": [
             {
               "ts": "2026-09-29T15:49:29.8449463Z",

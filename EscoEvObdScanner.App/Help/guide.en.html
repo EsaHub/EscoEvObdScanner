@@ -62,7 +62,7 @@
 <h2>1. What you need</h2>
 <ul>
   <li><b>A Windows computer</b> with the program installed.</li>
-  <li><b>An ELM327 or STN adapter</b> that shows up in Windows as a COM port: over USB or classic Bluetooth. Wi-Fi and Bluetooth LE adapters do not work. Windows 11 offers a Bluetooth OBD adapter for pairing only when <b>Advanced</b> is chosen in <i>Settings → Bluetooth &amp; devices → Devices → Bluetooth devices discovery</i>. Pairing creates two COM ports; use the outgoing one.</li>
+  <li><b>An ELM327 or STN adapter</b>: over USB or classic Bluetooth, where it shows up in Windows as a COM port, or over Bluetooth LE (e.g. OBDLink CX). Wi-Fi adapters do not work. Windows 11 offers a classic Bluetooth OBD adapter for pairing only when <b>Advanced</b> is chosen in <i>Settings → Bluetooth &amp; devices → Devices → Bluetooth devices discovery</i>. Pairing creates two COM ports; use the outgoing one. A Bluetooth LE adapter is not paired in the Windows settings: it is listed by its name in the program's port list ("OBDLink CX – Bluetooth LE"), and the program pairs it on the first connection.</li>
   <li><b>A supported car</b>:
     <table>
       <tr><th>Platform</th><th>Cars</th><th>Tested</th></tr>
@@ -74,7 +74,7 @@
   </li>
 </ul>
 <p>The program also has a <b>demo car</b> that works without an adapter. Its data comes from a real car's readings, so everything can be tried at home.</p>
-<div class="note">The program was developed and tested with an <b>OBDLink EX</b> USB adapter, so that one is known to work. The identifier scans have also been run over Bluetooth with an <b>OBDLink LX</b>. Other adapters should work if they show up as a COM port, but they have not been tested.</div>
+<div class="note">The program was developed and tested with an <b>OBDLink EX</b> USB adapter, so that one is known to work. The identifier scans have also been run over Bluetooth with an <b>OBDLink LX</b>, and Bluetooth LE has been tested with an <b>OBDLink CX</b>. Other adapters should work, but they have not been tested.</div>
 <div class="note warn"><b>The main difference between adapters:</b> the adapter must handle long replies made of many frames and the flow control set-up commands (<code>ATFCSH</code>, <code>ATFCSD</code>, <code>ATFCSM</code>). The cell voltages come in such replies (on a Stellantis all 108 cells in one 243-byte reply). Without them the charge and voltages show, but the cell voltages do not. Test a new adapter on the <b>Battery</b> tab: if every cell shows, the adapter is fine.</div>
 </section>
 
@@ -83,7 +83,7 @@
 <ol class="steps">
   <li><b>Plug the adapter</b> into the car's OBD port (usually under the dashboard on the driver's side) and switch the car to <b>READY</b>.</li>
   <li>On the <b>Connection</b> tab press <b>Add vehicle…</b>. Give it a name, a registration number for example, and <b>choose the right platform</b>. The wrong platform is the most common reason nothing comes from the car.</li>
-  <li>Choose the <b>Port</b> (the adapter's COM port). If it is missing, press <kbd>⟳</kbd>.</li>
+  <li>Choose the <b>Port</b> (the adapter's COM port, or a Bluetooth LE adapter). If it is missing, press <kbd>⟳</kbd>.</li>
   <li>Press <b>Connect</b>. The log says "Connected", and the VIN if the car gives it.</li>
   <li>On the <b>Dashboard</b> tab press <b>Start live view</b>. The dashboard starts to update.</li>
   <li>Drive a round with the live view on, read the <b>Fault codes</b> (deep read) with the car standing, and finally press <b>Create report (PDF)</b> on the <b>Battery</b> tab.</li>
@@ -201,6 +201,7 @@
   <tr><td>No values come, and the ECUs "did not answer" (NO DATA in the adapter traffic)</td><td>The wrong platform. Disconnect, remove the vehicle and add it again with the right platform.</td></tr>
   <tr><td>Connect fails, the adapter does not answer</td><td>The wrong port or speed. Try 38400. Some adapters fall asleep while the car rests: unplug and plug in the adapter.</td></tr>
   <tr><td>The port is busy</td><td>Another program uses the adapter. Close it.</td></tr>
+  <tr><td>A Bluetooth LE adapter does not pair</td><td>Some adapters (e.g. OBDLink CX) accept pairing only for 5 minutes after power on. Unplug the adapter, plug it back in and connect at once. Pairing is needed only once. A phone must not be connected to the adapter at the same time.</td></tr>
   <tr><td>Warning: the adapter is on another car than the vehicle chosen</td><td>Choose the right vehicle or add a new one. If it surely is the same car (a replaced battery ECU, for example), answer <b>Yes</b>.</td></tr>
   <tr><td>The report says "VIN: not given by the car"</td><td>The car does not give its VIN through the OBD port (so on the tested e-CMP car). Write the VIN in <b>Text for the report</b>.</td></tr>
   <tr><td>The cells do not show, other values do</td><td>The adapter does not handle long replies or the flow control commands (typical of cheap clones). Try another adapter.</td></tr>

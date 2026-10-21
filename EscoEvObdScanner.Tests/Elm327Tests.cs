@@ -1,7 +1,7 @@
 namespace EscoEvObdScanner.Tests
 {
     /// <summary>
-    /// What the serial link makes of the characters read before the prompt:
+    /// What the adapter link makes of the characters read before the prompt:
     /// a reply cut off by the deadline, the command echoed back, blank lines.
     /// </summary>
     public class Elm327Tests

@@ -10,36 +10,47 @@ namespace EscoEvObdScanner
     {
         /// <summary>
         /// The first of the ECU serial number (ISO 14229 0xF18C) or the VIN (0xF190) that an ECU of
-        /// the car file's dashboard values gives, the ECU of "soc" first, as a hash. The same car gives
-        /// the same answer each time; null when none of them tells.
+        /// the car file's dashboard values gives, the ECU of "soc" first, as a hash. An ECU is passed
+        /// over when it answers without giving either, or when the adapter cannot address it; when one
+        /// that comes earlier is addressed but gives no answer at all, the result is null, so the hash
+        /// always comes from the same ECU of the same car.
+        /// Null when none of them tells.
         /// </summary>
         public static string? Read(Scanner scanner, Catalog catalog) => Check(scanner, catalog).Id;
 
         /// <summary>
         /// As <see cref="Read"/>, and whether any of those ECUs answered at all, even with a refusal:
         /// none answering means the car file's addresses are not this car's, or the car is off.
+        /// <c>Silent</c>: an ECU that would have given the identity was addressed but did not answer,
+        /// which is why there is none (the car not fully awake).
         /// </summary>
-        public static (string? Id, bool Answered) Check(Scanner scanner, Catalog catalog)
+        public static (string? Id, bool Answered, bool Silent) Check(Scanner scanner, Catalog catalog)
         {
-            bool answered = false;
+            bool answered = false, earlierSilent = false;
             var ecus = new[] { catalog.LiveOf("soc")?.Ecu }.Concat(catalog.Live.Values.Select(l => l.Ecu))
                 .Where(id => !string.IsNullOrEmpty(id)).Distinct(StringComparer.OrdinalIgnoreCase)
                 .Select(id => catalog.TryEcu(id!)).OfType<EcuDef>();
             foreach (var ecu in ecus)
             {
+                bool heard = false, addressed = false;
                 try
                 {
                     scanner.Target(ecu.Request, ecu.Response);
+                    addressed = true;
                     foreach (int did in new[] { 0xF18C, 0xF190 })
                     {
                         var reply = scanner.ReadDid(did);
-                        if (reply.Kind is ResponseKind.Positive or ResponseKind.Negative) answered = true;
-                        if (reply.Kind == ResponseKind.Positive && !IsBlank(reply.Data)) return (Hash(did, reply.Data), true);
+                        if (reply.Kind is ResponseKind.Positive or ResponseKind.Negative) answered = heard = true;
+                        if (reply.Kind == ResponseKind.Positive && !IsBlank(reply.Data))
+                            // an earlier ECU that did not answer would have given the hash: this one cannot stand in for it
+                            return (earlierSilent ? null : Hash(did, reply.Data), true, earlierSilent);
                     }
                 }
                 catch (Exception ex) when (ex is AdapterException { Problem: not AdapterProblem.SetupRefused } or ArgumentOutOfRangeException) { }    // this ECU cannot be addressed; the next may tell
+                // an ECU the adapter cannot address is passed over on every connection alike
+                if (addressed && !heard) earlierSilent = true;
             }
-            return (null, answered);
+            return (null, answered, earlierSilent);
         }
 
         /// <summary>

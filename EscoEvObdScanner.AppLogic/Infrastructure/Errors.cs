@@ -15,6 +15,11 @@ namespace EscoEvObdScanner.AppLogic.Infrastructure
             AdapterException { Problem: AdapterProblem.SetupRefused } a => Loc.I.Format("ErrSetupRefused", a.Command ?? ""),
             AdapterException a => Loc.I.Format("ErrAdapterRefused", a.Command ?? ""),
             PortLostException p => Loc.I.Format("ErrPortLost", p.Port),
+            BleException { Problem: BleProblem.NotFound } b => Loc.I.Format("ErrBleNotFound", b.Adapter),
+            BleException { Problem: BleProblem.PairingFailed } b => Loc.I.Format("ErrBlePairing", b.Adapter, b.Detail ?? ""),
+            BleException { Problem: BleProblem.NoService } b => Loc.I.Format("ErrBleNoService", b.Adapter),
+            BleException { Problem: BleProblem.Refused } b => Loc.I.Format("ErrBleRefused", b.Adapter, b.Detail ?? ""),
+            BleException b => Loc.I.Format("ErrBleNoAnswer", b.Adapter),
             // SerialPort.Open: another program (or the command line) has the port
             UnauthorizedAccessException when Port(ex.Message) is string port => Loc.I.Format("ErrPortBusy", port),
             // SerialPort.Open: the adapter is not plugged in, or Windows gave it another number

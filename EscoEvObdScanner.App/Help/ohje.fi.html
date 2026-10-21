@@ -62,7 +62,7 @@
 <h2>1. Mitä tarvitset</h2>
 <ul>
   <li><b>Windows-tietokone</b>, johon ohjelma on asennettu.</li>
-  <li><b>ELM327- tai STN-adapteri</b>, joka näkyy Windowsissa COM-porttina: USB-johdolla tai perinteisellä Bluetoothilla. Wi-Fi- ja Bluetooth LE -adapterit eivät toimi. Windows 11 näyttää Bluetooth-OBD-adapterin pariutettavana vasta, kun kohdassa <i>Asetukset → Bluetooth ja laitteet → Laitteet → Bluetooth-laitteiden haku</i> on valittu <b>Lisäasetukset</b> (englanninkielisessä Windowsissa <i>Bluetooth devices discovery</i> → <b>Advanced</b>). Pariutus luo kaksi COM-porttia; käytä lähtevää.</li>
+  <li><b>ELM327- tai STN-adapteri</b>: USB-johdolla tai perinteisellä Bluetoothilla, jolloin se näkyy Windowsissa COM-porttina, tai Bluetooth LE:llä (esim. OBDLink CX). Wi-Fi-adapterit eivät toimi. Windows 11 näyttää perinteisen Bluetooth-OBD-adapterin pariutettavana vasta, kun kohdassa <i>Asetukset → Bluetooth ja laitteet → Laitteet → Bluetooth-laitteiden haku</i> on valittu <b>Lisäasetukset</b> (englanninkielisessä Windowsissa <i>Bluetooth devices discovery</i> → <b>Advanced</b>). Pariutus luo kaksi COM-porttia; käytä lähtevää. Bluetooth LE -adapteria ei pariuteta Windowsin asetuksista: se näkyy ohjelman porttilistassa nimellään ("OBDLink CX – Bluetooth LE"), ja ohjelma pariuttaa sen ensimmäisellä yhdistämisellä.</li>
   <li><b>Tuettu auto</b>:
     <table>
       <tr><th>Alusta</th><th>Autot</th><th>Testattu</th></tr>
@@ -74,7 +74,7 @@
   </li>
 </ul>
 <p>Ohjelmassa on myös <b>demoauto</b>, joka toimii ilman adapteria. Sen data on oikean auton mittauksista, joten sillä voi kokeilla kaikkea kotona.</p>
-<div class="note">Ohjelma on kehitetty ja testattu <b>OBDLink EX</b> -USB-adapterilla, joten ainakin se toimii varmasti. Tunnisteskannaukset on ajettu myös Bluetoothilla <b>OBDLink LX</b> -adapterilla. Muiden adapterien pitäisi toimia, jos ne näkyvät COM-porttina, mutta niitä ei ole testattu.</div>
+<div class="note">Ohjelma on kehitetty ja testattu <b>OBDLink EX</b> -USB-adapterilla, joten ainakin se toimii varmasti. Tunnisteskannaukset on ajettu myös Bluetoothilla <b>OBDLink LX</b> -adapterilla, ja Bluetooth LE on testattu <b>OBDLink CX</b> -adapterilla. Muiden adapterien pitäisi toimia, mutta niitä ei ole testattu.</div>
 <div class="note warn"><b>Tärkein ero adapterien välillä:</b> adapterin pitää tukea pitkiä, monesta kehyksestä koostuvia vastauksia ja vuonohjauksen asetuskomentoja (<code>ATFCSH</code>, <code>ATFCSD</code>, <code>ATFCSM</code>). Kennojännitteet tulevat juuri tällaisina vastauksina (Stellantiksella kaikki 108 kennoa yhdessä 243 tavun vastauksessa). Ilman näitä varaus ja jännitteet näkyvät, mutta kennojännitteet eivät. Testaa uusi adapteri <b>Akku</b>-välilehdeltä: jos kaikki kennot näkyvät, adapteri on kunnossa.</div>
 </section>
 
@@ -83,7 +83,7 @@
 <ol class="steps">
   <li><b>Kytke adapteri</b> auton OBD-liitäntään (yleensä kojelaudan alla kuljettajan puolella) ja käynnistä auto <b>READY</b>-tilaan.</li>
   <li><b>Yhteys</b>-välilehdellä paina <b>Lisää ajoneuvo…</b>. Anna nimi, esim. rekisteritunnus, ja <b>valitse oikea alusta</b>. Väärä alusta on yleisin syy siihen, ettei autosta tule mitään.</li>
-  <li>Valitse <b>Portti</b> (adapterin COM-portti). Jos portti puuttuu, paina <kbd>⟳</kbd>.</li>
+  <li>Valitse <b>Portti</b> (adapterin COM-portti tai Bluetooth LE -adapteri). Jos portti tai adapteri puuttuu, paina <kbd>⟳</kbd>.</li>
   <li>Paina <b>Yhdistä</b>. Lokiin tulee "Yhdistetty", ja jos auto kertoo, myös VIN.</li>
   <li><b>Mittaristo</b>-välilehdellä paina <b>Aloita seuranta</b>. Mittariston luvut alkavat päivittyä.</li>
   <li>Aja lenkki seuranta päällä, lue <b>Vikakoodit</b> (syvä haku) auton seistessä, ja tee lopuksi <b>Akku</b>-välilehdellä <b>Luo raportti (PDF)</b>.</li>
@@ -201,6 +201,7 @@
   <tr><td>Arvoja ei tule, ja ohjainlaitteet "eivät vastanneet" (adapterin liikenteessä NO DATA)</td><td>Väärä alusta. Katkaise yhteys, poista ajoneuvo ja lisää se uudelleen oikealla alustalla.</td></tr>
   <tr><td>Yhdistä ei onnistu, adapteri ei vastaa</td><td>Väärä portti tai nopeus. Kokeile nopeutta 38400. Jotkin adapterit nukahtavat, kun auto on levossa: irrota ja kytke adapteri.</td></tr>
   <tr><td>Portti on varattu</td><td>Jokin toinen ohjelma käyttää adapteria. Sulje se.</td></tr>
+  <tr><td>Bluetooth LE -adapterin pariliitos ei onnistu</td><td>Osa adaptereista (esim. OBDLink CX) hyväksyy pariliitoksen vain 5 minuutin ajan virran kytkemisestä. Irrota adapteri, kytke se takaisin ja yhdistä heti. Pariliitos tehdään vain kerran. Puhelin ei saa olla samaan aikaan yhteydessä adapteriin.</td></tr>
   <tr><td>Varoitus: adapteri on eri autossa kuin valittu ajoneuvo</td><td>Valitse oikea ajoneuvo tai lisää uusi. Jos auto on varmasti sama (esim. akunhallinta on vaihdettu), vastaa <b>Kyllä</b>.</td></tr>
   <tr><td>Raportissa "VIN: auto ei kertonut"</td><td>Auto ei anna VIN:iä OBD-liitännän kautta (näin testatussa e-CMP-autossa). Kirjoita VIN kenttään <b>Teksti raporttiin</b>.</td></tr>
   <tr><td>Kennot eivät näy, muut arvot näkyvät</td><td>Adapteri ei tue pitkiä vastauksia tai vuonohjauksen komentoja (tyypillistä halvoille kopioille). Kokeile toista adapteria.</td></tr>

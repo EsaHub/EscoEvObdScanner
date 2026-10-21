@@ -18,6 +18,14 @@ The Windows desktop parts (WPF, https://github.com/dotnet/wpf, and
 https://github.com/dotnet/windowsdesktop) are under the same license; their notices:
 https://github.com/dotnet/wpf/blob/main/THIRD-PARTY-NOTICES.TXT
 
+## C#/WinRT and the Windows SDK projection
+
+The app reaches the Windows Bluetooth LE API through `WinRT.Runtime.dll` and
+`Microsoft.Windows.SDK.NET.dll`, which the .NET SDK adds for a Windows 10 target.
+
+Copyright (c) Microsoft Corporation. MIT License (text below).
+https://github.com/microsoft/CsWinRT
+
 ## PDFsharp and MigraDoc
 
 Used to write the battery report (PDF).

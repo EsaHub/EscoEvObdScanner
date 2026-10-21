@@ -1,0 +1,15 @@
+{
+  "adapter_names": "obd|elm|link|vgate|icar|veepeak|konnwei|carista|scan",
+  "preferred_services": [ "FFF0", "FFE0", "18F0" ],
+  "pairing_pin": "123456",
+  "never_used_services": [
+    "1800",
+    "1801",
+    "180A",
+    "180F",
+    "FE59",
+    "00001530-1212-efde-1523-785feabcd123",
+    "8e400001-f315-4f60-9fb8-838830daea50",
+    "f000ffc0-0451-4000-b000-000000000000"
+  ]
+}

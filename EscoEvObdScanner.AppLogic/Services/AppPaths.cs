@@ -29,6 +29,14 @@ namespace EscoEvObdScanner.AppLogic.Services
 
         public static string SettingsFile => Path.Combine(ConfigDir, "settings.json");
 
+        /// <summary>
+        /// The Bluetooth LE adapter settings: the user's file in the config folder if there is one, else the
+        /// one shipped next to the program, else the defaults. <paramref name="problem"/> tells why a file was not used.
+        /// </summary>
+        public static BleAdapters BleAdapters(out string? problem) =>
+            EscoEvObdScanner.BleAdapters.Load(out problem, Path.Combine(ConfigDir, EscoEvObdScanner.BleAdapters.FileName),
+                Path.Combine(AppContext.BaseDirectory, EscoEvObdScanner.BleAdapters.FileName));
+
         /// <summary>Every car: the user's copies first, then shipped ones the user has no copy of.</summary>
         public static List<string> Cars() => CarFiles.In(UserCarsDir, BundledCarsDir);
 

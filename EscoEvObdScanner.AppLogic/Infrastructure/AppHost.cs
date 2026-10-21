@@ -9,13 +9,24 @@ namespace EscoEvObdScanner.AppLogic.Infrastructure
     /// <summary>One recording in the list: its main file and how it reads.</summary>
     public sealed record RecordingChoice(string Path, string Text);
 
-    /// <summary>A serial port with the device name the system gives it.</summary>
+    /// <summary>
+    /// Where the adapter may be: a serial port with the device name the system gives it, or a
+    /// Bluetooth LE adapter, whose <see cref="Name"/> is "BLE:" and its address and whose
+    /// description is its advertised name.
+    /// </summary>
     public sealed record PortInfo(string Name, string Description)
     {
-        public override string ToString() => string.IsNullOrEmpty(Description) ? Name : $"{Name}  –  {Description}";
+        public override string ToString() =>
+            IsBluetoothLe ? $"{Description}  –  Bluetooth LE"
+            : string.IsNullOrEmpty(Description) ? Name : $"{Name}  –  {Description}";
 
-        /// <summary>USB serial chips used in OBD adapters, to pre-select the likely port.</summary>
-        public static bool LooksLikeAdapter(PortInfo p) =>
+        /// <summary>The prefix of a Bluetooth LE adapter's <see cref="Name"/>, before its address in hex.</summary>
+        public const string BlePrefix = "BLE:";
+
+        public bool IsBluetoothLe => Name.StartsWith(BlePrefix, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>USB serial chips and Bluetooth links used in OBD adapters, to pre-select the likely port.</summary>
+        public static bool LooksLikeAdapter(PortInfo p) => p.IsBluetoothLe ||
             System.Text.RegularExpressions.Regex.IsMatch(p.Description, "USB|FTDI|CH340|CP210|Prolific|Bluetooth|Serial",
                 System.Text.RegularExpressions.RegexOptions.IgnoreCase) &&
             !p.Description.Contains("Management", StringComparison.OrdinalIgnoreCase);
@@ -53,8 +64,12 @@ namespace EscoEvObdScanner.AppLogic.Infrastructure
         /// <summary>Opens a file in its program or a folder in the file browser.</summary>
         void Open(string path);
 
-        /// <summary>The serial ports the adapter may be on.</summary>
+        /// <summary>The serial ports the adapter may be on, and on Windows the Bluetooth LE adapters found nearby.</summary>
         IReadOnlyList<PortInfo> Ports();
+
+        /// <summary>The link to the adapter on <paramref name="port"/> (a <see cref="PortInfo.Name"/>), not opened yet:
+        /// a serial port here; the Windows app also opens the Bluetooth LE adapters it lists.</summary>
+        IElmLink CreateLink(string port, int baud) => new Elm327(port, baud);
 
         /// <summary>The UI language changed; dates and numbers on screen follow the new culture.</summary>
         void LanguageChanged();

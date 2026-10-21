@@ -13,7 +13,7 @@ using Microsoft.Win32;
 
 namespace EscoEvObdScanner.App.Services
 {
-    /// <summary>The Windows side of what the view models need: message boxes, file and recording dialogs, Explorer, COM ports, the dispatcher.</summary>
+    /// <summary>The Windows side of what the view models need: message boxes, file and recording dialogs, Explorer, COM ports and Bluetooth LE adapters, the dispatcher.</summary>
     public sealed class WpfHost : IAppHost
     {
         const string Title = "Esco EV OBD Scanner";
@@ -57,7 +57,13 @@ namespace EscoEvObdScanner.App.Services
                 : new ProcessStartInfo(path) { UseShellExecute = true });
         }
 
-        public IReadOnlyList<PortInfo> Ports() => PortList.Get();
+        public IReadOnlyList<PortInfo> Ports() => PortList.Get().Concat(BleScan.Get()).ToList();
+
+        /// <summary>A Bluetooth LE adapter from <see cref="BleScan"/> through <see cref="BleChannel"/>; a COM port as on every platform.</summary>
+        public IElmLink CreateLink(string port, int baud) =>
+            BleScan.Address(port) is ulong address
+                ? new ElmLink(new BleChannel(address, BleScan.NameOf(address), BleScan.Settings))
+                : new Elm327(port, baud);
 
         /// <summary>The window's bindings format with its language, set at start; the new culture goes to them too.</summary>
         public void LanguageChanged()

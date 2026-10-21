@@ -13,7 +13,8 @@ command-line scanner for working out what undocumented identifiers mean.
 
 > **Just want to use it?** Download the MSI from [Releases](https://github.com/EsaHub/EscoEvObdScanner/releases),
 > install it and press **?** in the app for the user guide (Finnish and English). You need an
-> ELM327 or STN adapter (for example OBDLink EX or LX) that shows up as a COM port. Windows may warn "Windows protected your PC" because the
+> ELM327 or STN adapter: one that shows up as a COM port (USB or classic Bluetooth, for example OBDLink EX or LX)
+> or a Bluetooth LE one (for example OBDLink CX). Windows may warn "Windows protected your PC" because the
 > installer is not signed with a paid certificate: choose **More info → Run anyway**.
 > The rest of this page is for developers and the curious.
 
@@ -45,13 +46,17 @@ Another make needs a new car file, not new code: see
 > (STN chip; it answers `ATI` as "ELM327 v1.4b") on a 2023 Opel Mokka-e and a 2024 Kia
 > Niro EV, so that adapter is known to work. The identifier scans of the Mokka-e have also
 > been run over Bluetooth with an OBDLink LX (classic Bluetooth, same chip family), as fast
-> as over USB.
+> as over USB, and Bluetooth LE has been tested with an OBDLink CX.
 >
 > On Windows 11 a Bluetooth OBD adapter does not show up in *Add device* until
 > *Settings → Bluetooth & devices → Devices → Bluetooth devices discovery* is set to
 > **Advanced**. Pairing creates two COM ports; use the outgoing one.
-> The adapter must appear as a COM port: USB or classic Bluetooth, not Wi-Fi or
-> Bluetooth LE. It must also handle long multi-frame replies and the flow control
+> The adapter must appear as a COM port (USB or classic Bluetooth) or be a Bluetooth LE adapter;
+> Wi-Fi adapters do not work. A Bluetooth LE adapter is listed in the port list by its name and paired
+> by the program on the first connection (the OBDLink CX accepts pairing only for 5 minutes after power
+> on); which of its services are used, the adapter names listed and the pairing PIN are in
+> `ble-adapters.json` next to the program, and a copy in `%LOCALAPPDATA%\EscoEvObdScanner` overrides it.
+> The adapter must also handle long multi-frame replies and the flow control
 > commands `ATFCSH`, `ATFCSD` and `ATFCSM`: the cell voltages come that way (on the
 > e-CMP all 108 cells in one 243-byte reply). Without them the charge and voltages show
 > but the cells do not, so the Battery tab is the test of a new adapter.
@@ -86,7 +91,8 @@ share the car file, so findings in one help them all. At the first connection th
 app keeps a hash of an ECU serial number or the VIN (not the value itself; the
 battery ECU first) and warns when the adapter is later on another car than the
 vehicle chosen; when it surely is the same car (a replaced battery ECU), Yes in
-the warning updates the hash. A car that gives neither is not checked, and the log says so. When no ECU of
+the warning updates the hash. A car that gives neither is not checked, and the log says so; nor is a car whose
+battery ECU does not answer (not fully awake), as another ECU's serial would not match. When no ECU of
 the car file answers at all, the app warns that the vehicle probably has the wrong car file, or the car is off.
 The VIN, where the car gives one, is kept with the vehicle for its reports.
 
@@ -239,7 +245,7 @@ Requires the .NET 10 SDK.
 ```powershell
 dotnet build EscoEvObdScanner.slnx
 dotnet test --project EscoEvObdScanner.Tests          # unit + simulated-car tests
-.\EscoEvObdScanner.App\bin\Debug\net10.0-windows\EscoEvObdScanner.App.exe --selftest out   # UI self-test, screenshots in out\
+.\EscoEvObdScanner.App\bin\Debug\net10.0-windows10.0.19041.0\EscoEvObdScanner.App.exe --selftest out   # UI self-test, screenshots in out\
 .\build-installer.ps1                               # self-contained exe + MSI in publish\ (version from Directory.Build.props)
 ```
 
@@ -452,6 +458,7 @@ wican e-208 profile already reads the odometer from it.
 
 | ECU | DID | Meaning |
 |---|---|---|
+| VCU 0x6A2 | D402, D802 | vehicle speed from the wheels, /128 km/h: the same raw value throughout a drive; 102 km/h at a steady 100 km/h on GPS, with the dashboard at 104 (evDash's ×0.00794 matches the dashboard, not the true speed) |
 | VCU 0x6A2 | D8F0, D8F1 | pack maximum and minimum temperature |
 | VCU 0x6A2 | D819 | drive mode: 2 Sport, 6 Normal, 7 Eco |
 | VCU 0x6A2 | D4E7 (copies D85D, D8C2) | gear selector: 0 P, 1 R, 2 N, 3 D |
@@ -487,7 +494,7 @@ zero-based, so +1); the sum of cell voltages (D438) matches the 108 cells added 
 and the average cell voltage (D43D) equals their mean; the pack maximum temperature
 (D817) equals the minimum plus the spread and the hottest probe; the odometer (VCU
 D49C; the motor control unit holds the same) matches the dashboard; the motor speed
-(VCU D8CF and MCU DC00) keeps a fixed ratio to the road speed, 67.02 and 66.98 rpm
+(VCU D8CF and MCU DC00) keeps a fixed ratio to the road speed, 68.11 and 68.07 rpm
 per km/h on the same drive; and the motor power (VCU D8D9) was 0.93 of the battery
 power over a drive and 0.97 above 30 kW, the rest going to the auxiliary load. The
 accelerator pedal (VCU D407) reads B4/2 %: raw 199 with the pedal fully down, 0 released. The
@@ -520,9 +527,9 @@ From OBDb's Peugeot signal set and Battery-Emulator: on the VCU the 12 V battery
 stator (D8CD), DC-DC converter (D8CE), motor coolant inlet (D8D6) and
 traction circuit coolant temperatures (D8F9), and the heating circuit coolant temperature (D8FB),
 which on this car follows the cabin heater; on the MCU the inverter temperatures (DC04, DC6A); on
-the BMS the insulation resistance (D47A). The ESP speed (VCU D802) reached 68.8 km/h on a
-drive on 2026-10-09 but has not been compared with a known value yet. The on-board charger temperature (VCU D8E1) reads a fixed 29 °C whenever the
-charger is idle and moves only around AC charging, so the app does not show it.
+the BMS the insulation resistance (D47A). The on-board charger temperature (VCU D8E1) read
+29 °C in 51 of 53 snaps with the charger idle and other values only around AC charging, so the app
+does not show it.
 
 **Answering, meaning still open**
 

@@ -33,7 +33,7 @@ namespace EscoEvObdScanner.Tests
         {
             // a car on the adapter whose addresses are all different: silence on every ECU of the car file
             var link = new ScriptedLink();
-            var (id, answered) = VehicleIdentity.Check(new Scanner(link), TestData.Catalog());
+            var (id, answered, _) = VehicleIdentity.Check(new Scanner(link), TestData.Catalog());
 
             Assert.Null(id);
             Assert.False(answered);
@@ -46,17 +46,40 @@ namespace EscoEvObdScanner.Tests
         {
             // the car file fits, the car only keeps its serial number to itself
             var link = new ScriptedLink().On("22F18C", "7F2233").On("22F190", "7F2231");
-            var (id, answered) = VehicleIdentity.Check(new Scanner(link), TestData.Catalog());
+            var (id, answered, _) = VehicleIdentity.Check(new Scanner(link), TestData.Catalog());
 
             Assert.Null(id);
             Assert.True(answered);
         }
 
         [Fact]
+        public void SilentFirstEcuGivesNoIdentityRatherThanAnotherEcus()
+        {
+            // the battery ECU, which gives the identity when awake, is silent; another ECU gives its serial
+            var link = new ScriptedLink().On("22F18C", "NO DATA").On("22F18C", "62F18C313233");
+            var (id, answered, silent) = VehicleIdentity.Check(new Scanner(link), TestData.Catalog());
+
+            Assert.Null(id);
+            Assert.True(answered);
+            Assert.True(silent);
+        }
+
+        [Fact]
+        public void EcuWithoutASerialIsPassedOver()
+        {
+            // the battery ECU answers but keeps its serial and VIN to itself: the next ECU gives the identity
+            var link = new ScriptedLink().On("22F18C", "7F2231").On("22F190", "7F2231").On("22F18C", "62F18C313233");
+            var (id, _, silent) = VehicleIdentity.Check(new Scanner(link), TestData.Catalog());
+
+            Assert.Equal(VehicleIdentity.Hash(0xF18C, new byte[] { 0x31, 0x32, 0x33 }), id);
+            Assert.False(silent);
+        }
+
+        [Fact]
         public void EcuThatCannotBeAddressedIsSkipped()
         {
             var link = new ScriptedLink().On("ATSH6B4", "?").On("22F18C", "62F18C313233");
-            var (id, answered) = VehicleIdentity.Check(new Scanner(link), TestData.Catalog());
+            var (id, answered, _) = VehicleIdentity.Check(new Scanner(link), TestData.Catalog());
 
             Assert.Equal(VehicleIdentity.Hash(0xF18C, new byte[] { 0x31, 0x32, 0x33 }), id);
             Assert.True(answered);
@@ -66,7 +89,7 @@ namespace EscoEvObdScanner.Tests
         public void TheDemoCarAnswersTheCheck()
         {
             var (_, scanner, catalog) = TestData.DemoCar();
-            var (id, answered) = VehicleIdentity.Check(scanner, catalog);
+            var (id, answered, _) = VehicleIdentity.Check(scanner, catalog);
             Assert.True(answered);
             Assert.Equal(VehicleIdentity.Read(scanner, catalog), id);
         }

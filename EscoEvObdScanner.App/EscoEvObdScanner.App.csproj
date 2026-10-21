@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <!-- the Windows 10 SDK version brings the Bluetooth LE API (Windows.Devices.Bluetooth) -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -24,6 +25,8 @@
 
   <ItemGroup>
     <Content Include="..\EscoEvObdScanner\cars\*.json" Link="cars\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- which Bluetooth LE devices are listed as adapters and which of their services are used -->
+    <Content Include="ble-adapters.json" CopyToOutputDirectory="PreserveNewest" />
     <!-- the user guide, one page per language, opened from the ? button and the Start menu -->
     <Content Include="Help\*.html" Link="help\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Resource Include="Themes\app.ico" />

@@ -71,6 +71,9 @@ namespace EscoEvObdScanner.AppLogic.ViewModels
             // the demo car's name in the list is a UI text
             Loc.I.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(Loc.Language)) LoadCars(); };
 
+            AppPaths.BleAdapters(out string? bleProblem);
+            if (bleProblem != null) _state.Log(Loc.I.Format("BleConfigBroken", bleProblem));
+
             LoadPorts();
             LoadCars();
         }
@@ -204,6 +207,9 @@ namespace EscoEvObdScanner.AppLogic.ViewModels
         {
             Ports.Clear();
             foreach (var p in AppHost.I.Ports()) Ports.Add(p);
+            // the Bluetooth LE adapter used last time stays choosable before it is heard advertising again
+            if (_state.Settings.Port is string saved && new PortInfo(saved, "").IsBluetoothLe && Ports.All(p => p.Name != saved))
+                Ports.Add(new PortInfo(saved, Loc.I["BleAdapterSaved"]));
 
             SelectedPort = Ports.FirstOrDefault(p => p.Name == _state.Settings.Port)
                         ?? Ports.FirstOrDefault(PortInfo.LooksLikeAdapter)
@@ -328,8 +334,8 @@ namespace EscoEvObdScanner.AppLogic.ViewModels
         async Task<bool?> CheckVehicleAsync(Vehicle vehicle)
         {
             string? id;
-            bool answered;
-            try { (id, answered) = await Adapter.RunAsync("VehicleChecking", (scanner, _) => VehicleIdentity.Check(scanner, _state.Catalog)); }
+            bool answered, silent;
+            try { (id, answered, silent) = await Adapter.RunAsync("VehicleChecking", (scanner, _) => VehicleIdentity.Check(scanner, _state.Catalog)); }
             catch (Exception ex) when (ex is not (OutOfMemoryException or PortLostException)) { return null; }      // the check is a help, not a condition; a lost port is reported
             if (id == null && !answered)
             {
@@ -340,7 +346,7 @@ namespace EscoEvObdScanner.AppLogic.ViewModels
                 AppHost.I.Tell(text, Notice.Warning);
                 return null;
             }
-            if (id == null) { _state.Log(Loc.I.Format("VehicleNoIdentity", vehicle.Name)); return null; }
+            if (id == null) { _state.Log(Loc.I.Format(silent ? "VehicleNotAwake" : "VehicleNoIdentity", vehicle.Name)); return null; }
             var other = _state.VehicleList.FirstOrDefault(v => !ReferenceEquals(v, vehicle) && v.SerialHash == id);
             if (other != null)
             {

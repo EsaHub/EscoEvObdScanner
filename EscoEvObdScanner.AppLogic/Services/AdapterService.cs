@@ -52,7 +52,7 @@ namespace EscoEvObdScanner.AppLogic.Services
         public bool CanRun => IsConnected && !IsBusy;
 
         public Task ConnectAsync(string port, int baud, Catalog catalog) =>
-            OpenAsync(() => new Elm327(port, baud), catalog, demo: false);
+            OpenAsync(() => AppHost.I.CreateLink(port, baud), catalog, demo: false);
 
         public Task ConnectDemoAsync(Catalog catalog) => OpenAsync(() =>
         {
