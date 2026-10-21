@@ -5,10 +5,10 @@
   <img src="assets/logo.svg" alt="Esco EV OBD Scanner" width="380">
 </picture>
 
-Read-only diagnostics for electric cars over a serial ELM327 or STN adapter,
-made first of all for the Stellantis e-CMP platform (Opel Mokka-e and
-Corsa-e, Peugeot e-208 and e-2008, Citroën e-C4, DS 3 E-Tense): a Windows
-app with a live dashboard, battery cell view and charts, and a
+Read-only diagnostics for electric cars over an ELM327 or STN adapter (USB,
+Bluetooth or Bluetooth LE), made first of all for the Stellantis e-CMP platform
+(Opel Mokka-e and Corsa-e, Peugeot e-208 and e-2008, Citroën e-C4, DS 3 E-Tense):
+a Windows app with a live dashboard, battery cell view and charts, and a
 command-line scanner for working out what undocumented identifiers mean.
 
 > **Just want to use it?** Download the MSI from [Releases](https://github.com/EsaHub/EscoEvObdScanner/releases),
@@ -23,57 +23,61 @@ command-line scanner for working out what undocumented identifiers mean.
 The program knows no car itself. Everything car-specific - ECU addresses,
 identifiers, formulas, where the dashboard reads each value, how many cells the
 battery has - comes from a car file in the `cars` folder, and the app lets you
-pick the car. `cars/stellantis-ecmp.json` covers the
-Stellantis e-CMP platform (Opel Mokka-e/Corsa-e, Peugeot e-208/e-2008, Citroën
-e-C4, DS 3 E-Tense), tested on a 2023 Mokka-e and a 2023 Citroën e-C4. It is the main car
-file: seven of its ECUs have been scanned through every identifier on the Mokka-e, and about 120
-identifiers have been worked out or checked on the author's own drives, charges and
-snaps, cell health included. About 1,000 more answer, but what they mean is not
-known yet; the file lists them for anyone who wants to work them out.
+pick the car. Four car files are shipped:
+
+| Car file | Cars | Tested on | What it holds |
+|---|---|---|---|
+| `stellantis-ecmp.json` | Stellantis e-CMP: Opel Mokka-e/Corsa-e, Peugeot e-208/e-2008, Citroën e-C4, DS 3 E-Tense | 2023 Mokka-e, 2023 Citroën e-C4 | The main car file: seven of its ECUs have been scanned through every identifier on the Mokka-e, and about 120 identifiers have been worked out or checked on the author's own drives, charges and snaps, cell health included. About 1,000 more answer, but what they mean is not known yet; the file lists them for anyone who wants to work them out. |
+| `kia-niro-ev-2022.json` | Second-generation Kia Niro EV (2022 on, 96 cells) | 2024 EU Niro EV | Replies other people captured on US cars (OBDb). |
+| `kia-eniro.json` | Kia e-Niro and Hyundai Kona Electric 2018–2022 | not tested on a car | The positions evDash publishes, checked against its sample replies. |
+| `volvo-v70-2008.json` | 2008 Volvo V70 diesel, an example of a car that is not electric | 2008 Volvo V70 | The fault codes of four ECUs (engine, central electronic module, ABS, electric parking brake) and engine, brake and body values, with names and scales from OBDb's Volvo S80, V60 and XC60 sets where they answered on that car. |
+
 The Kia files are smaller and rest mostly on what other projects have published.
-`cars/kia-niro-ev-2022.json` covers the second-generation Kia Niro EV (2022 on,
-96 cells) from replies other people captured on US cars (OBDb), tested on a 2024
-EU Niro EV. `cars/kia-eniro.json` covers the Kia e-Niro and Hyundai Kona Electric
-2018–2022 from the positions evDash publishes, checked against its sample replies
-but not tested on a car. `cars/volvo-v70-2008.json` is an example of a car that is not
-electric: on a 2008 Volvo V70 diesel it reads the fault codes of four ECUs (engine, central
-electronic module, ABS, electric parking brake) and engine, brake and body values, with
-names and scales from OBDb's Volvo S80, V60 and XC60 sets where they answered on that car.
 Another make needs a new car file, not new code: see
 [Adding a car](#adding-a-car).
 
-> **Status:** early. Developed and tested with an OBDLink EX USB adapter
-> (STN chip; it answers `ATI` as "ELM327 v1.4b") on a 2023 Opel Mokka-e and a 2024 Kia
-> Niro EV, so that adapter is known to work. The identifier scans of the Mokka-e have also
-> been run over Bluetooth with an OBDLink LX (classic Bluetooth, same chip family), as fast
-> as over USB, and Bluetooth LE has been tested with an OBDLink CX.
->
-> On Windows 11 a Bluetooth OBD adapter does not show up in *Add device* until
-> *Settings → Bluetooth & devices → Devices → Bluetooth devices discovery* is set to
-> **Advanced**. Pairing creates two COM ports; use the outgoing one.
-> The adapter must appear as a COM port (USB or classic Bluetooth) or be a Bluetooth LE adapter;
-> Wi-Fi adapters do not work. A Bluetooth LE adapter is listed in the port list by its name and paired
-> by the program on the first connection (the OBDLink CX accepts pairing only for 5 minutes after power
-> on); which of its services are used, the adapter names listed and the pairing PIN are in
-> `ble-adapters.json` next to the program, and a copy in `%LOCALAPPDATA%\EscoEvObdScanner` overrides it.
-> The adapter must also handle long multi-frame replies and the flow control
-> commands `ATFCSH`, `ATFCSD` and `ATFCSM`: the cell voltages come that way (on the
-> e-CMP all 108 cells in one 243-byte reply). Without them the charge and voltages show
-> but the cells do not, so the Battery tab is the test of a new adapter.
->
-> Suomenkielinen käyttöohje: [OHJE.md](OHJE.md)
+## Status
 
-## What is in the box
+Early. Developed and tested with an OBDLink EX USB adapter (STN chip; it answers `ATI` as
+"ELM327 v1.4b") on a 2023 Opel Mokka-e and a 2024 Kia Niro EV, so that adapter is known to
+work. The identifier scans of the Mokka-e have also been run over Bluetooth with an OBDLink LX
+(classic Bluetooth, same chip family), as fast as over USB, and Bluetooth LE has been tested
+with an OBDLink CX.
 
-| Project | What it is |
-|---|---|
-| `EscoEvObdScanner.App` | Windows app (WPF), the windows and drawing around `AppLogic`: vehicles (each car by a name of its own, with its own results), connection, dashboard (optionally started as soon as the adapter is connected; grouped values, a range estimate from your own drives on the charge gauge where the car gives the remaining energy; trip and charging energy and the session's peaks; lifetime energy counters with an electricity cost estimate at your price, the per-year figures counted from the date the car was taken into use and its odometer then), battery (every cell and temperature probe, cell health, cells under load), a battery report (PDF), charts, fault codes, ECUs (the car file's ECUs and their known and discovered identifiers, with their values read and the ECUs checked on request), discovery (finding ECUs, then scanning one for identifiers; both say what the car file lists as searched or scanned already), snapshot comparison; while the live view holds the adapter, the status bar says so on the tabs that read the car. Finnish and English. |
-| `EscoEvObdScanner` | Command-line tool for reading, scanning, snaps, fault codes and ECU discovery (no dashboard, charts or report), for scripting and long scans; built from source, not in the MSI |
-| `EscoEvObdScanner` → `cars/` | The car files |
-| `EscoEvObdScanner.AppLogic` | What the app does, without Windows UI types: the view models of the tabs, vehicles, drive history, settings, the adapter session, the battery report (PDF) and the UI texts. The platform plugs in through `IAppHost` (dialogs, opening files, ports, a UI timer); the report font is read from the Windows font folder |
-| `EscoEvObdScanner.Core` | Car diagnostics, used by the app and the command line: ELM327 transport, UDS parsing, car files, live values, analyses and ratings, fault codes, recordings, simulated car |
-| `EscoEvObdScanner.Tests` | Unit and end-to-end tests against a simulated car built from real replies |
-| `EscoEvObdScanner.Installer` | MSI installer (WiX) |
+## Adapters
+
+The adapter must appear as a COM port (USB or classic Bluetooth) or be a Bluetooth LE adapter;
+Wi-Fi adapters do not work.
+
+- **Classic Bluetooth:** on Windows 11 a Bluetooth OBD adapter does not show up in *Add device*
+  until *Settings → Bluetooth & devices → Devices → Bluetooth devices discovery* is set to
+  **Advanced**. Pairing creates two COM ports; use the outgoing one.
+- **Bluetooth LE:** the adapter is listed in the port list by its name and paired by the program
+  on the first connection (the OBDLink CX accepts pairing only for 5 minutes after power on).
+  Which of its services are used, the adapter names listed and the pairing PIN are in
+  `ble-adapters.json` next to the program, and a copy in `%LOCALAPPDATA%\EscoEvObdScanner`
+  overrides it.
+- **Long replies:** the adapter must also handle long multi-frame replies and the flow control
+  commands `ATFCSH`, `ATFCSD` and `ATFCSM`: the cell voltages come that way (on the e-CMP all
+  108 cells in one 243-byte reply). Without them the charge and voltages show but the cells do
+  not, so the Battery tab is the test of a new adapter.
+
+## Using the app
+
+![The Dashboard tab during a drive: gauges with their readings, the trip of this session, the car’s own lifetime counters and the electricity estimate at a given price (demo car)](assets/screenshots/dashboard.png)
+
+![Cell voltages and temperature probes (demo car)](assets/screenshots/battery.png)
+
+![Cells under load after a 30-minute drive of the author's Mokka-e: how much each cell sags under load beyond its offset at rest, per 100 A](assets/screenshots/cells-under-load.png)
+
+The **?** button at the top right opens the user guide (`EscoEvObdScanner.App/Help`, Finnish and English), which is also in the Start menu: the app's use, the report and its limits with their sources, and troubleshooting, for those who only install the MSI.
+Suomenkielinen käyttöohje: [OHJE.md](OHJE.md)
+
+### Getting started
+
+Install the MSI (or run `EscoEvObdScanner.App.exe` from `publish\app`, next to its `cars` and
+`help` folders), plug in the adapter, choose the car and the port on the **Connection** tab and
+press **Connect**.
 
 **No adapter?** The e-CMP car file also gives a demo car: a simulated
 Mokka-e built from real, anonymised readings and fault codes stored in the program. In the app it is a car of its own
@@ -83,7 +87,9 @@ adapter; on the command line it is the port `demo`. It answers with a placeholde
 over the OBD port. Its results go to a folder
 of their own (`<car>-demo`), never among the real car's.
 
-**Vehicles.** Each car you measure is a vehicle with a name of your own (a
+### Vehicles
+
+Each car you measure is a vehicle with a name of your own (a
 registration number, "work car"), added on the Connection tab with its
 car file. A vehicle has its own results folder (`Documents\EscoEvObdScanner\<vehicle>`)
 and its own drive history for the range estimate; vehicles on the same platform
@@ -95,6 +101,44 @@ the warning updates the hash. A car that gives neither is not checked, and the l
 battery ECU does not answer (not fully awake), as another ECU's serial would not match. When no ECU of
 the car file answers at all, the app warns that the vehicle probably has the wrong car file, or the car is off.
 The VIN, where the car gives one, is kept with the vehicle for its reports.
+
+### Results and fault codes
+
+Results (scans, snapshots, fault codes, live CSV recordings, logs) go to
+`Documents\EscoEvObdScanner\<vehicle>`, one subfolder per kind (the command line
+uses the car file's name, `<car>`). Earlier fault code reads can be opened again from the
+Fault codes tab, which shows each code’s failure type and status bits by their names in the
+standards (SAE J2012-DA, ISO 14229-1), untranslated, so they can be looked up.
+
+### Battery report
+
+**Create report (PDF)** on the Battery tab writes a battery report of what the app shows:
+
+- The car's VIN first, so it can be compared with the windscreen and the registration
+  document: read at the connection and kept with the vehicle, so a report made later has it
+  too. Not every car gives it (the e-CMP does not over the OBD port); then it can be written in
+  the **Text for the report** field.
+- The values, every cell and probe, and the fault codes if they were read, with rough ratings
+  (health, cell spread at rest, cells under load, temperature spread, insulation, battery ECU
+  faults).
+- With the live view running during a drive, the drive (its time span, distance, energy,
+  consumption, highest load) and the cells that sag most under load beyond their offset at rest
+  (internal resistance, not charge), next to their health.
+- Where the car gives them, the battery management's date of manufacture, the battery's age and
+  wear rate ((100 % − SOH) per year and per 10,000 km, assuming the new battery was at 100 %)
+  and its software and hardware versions (the e-CMP; read at the connection and kept with the
+  vehicle like the VIN, so a report made from a recording has them too, with the date they were
+  read).
+- The 12 V battery's voltage with a note on reading it at rest (Battery University BU-903 [6]).
+- The car's lifetime counters: energy into and out of the battery (the Niro EV and the e-CMP),
+  AC and DC charging sessions and energy (the Niro EV), starts and time above 55 °C (the e-CMP).
+
+**Report from recording…** makes the same report afterwards from a saved live view, picked
+from a list that shows each one's time, distance and cell reads. A Source column in each table
+says whether a figure is given by the car or calculated. The report ends with how each
+calculated figure is calculated, the limits of every rating with their basis (see
+[Ratings and their basis](#ratings-and-their-basis)), and where each figure comes from. In
+Finnish, dates and numbers are in Finnish format; in English, in the Windows regional format.
 
 ## Safety
 
@@ -127,49 +171,6 @@ Even so:
 - Result files and logs can contain serial numbers. `.gitignore` keeps them
   out of the repository.
 
-## Using the app
-
-![The Dashboard tab during a drive: gauges with their readings, the trip of this session, the car’s own lifetime counters and the electricity estimate at a given price (demo car)](assets/screenshots/dashboard.png)
-
-![Cell voltages and temperature probes (demo car)](assets/screenshots/battery.png)
-
-![Cells under load after a 30-minute drive of the author's Mokka-e: how much each cell sags under load beyond its offset at rest, per 100 A](assets/screenshots/cells-under-load.png)
-
-The **?** button at the top right opens the user guide (`EscoEvObdScanner.App/Help`, Finnish and English), which is also in the Start menu: the app's use, the report and its limits with their sources, and troubleshooting, for those who only install the MSI.
-
-Install the MSI (or run `EscoEvObdScanner.App.exe` from `publish\app`, next to its `cars` and `help` folders), plug in the adapter, choose
-the car and the port on the **Connection** tab and press **Connect**. Results (scans,
-snapshots, fault codes, live CSV recordings, logs) go to
-`Documents\EscoEvObdScanner\<vehicle>`, one subfolder per kind (the command line
-uses the car file's name, `<car>`); earlier fault code reads
-can be opened again from the Fault codes tab, which shows each code’s failure type and status bits by
-their names in the standards (SAE J2012-DA, ISO 14229-1), untranslated, so they can be looked up. **Create report (PDF)** on the
-Battery tab writes a battery report of what the app shows: the values, every
-cell and probe, and the fault codes if they were read, with rough ratings
-(health, cell spread at rest, cells under load, temperature spread, insulation, battery ECU faults).
-With the live view running during a drive it adds the drive (its time span, distance, energy,
-consumption, highest load) and the cells that sag most under load beyond their
-offset at rest (internal resistance, not charge), next to their health; **Report from recording…** makes the same report afterwards from a saved
-live view, picked from a list that shows each one's time, distance and cell reads.
-The report starts with the car's VIN, so it can be compared with the windscreen and
-the registration document: read at the connection and kept with the vehicle, so a
-report made later has it too. Not every car gives it (the e-CMP does not over the OBD
-port); then it can be written in the **Text for the report** field. Where the car gives them,
-the report lists the battery management's date of manufacture, the battery's age and wear rate
-((100 % − SOH) per year and per 10,000 km, assuming the new battery was at 100 %) and its software
-and hardware versions (the e-CMP; read at the connection and kept with the vehicle like the VIN, so a report made from a recording has them too, with the date they were read), the 12 V battery's voltage with a note on reading it at rest
-(Battery University BU-903 [6]), and the car's lifetime counters: energy into and out of the battery (the Niro EV and the e-CMP),
-AC and DC charging sessions and energy (the Niro EV), starts and time above 55 °C (the e-CMP). A Source column in each table says
-whether a figure is given by the car or calculated. The report ends with how each
-calculated figure is calculated, the limits of every rating with their basis (see
-below), and where each figure comes from. In Finnish, dates and numbers are in Finnish format; in English, in the
-Windows regional format.
-Working copies of the car files live in `%LOCALAPPDATA%\EscoEvObdScanner\cars`, so
-scan results can be merged into them without write access to Program Files. A
-car file from elsewhere can be imported on the Connection tab. The command line
-works on the car files in a `cars` folder in the current folder or next to its
-exe instead, so a merge on the command line does not reach the app's copies.
-
 ## Ratings and their basis
 
 The report rates a few figures as Good, Attention or Check. The limits are in
@@ -196,6 +197,150 @@ has its formula in the report's "How the figures are calculated" section.
 4. [Battery Thermal Management Systems for EVs and Its Applications (SciTePress 2022)](https://www.scitepress.org/Papers/2022/110307/110307.pdf)
 5. [UNECE Regulation No 100, paragraph 5.1.3](https://www.lexaris.de/library/tableofcontents/2059009)
 6. [Battery University: BU-903 How to Measure State-of-charge](https://batteryuniversity.com/article/bu-903-how-to-measure-state-of-charge) (the 12 V battery's rest voltage)
+
+## Findings
+
+What this tool found on a 2023 Mokka-e that the public sources listed under
+[Credits](#credits) did not document. "Confirmed" means checked on the car
+against the dashboard, a charge, a drive or another known value; "likely" means
+the readings fit but have not been checked that way. Each identifier's
+`confidence` and `notes` in the car file give the evidence and raw samples.
+
+**ECUs.** Three more ECUs answer diagnostic requests on the OBD port: 0x6AD
+(ABS/ESP), 0x6B5 (power steering) and 0x74A (windscreen camera for driver assistance, on a separate reply
+offset of -0x100). A fourth, 0x6A6, is the motor control unit (MCU_ECMP); the
+wican e-208 profile already reads the odometer from it.
+
+**Confirmed**
+
+| ECU | DID | Meaning |
+|---|---|---|
+| VCU 0x6A2 | D402, D802 | vehicle speed from the wheels, /128 km/h: the same raw value throughout a drive; 102 km/h at a steady 100 km/h on GPS, with the dashboard at 104 (evDash's ×0.00794 matches the dashboard, not the true speed) |
+| VCU 0x6A2 | D8F0, D8F1 | pack maximum and minimum temperature |
+| VCU 0x6A2 | D819 | drive mode: 2 Sport, 6 Normal, 7 Eco |
+| VCU 0x6A2 | D4E7 (copies D85D, D8C2) | gear selector: 0 P, 1 R, 2 N, 3 D |
+| VCU 0x6A2 | D8E6 | HV bus voltage in whole volts (the pack voltage in Ready, about 12 V with the contactors open) |
+| VCU 0x6A2 | D414 | outside temperature, the same as D434 |
+| VCU 0x6A2 | D403, D463, D4B7 | brake pedal: 1 pressed, 0 released |
+| VCU 0x6A2 | D4C0 | Ready: 3 in Ready, 0 otherwise |
+| VCU 0x6A2 | D818 | power state: 3 Ready, 4 HV on but not Ready (also while charging), 0 contactors open |
+| VCU, charger | D8AA | charging state: 0 charge session (charging or waiting), 2 charge finished with the cable in, 3 no cable |
+| BMS 0x6B4 | D433, D434 | HV bus voltage after the contactors, /16 V (the pack voltage when they are closed) |
+| BMS 0x6B4 | D449 | a further pack current (reading 3 in the car file), the same scale and sign as D816 (within 0.02 A at a steady current) |
+| BMS 0x6B4 | D49C | odometer, km/1024 (OBDb's /1000 does not match the dashboard) |
+| BMS 0x6B4 | D42E | lifetime energy counters, 1/16 kWh: energy into the battery, regeneration included (a DC charge added 23.06 kWh against 23.68 kWh on the charger), and out of it (20.1 kWh/100 km over 341 km against 19.5 on the trip computer); the third word is the odometer + 9 km. The energy into the battery reads 0 after the car wakes until it has driven or charged; the app then leaves it out |
+| BMS 0x6B4 | D47D | BMS clock, seconds |
+| MCU 0x6A6 | DC06, DC37 | HV voltage at the motor control unit, /32 V (two measuring points) |
+| Charger 0x590 | D824 | HV voltage at the charger |
+| Charger 0x590 | E119, E11B | HV voltage at the charger, /128 V (two measuring points within 0.5 V of the pack voltage) |
+| Charger 0x590 | D822 | 12 V system voltage |
+| Charger 0x590 | D80C | 12 V system voltage, a second reading 0.3 V below D822 |
+| Charger 0x590 | D855 | the same as the charge cable value D854: 100 with the cable in, 0 unplugged |
+| VCU, charger | D8EB | state of charge, /10 % (equals BMS D410 and the dashboard %) |
+| VCU, charger | D4CA | vehicle clock in 0.1 s steps, which dates the fault code freeze frames (name from Battery-Emulator, scale found here; the BMS and the motor control unit hold the same clock) |
+| VCU, BMS, charger | D866 | Ready: 8 in Ready, 0 when off or on but not Ready (on the VCU and the charger also D4B9: 1 / 0) |
+| Power steering 0x6B5 | D419 | lane keeping assist: 2 on, 1 off |
+| Power steering 0x6B5 | D41B | lane keeping active: 2 active, 0 off or not active |
+
+**Named by the public sources, checked here on the car**
+
+| ECU | DID | What was checked |
+|---|---|---|
+| BMS 0x6B4 | D860, D4B5 | the pack SOH (D860) is exactly the lowest of the per-cell health values (D4B5), so the pack is rated by its weakest cell |
+| BMS 0x6B4 | D43C, D43B | the lowest and highest cell numbers point at the lowest and highest cell of the cell voltages (zero-based, so +1) |
+| BMS 0x6B4 | D445, D446 | the hottest and coldest probe numbers point at those of the temperature probes (zero-based, so +1) |
+| BMS 0x6B4 | D438 | the sum of cell voltages matches the 108 cells added up |
+| BMS 0x6B4 | D43D | the average cell voltage equals their mean |
+| BMS 0x6B4 | D817 | the pack maximum temperature equals the minimum plus the spread and the hottest probe |
+| BMS 0x6B4 | D810 | the raw SOC stays within 0.4 points of the calibrated SOC D410 |
+| BMS 0x6B4 | D871-D874 | the power limits (named by evDash and Battery-Emulator) read `[B4:B7]/128-500` kW, OBDb's scale: discharge for 10 and 30 s up to exactly 160 kW, charge and regeneration negative and shrinking as the battery fills, the 30 s limit never larger than the 10 s one; drives stayed within them (114 kW out, 68 kW regeneration) |
+| VCU 0x6A2 | D49C | the odometer (the motor control unit holds the same) matches the dashboard |
+| VCU 0x6A2, MCU 0x6A6 | D8CF, DC00 | the motor speed keeps a fixed ratio to the road speed, 68.11 and 68.07 rpm per km/h on the same drive |
+| VCU 0x6A2 | D8D9 | the motor power was 0.93 of the battery power over a drive and 0.97 above 30 kW, the rest going to the auxiliary load; it is 1.15 times torque × motor speed driving and 0.91 times it regenerating, as electric power against shaft power |
+| VCU 0x6A2 | D8D0 | the actual motor torque reached 259 Nm on a drive (the Mokka-e is rated 260 Nm) |
+| VCU 0x6A2 | D407 | the accelerator pedal reads B4/2 %: raw 199 with the pedal fully down, 0 released |
+
+**Likely: not checked or candidates** (the app's *not checked* and *candidate* levels)
+
+| ECU | DID | Meaning |
+|---|---|---|
+| Charger 0x590 | D82B | AC grid voltage (229-235 V plugged in, 0 unplugged) |
+| Charger 0x590 | D5CF, D5D1 | AC grid voltage, /100 V (two readings within 1.5 V of D82B; 0 unplugged) |
+| Charger 0x590 | D829 | 12 V side current, about 1 A per step (follows the rear window heater, seat heater, lights and fan, but also rises with the cabin heating) |
+| BMS 0x6B4 | D813, D44C, D44D, D452, D453 | HV contactors open (0) or closed; closed also after leaving Ready and with the charge cable in |
+| BMS 0x6B4 | D413, D862, D863 | further SOC variants |
+| BMS 0x6B4 | D416 | contactor close counter (name from Battery-Emulator; grows with each HV contactor closing, also at the end of a DC charge) |
+| MCU 0x6A6 | DC71 | motor temperature, /100 °C (rises while driving, falls when parked) |
+| VCU 0x6A2 | D85B | brake pedal state: 1 or 2 with the pedal pressed in P, but 0 with it pressed in D or N in most snaps |
+| VCU 0x6A2 | D880 | requested motor torque (name from OBDb), /10 Nm: tracks the actual torque D8D0 about 0.2 s ahead (peak 261 against 259 Nm); the data cannot tell requested from actual |
+
+**Published by others, not checked yet** (the app's *not checked* level; on this car the published scale gives plausible values)
+
+From OBDb's Peugeot signal set and Battery-Emulator: on the VCU the 12 V battery (D496), motor
+stator (D8CD), DC-DC converter (D8CE), motor coolant inlet (D8D6) and
+traction circuit coolant temperatures (D8F9), and the heating circuit coolant temperature (D8FB),
+which on this car follows the cabin heater; on the MCU the inverter temperatures (DC04, DC6A); on
+the BMS the insulation resistance (D47A). The on-board charger temperature (VCU D8E1) read
+29 °C in 51 of 53 snaps with the charger idle and other values only around AC charging, so the app
+does not show it.
+
+**Answering, meaning still open**
+
+| ECU | Ranges | DIDs |
+|---|---|---|
+| VCU 0x6A2 | D4xx, D8xx | 119 |
+| VCU 0x6A2 | **D5xx, D6xx, D7xx**: groups not mentioned anywhere | 29 |
+| VCU 0x6A2 | E031-E0A9 (E031-E03A: ten records that move down a place as new ones arrive, four after an overnight charge and a drive on 2026-10-14/15; fields not worked out) | 16 |
+| BMS 0x6B4 | D4xx, D8xx (many named by Battery-Emulator, without scale) | 79 |
+| BMS 0x6B4 | **DC0F, DC63-DC65, DF63-DF64**: groups not mentioned anywhere (D900 and E082 nearby are named by Battery-Emulator) | 6 |
+| MCU 0x6A6 | D4xx, DCxx | 20 |
+| Charger 0x590 | D4xx, D8xx, F1xx | 43 |
+| Charger 0x590 | **D5BD, D5D0, D5D2**: the rest of a group not mentioned anywhere, with D5CF and D5D1 above (answers with and without the charge cable) | 3 |
+| Charger 0x590 | E000-E707 | 131 |
+| Charger 0x590 | 0D1F-0DFE and 3788-3B02: they exist, but answered conditionsNotCorrect and gave no value when scanned | 268 |
+| ABS/ESP 0x6AD | D4xx, D6xx | 76 |
+| Power steering 0x6B5 | D4xx | 20 |
+| Windscreen camera 0x74A | D4xx, D5xx | 18 |
+| Windscreen camera 0x74A | FD00-FD79 (supplier area) | 70 |
+| All seven | the rest: small groups elsewhere, among them F0xx-F1xx on every ECU and F4xx, F6xx, F8xx on the VCU | 120 |
+| **In all** | | **1,018** |
+
+Not found on the ECUs that answer: the VIN, the dashboard's range estimate, the
+trip computers and the seat heaters. The body computer (BSI), the instrument cluster and the
+climate unit, whose addresses PyPSADiag lists, did not answer on the OBD port.
+
+## What is in the box
+
+| Project | What it is |
+|---|---|
+| `EscoEvObdScanner.App` | Windows app (WPF), the windows and drawing around `AppLogic`; what it does is listed below the table. Finnish and English. |
+| `EscoEvObdScanner` | Command-line tool for reading, scanning, snaps, fault codes and ECU discovery (no dashboard, charts or report), for scripting and long scans; built from source, not in the MSI |
+| `EscoEvObdScanner` → `cars/` | The car files |
+| `EscoEvObdScanner.AppLogic` | What the app does, without Windows UI types: the view models of the tabs, vehicles, drive history, settings, the adapter session, the battery report (PDF) and the UI texts. The platform plugs in through `IAppHost` (dialogs, opening files, ports, a UI timer); the report font is read from the Windows font folder |
+| `EscoEvObdScanner.Core` | Car diagnostics, used by the app and the command line: ELM327 transport, UDS parsing, car files, live values, analyses and ratings, fault codes, recordings, simulated car |
+| `EscoEvObdScanner.Tests` | Unit and end-to-end tests against a simulated car built from real replies |
+| `EscoEvObdScanner.Installer` | MSI installer (WiX) |
+
+**The app:**
+
+- **Vehicles:** each car by a name of its own, with its own results.
+- **Connection** to the adapter.
+- **Dashboard:** grouped values, optionally started as soon as the adapter is connected; a range
+  estimate from your own drives on the charge gauge where the car gives the remaining energy; trip
+  and charging energy and the session's peaks; lifetime energy counters with an electricity cost
+  estimate at your price, the per-year figures counted from the date the car was taken into use and
+  its odometer then.
+- **Battery:** every cell and temperature probe, cell health, cells under load.
+- **Battery report** (PDF).
+- **Charts.**
+- **Fault codes.**
+- **ECUs:** the car file's ECUs and their known and discovered identifiers, with their values read
+  and the ECUs checked on request.
+- **Discovery:** finding ECUs, then scanning one for identifiers; both say what the car file lists
+  as searched or scanned already.
+- **Snapshot comparison.**
+
+While the live view holds the adapter, the status bar says so on the tabs that read the car.
 
 ## Using the command line
 
@@ -315,13 +460,15 @@ files use English. An identifier is known by its ECU and `did`, not by its
 name. A plain string as `name` counts as English.
 
 The app works on a copy of each car file in `%LOCALAPPDATA%\EscoEvObdScanner\cars`,
-since scan results are merged into it. When a newer version of a shipped car
+since scan results are merged into it without write access to Program Files. When a newer version of a shipped car
 file is installed (a higher `version`), a copy without merged results is
 replaced; one with merged results becomes the new file with those results
 carried over; either way the copy is kept in `cars\backup` first. A copy that
 does not load as a car file is replaced by the shipped one the same way (kept as
-`<name>-broken-<time>.json`), and the log says so. A car file imported on the
-Connection tab is never replaced by an update.
+`<name>-broken-<time>.json`), and the log says so. A car file from elsewhere can be
+imported on the Connection tab; it is never replaced by an update. The command line
+works on the car files in a `cars` folder in the current folder or next to its exe
+instead, so a merge on the command line does not reach the app's copies.
 
 ## Adding a car
 
@@ -440,121 +587,6 @@ B0 = length   B1 = 0x62   B2..B3 = DID   B4.. = payload
 | `+ - * / ( )` | arithmetic |
 
 Examples: `(B4*256+B5)/512`, `[B4:B5]/16`, `[B4:B7]/64-1200`.
-
-## Findings
-
-What this tool found on a 2023 Mokka-e that the public sources listed under
-[Credits](#credits) did not document. "Confirmed" means checked on the car
-against the dashboard, a charge, a drive or another known value; "likely" means
-the readings fit but have not been checked that way. Each identifier's
-`confidence` and `notes` in the car file give the evidence and raw samples.
-
-**ECUs.** Three more ECUs answer diagnostic requests on the OBD port: 0x6AD
-(ABS/ESP), 0x6B5 (power steering) and 0x74A (windscreen camera for driver assistance, on a separate reply
-offset of -0x100). A fourth, 0x6A6, is the motor control unit (MCU_ECMP); the
-wican e-208 profile already reads the odometer from it.
-
-**Confirmed**
-
-| ECU | DID | Meaning |
-|---|---|---|
-| VCU 0x6A2 | D402, D802 | vehicle speed from the wheels, /128 km/h: the same raw value throughout a drive; 102 km/h at a steady 100 km/h on GPS, with the dashboard at 104 (evDash's ×0.00794 matches the dashboard, not the true speed) |
-| VCU 0x6A2 | D8F0, D8F1 | pack maximum and minimum temperature |
-| VCU 0x6A2 | D819 | drive mode: 2 Sport, 6 Normal, 7 Eco |
-| VCU 0x6A2 | D4E7 (copies D85D, D8C2) | gear selector: 0 P, 1 R, 2 N, 3 D |
-| VCU 0x6A2 | D8E6 | HV bus voltage in whole volts (the pack voltage in Ready, about 12 V with the contactors open) |
-| VCU 0x6A2 | D414 | outside temperature, the same as D434 |
-| VCU 0x6A2 | D403, D463, D4B7 | brake pedal: 1 pressed, 0 released |
-| VCU 0x6A2 | D4C0 | Ready: 3 in Ready, 0 otherwise |
-| VCU 0x6A2 | D818 | power state: 3 Ready, 4 HV on but not Ready (also while charging), 0 contactors open |
-| VCU, charger | D8AA | charging state: 0 charge session (charging or waiting), 2 charge finished with the cable in, 3 no cable |
-| BMS 0x6B4 | D433, D434 | HV bus voltage after the contactors, /16 V (the pack voltage when they are closed) |
-| BMS 0x6B4 | D449 | a further pack current (reading 3 in the car file), the same scale and sign as D816 (within 0.02 A at a steady current) |
-| BMS 0x6B4 | D49C | odometer, km/1024 (OBDb's /1000 does not match the dashboard) |
-| BMS 0x6B4 | D42E | lifetime energy counters, 1/16 kWh: energy into the battery, regeneration included (a DC charge added 23.06 kWh against 23.68 kWh on the charger), and out of it (20.1 kWh/100 km over 341 km against 19.5 on the trip computer); the third word is the odometer + 9 km. The energy into the battery reads 0 after the car wakes until it has driven or charged; the app then leaves it out |
-| BMS 0x6B4 | D47D | BMS clock, seconds |
-| MCU 0x6A6 | DC06, DC37 | HV voltage at the motor control unit, /32 V (two measuring points) |
-| Charger 0x590 | D824 | HV voltage at the charger |
-| Charger 0x590 | E119, E11B | HV voltage at the charger, /128 V (two measuring points within 0.5 V of the pack voltage) |
-| Charger 0x590 | D822 | 12 V system voltage |
-| Charger 0x590 | D80C | 12 V system voltage, a second reading 0.3 V below D822 |
-| Charger 0x590 | D855 | the same as the charge cable value D854: 100 with the cable in, 0 unplugged |
-| VCU, charger | D8EB | state of charge, /10 % (equals BMS D410 and the dashboard %) |
-| VCU, charger | D4CA | vehicle clock in 0.1 s steps, which dates the fault code freeze frames (name from Battery-Emulator, scale found here; the BMS and the motor control unit hold the same clock) |
-| VCU, BMS, charger | D866 | Ready: 8 in Ready, 0 when off or on but not Ready (on the VCU and the charger also D4B9: 1 / 0) |
-| Power steering 0x6B5 | D419 | lane keeping assist: 2 on, 1 off |
-| Power steering 0x6B5 | D41B | lane keeping active: 2 active, 0 off or not active |
-
-Identifiers the public sources name, checked here on the car: the pack SOH
-(BMS D860) is exactly the lowest of the per-cell health values (D4B5), so the
-pack is rated by its weakest cell; the lowest and highest cell numbers (D43C, D43B)
-point at the lowest and highest cell of the cell voltages, and the hottest and
-coldest probe numbers (D445, D446) at those of the temperature probes (all four
-zero-based, so +1); the sum of cell voltages (D438) matches the 108 cells added up,
-and the average cell voltage (D43D) equals their mean; the pack maximum temperature
-(D817) equals the minimum plus the spread and the hottest probe; the odometer (VCU
-D49C; the motor control unit holds the same) matches the dashboard; the motor speed
-(VCU D8CF and MCU DC00) keeps a fixed ratio to the road speed, 68.11 and 68.07 rpm
-per km/h on the same drive; and the motor power (VCU D8D9) was 0.93 of the battery
-power over a drive and 0.97 above 30 kW, the rest going to the auxiliary load. The
-accelerator pedal (VCU D407) reads B4/2 %: raw 199 with the pedal fully down, 0 released. The
-actual motor torque (VCU D8D0) reached 259 Nm on a drive (the Mokka-e is rated 260 Nm), and the
-motor power D8D9 is 1.15 times torque × motor speed driving and 0.91 times it regenerating, as
-electric power against shaft power. The raw SOC (BMS D810) stays within 0.4
-points of the calibrated SOC D410. The BMS
-power limits (D871-D874, named by evDash and Battery-Emulator) read `[B4:B7]/128-500` kW, OBDb's
-scale: discharge for 10 and 30 s up to exactly 160 kW, charge and regeneration negative and
-shrinking as the battery fills, the 30 s limit never larger than the 10 s one; drives stayed within
-them (114 kW out, 68 kW regeneration).
-
-**Likely: not checked or candidates** (the app's *not checked* and *candidate* levels)
-
-| ECU | DID | Meaning |
-|---|---|---|
-| Charger 0x590 | D82B | AC grid voltage (229-235 V plugged in, 0 unplugged) |
-| Charger 0x590 | D5CF, D5D1 | AC grid voltage, /100 V (two readings within 1.5 V of D82B; 0 unplugged) |
-| Charger 0x590 | D829 | 12 V side current, about 1 A per step (follows the rear window heater, seat heater, lights and fan, but also rises with the cabin heating) |
-| BMS 0x6B4 | D813, D44C, D44D, D452, D453 | HV contactors open (0) or closed; closed also after leaving Ready and with the charge cable in |
-| BMS 0x6B4 | D413, D862, D863 | further SOC variants |
-| BMS 0x6B4 | D416 | contactor close counter (name from Battery-Emulator; grows with each HV contactor closing, also at the end of a DC charge) |
-| MCU 0x6A6 | DC71 | motor temperature, /100 °C (rises while driving, falls when parked) |
-| VCU 0x6A2 | D85B | brake pedal state: 1 or 2 with the pedal pressed in P, but 0 with it pressed in D or N in most snaps |
-| VCU 0x6A2 | D880 | requested motor torque (name from OBDb), /10 Nm: tracks the actual torque D8D0 about 0.2 s ahead (peak 261 against 259 Nm); the data cannot tell requested from actual |
-
-**Published by others, not checked yet** (the app's *not checked* level; on this car the published scale gives plausible values)
-
-From OBDb's Peugeot signal set and Battery-Emulator: on the VCU the 12 V battery (D496), motor
-stator (D8CD), DC-DC converter (D8CE), motor coolant inlet (D8D6) and
-traction circuit coolant temperatures (D8F9), and the heating circuit coolant temperature (D8FB),
-which on this car follows the cabin heater; on the MCU the inverter temperatures (DC04, DC6A); on
-the BMS the insulation resistance (D47A). The on-board charger temperature (VCU D8E1) read
-29 °C in 51 of 53 snaps with the charger idle and other values only around AC charging, so the app
-does not show it.
-
-**Answering, meaning still open**
-
-| ECU | Ranges | DIDs |
-|---|---|---|
-| VCU 0x6A2 | D4xx, D8xx | 119 |
-| VCU 0x6A2 | **D5xx, D6xx, D7xx**: groups not mentioned anywhere | 29 |
-| VCU 0x6A2 | E031-E0A9 (E031-E03A: ten records that move down a place as new ones arrive, four after an overnight charge and a drive on 2026-10-14/15; fields not worked out) | 16 |
-| BMS 0x6B4 | D4xx, D8xx (many named by Battery-Emulator, without scale) | 79 |
-| BMS 0x6B4 | **DC0F, DC63-DC65, DF63-DF64**: groups not mentioned anywhere (D900 and E082 nearby are named by Battery-Emulator) | 6 |
-| MCU 0x6A6 | D4xx, DCxx | 20 |
-| Charger 0x590 | D4xx, D8xx, F1xx | 43 |
-| Charger 0x590 | **D5BD, D5D0, D5D2**: the rest of a group not mentioned anywhere, with D5CF and D5D1 above (answers with and without the charge cable) | 3 |
-| Charger 0x590 | E000-E707 | 131 |
-| Charger 0x590 | 0D1F-0DFE and 3788-3B02: they exist, but answered conditionsNotCorrect and gave no value when scanned | 268 |
-| ABS/ESP 0x6AD | D4xx, D6xx | 76 |
-| Power steering 0x6B5 | D4xx | 20 |
-| Windscreen camera 0x74A | D4xx, D5xx | 18 |
-| Windscreen camera 0x74A | FD00-FD79 (supplier area) | 70 |
-| All seven | the rest: small groups elsewhere, among them F0xx-F1xx on every ECU and F4xx, F6xx, F8xx on the VCU | 120 |
-| **In all** | | **1,018** |
-
-Not found on the ECUs that answer: the VIN, the dashboard's range estimate, the
-trip computers and the seat heaters. The body computer (BSI), the instrument cluster and the
-climate unit, whose addresses PyPSADiag lists, did not answer on the OBD port.
 
 ## Languages
 
